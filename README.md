@@ -6,3 +6,5 @@
 
 # Hanro van der Westhuizen : AI client
 # u18141235
+
+### Making a guide for class

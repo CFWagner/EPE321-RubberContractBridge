@@ -4,7 +4,7 @@ Rubber bridge software application developed by Group M in partial fulfilment of
 
 ## Work Breakdown
 
-* Christiaan Wagner (u04503237) - Network
+* Christiaan Wagner (u04503237) - Network class
 * Hanro van der Westhuizen (u18141235) - AI Player
 * Christopher Conroy (u18072918) - Game Server
 

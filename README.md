@@ -12,5 +12,3 @@ Rubber bridge software application developed by Group M in partial fulfilment of
 ## Trello Board
 
 The trello board for the project can be accessed [here](https://trello.com/invite/b/fFzt3O9t/99d623713ce3b1319d5b6865383b0122/bridge-software-project).
-
-### Making a guide for class

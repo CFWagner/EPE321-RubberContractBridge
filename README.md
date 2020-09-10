@@ -4,5 +4,5 @@
 # u04503237
 
 
-# Hanro van der Westhuizen : AI clients
+# Hanro van der Westhuizen : AI client
 # u18141235

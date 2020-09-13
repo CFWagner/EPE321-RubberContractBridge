@@ -5,9 +5,9 @@ Rubber bridge software application developed by Group M in partial fulfilment of
 ## Work Breakdown
 
 * Christiaan Wagner (u04503237) - Network class
-* Hanro van der Westhuizen (u18141235) - AI Player
+* Hanro van der Westhuizen (u18141235) - GUI
 * Christopher Conroy (u18072918) - Game Server
-* Matthew Winnan (u18037497) - GUI
+* Matthew Winnan (u18037497) - AI Player
 
 ## Trello Board
 

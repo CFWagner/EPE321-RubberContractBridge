@@ -10,12 +10,14 @@ SOURCES += \
     clientgui.cpp \
     main.cpp \
     mainwindow.cpp \
+    playernetwork.cpp \
     servergui.cpp
 
 #All header files of the project is addded below.
 HEADERS += \
     clientgui.h \
     mainwindow.h \
+    playernetwork.h \
     servergui.h
 
 #All UI windows are shown below.

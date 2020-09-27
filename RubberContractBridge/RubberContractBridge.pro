@@ -18,6 +18,7 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
+    logger.cpp \
     main.cpp \
     mainwindow.cpp \
     servergui.cpp
@@ -42,6 +43,7 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
+    logger.h \
     mainwindow.h \
     servergui.h
 

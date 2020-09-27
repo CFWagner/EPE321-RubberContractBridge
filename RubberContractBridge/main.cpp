@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include "clientgui.h"
 #include "servergui.h"
+#include "servernetwork.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
+    ServerNetwork testServerNetwork;
 
 
 //    QApplication rcbApplication(argc, argv);

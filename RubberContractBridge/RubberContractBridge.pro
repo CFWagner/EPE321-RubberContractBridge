@@ -15,6 +15,7 @@ SOURCES += \
 #All header files of the project is addded below.
 HEADERS += \
     clientgui.h \
+    enumerations/CardRank.h \
     mainwindow.h \
     servergui.h
 

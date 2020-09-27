@@ -15,6 +15,13 @@ SOURCES += \
 #All header files of the project is addded below.
 HEADERS += \
     clientgui.h \
+    enumerations/BidCall.h \
+    enumerations/CardRank.h \
+    enumerations/CardSuit.h \
+    enumerations/GameEvent.h \
+    enumerations/GamePhase.h \
+    enumerations/PlayerPosition.h \
+    enumerations/Team.h \
     mainwindow.h \
     servergui.h
 

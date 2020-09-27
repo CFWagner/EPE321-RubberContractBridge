@@ -247,6 +247,7 @@ Makefile: ..\RubberContractBridge\RubberContractBridge.pro C:\ProgramFiles\Qt\5.
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\qt_config.prf \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\win32-msvc\qmake.conf \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\spec_post.prf \
+		.qmake.stash \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\exclusive_builds.prf \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\common\msvc-version.conf \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\toolchain.prf \
@@ -278,7 +279,6 @@ Makefile: ..\RubberContractBridge\RubberContractBridge.pro C:\ProgramFiles\Qt\5.
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\Qt5Network.prl \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\Qt5Core.prl \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\qtmain.prl \
-		.qmake.stash \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\build_pass.prf \
 		..\RubberContractBridge\GUI.qrc \
 		C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\Qt5Widgetsd.prl \
@@ -451,6 +451,7 @@ C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\qt_functions.prf:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\qt_config.prf:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\win32-msvc\qmake.conf:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\spec_post.prf:
+.qmake.stash:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\exclusive_builds.prf:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\common\msvc-version.conf:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\toolchain.prf:
@@ -482,7 +483,6 @@ C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\Qt5Qml.prl:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\Qt5Network.prl:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\Qt5Core.prl:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\qtmain.prl:
-.qmake.stash:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\mkspecs\features\build_pass.prf:
 ..\RubberContractBridge\GUI.qrc:
 C:\ProgramFiles\Qt\5.15.0\msvc2019_64\lib\Qt5Widgetsd.prl:

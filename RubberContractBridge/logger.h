@@ -2,6 +2,10 @@
 #define LOGGER_H
 
 #include <QObject>
+#include <QDateTime>
+#include <QTextStream>
+#include <QDebug>
+#include <QTextStream>
 
 class Logger : public QObject
 {

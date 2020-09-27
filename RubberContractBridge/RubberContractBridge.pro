@@ -8,6 +8,7 @@ CONFIG += c++11
 #All sources classes of the project is addded below.
 SOURCES += \
     clientgui.cpp \
+    logger.cpp \
     main.cpp \
     mainwindow.cpp \
     servergui.cpp
@@ -15,6 +16,7 @@ SOURCES += \
 #All header files of the project is addded below.
 HEADERS += \
     clientgui.h \
+    logger.h \
     mainwindow.h \
     servergui.h
 

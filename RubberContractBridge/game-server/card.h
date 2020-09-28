@@ -14,7 +14,6 @@ public:
     CardRank getRank();
     void read(const QJsonObject &json);
     void write(const QJsonObject &json);
-    QString toString();
 private:
     CardSuit suit;
     CardRank rank;

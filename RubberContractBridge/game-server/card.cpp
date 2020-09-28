@@ -1,9 +1,6 @@
 #include "card.h"
 
-Card::Card()
-{
-
-}
+Card::Card() {}
 
 Card::Card(CardSuit suit, CardRank rank)
 {
@@ -23,15 +20,12 @@ CardRank Card::getRank()
 
 void Card::read(const QJsonObject &json)
 {
-
+    suit = CardSuit(qRound(json["suit"].toDouble()));
+    rank = CardRank(qRound(json["rank"].toDouble()));
 }
 
 void Card::write(const QJsonObject &json)
 {
-
-}
-
-QString Card::toString()
-{
-    return "";
+    json["suit"] = suit;
+    json["rank"] = rank;
 }

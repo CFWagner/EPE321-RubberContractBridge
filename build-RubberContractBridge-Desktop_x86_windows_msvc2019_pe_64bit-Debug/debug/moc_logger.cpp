@@ -61,7 +61,7 @@ static const uint qt_meta_data_Logger[] = {
        1,    2,   24,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       5,    2,   29,    2, 0x08 /* Private */,
+       5,    2,   29,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString,    3,    4,

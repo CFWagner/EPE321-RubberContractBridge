@@ -17,6 +17,7 @@ public:
     // TODO: Remove this enums and use the correct from the server.
     enum Bid{};
     enum Move{};
+    class GameState{};
 
 private slots:
     void txRequestLogin(QHostAddress serverIP, QString playerName, QString password);
@@ -24,9 +25,19 @@ private slots:
     void txMoveSelected(Move move);
     void txMessage(QString msg);
     void rxAll();
-    void serverDisconnected();
+    void internalServerDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
 
 signals:
+    void serverNotFound(QString reason);
+    void notifyBidTurn();
+    void notifyMoveTurn();
+    void notifyBidRejected(QString reason);
+    void notifyMoveRejected(QString reason);
+    void loginResult(bool loginSuccessful, QString reason);
+    void updateGameState(GameState gameState);
+    void messageReceived(QString source, QString msg);
+    void serverDisconnected();
+    void gameTerminated(QString reason);
 
 private:
     void txAll(QJsonObject data);

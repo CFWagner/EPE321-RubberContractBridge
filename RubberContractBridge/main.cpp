@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     // Test logger class
     Logger testLog;
-    testLog.log(QString("This is context"),QString("This is the message"));
+    //testLog.log(QString("This is context"),QString("This is the message"));
 
     //
     QApplication rcbApplication(argc, argv);

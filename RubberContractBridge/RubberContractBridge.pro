@@ -11,9 +11,12 @@ SOURCES += \
     game-server/bid.cpp \
     game-server/card.cpp \
     game-server/cardset.cpp \
+    game-server/gameserver.cpp \
     game-server/gamestate.cpp \
     game-server/player.cpp \
     game-server/playergamestate.cpp \
+    game-server/score.cpp \
+    game-server/server.cpp \
     game-server/servergamestate.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -32,9 +35,12 @@ HEADERS += \
     game-server/bid.h \
     game-server/card.h \
     game-server/cardset.h \
+    game-server/gameserver.h \
     game-server/gamestate.h \
     game-server/player.h \
     game-server/playergamestate.h \
+    game-server/score.h \
+    game-server/server.h \
     game-server/servergamestate.h \
     mainwindow.h \
     servergui.h

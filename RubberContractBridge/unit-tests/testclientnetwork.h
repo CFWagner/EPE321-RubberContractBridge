@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
-#include <QtTest/QSignalSpy>
+#include <QSignalSpy>
 #include "network/clientnetwork.h"
 
 class testClientNetwork : public QObject

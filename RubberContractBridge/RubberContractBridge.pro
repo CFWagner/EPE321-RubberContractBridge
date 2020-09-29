@@ -1,9 +1,11 @@
 # The required libraries are added such as core and gui.
 QT       += core gui qml
+QT += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+CONFIG += no_testcase_installs
 
 #All sources classes of the project is addded below.
 SOURCES += \

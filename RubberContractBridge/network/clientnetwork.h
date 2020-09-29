@@ -8,21 +8,21 @@
 #include <QJsonObject>
 #include <QHostAddress>
 
+#include "game-server/playergamestate.h"
+#include "game-server/bid.h"
+#include "game-server/card.h"
+
 class ClientNetwork : public QObject
 {
     Q_OBJECT
 public:
     explicit ClientNetwork(QObject *parent = nullptr);
     ~ClientNetwork();
-    // TODO: Remove this enums and use the correct from the server.
-    enum Bid{};
-    enum Move{};
-    class GameState{};
 
 private slots:
     void txRequestLogin(QHostAddress serverIP, QString playerName, QString password);
     void txBidSelected(Bid bid);
-    void txMoveSelected(Move move);
+    void txMoveSelected(Card card);
     void txMessage(QString msg);
     void rxAll();
     void internalServerDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.

@@ -15,12 +15,12 @@ void ClientNetwork::txRequestLogin(QHostAddress serverIP, QString playerName, QS
 
 }
 
-void ClientNetwork::txBidSelected(ClientNetwork::Bid bid)
+void ClientNetwork::txBidSelected(Bid bid)
 {
 
 }
 
-void ClientNetwork::txMoveSelected(ClientNetwork::Move move)
+void ClientNetwork::txMoveSelected(Card card)
 {
 
 }
@@ -35,7 +35,7 @@ void ClientNetwork::rxAll()
 
 }
 
-void ClientNetwork::serverDisconnected()
+void ClientNetwork::internalServerDisconnected()
 {
 
 }

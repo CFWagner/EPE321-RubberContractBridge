@@ -5,61 +5,26 @@ testServerNetwork::testServerNetwork(QObject *parent) : QObject(parent)
 
 }
 
-void testServerNetwork::initServer1()
+void testServerNetwork::initServer()
 {
     QString passwordServer = "abcdef1234$#@";
     QHostAddress ip = QHostAddress::LocalHost;
     ServerNetwork testServerNet;
     testServerNet.setPassword(passwordServer);
     testServerNet.initServer(ip);
-    QVector<bool> bUnitTest = testServerNet.getUnitTest();
-
-    // IP should be valid
-    QVERIFY(bUnitTest[11] == false);
-
-    // Server should be able to connect to port.
-    QVERIFY(bUnitTest[12] == false);
-
-    // The server is listening
-    QVERIFY(bUnitTest[13] == true);
-
-    // initServer not called twice
-    QVERIFY(bUnitTest[10] == false);
-
-    // Call ininServer a second time
-    testServerNet.initServer(ip);
-    bUnitTest = testServerNet.getUnitTest();
-
-    // Should not try to connect
-    QVERIFY(bUnitTest[10] == true);
-    QVERIFY(bUnitTest[13] == false);
-
     testServerNet.deleteLater();
 
-}
+    ip = "192.168.56.1";
+    ServerNetwork testServerNet2;
+    testServerNet2.setPassword(passwordServer);
+    testServerNet2.initServer(ip);
+    testServerNet2.deleteLater();
 
-void testServerNetwork::initServer2()
-{
-    // Test invalid IP adress
-    QString passwordServer = "abcdef1234$#@";
-    QHostAddress ip = QHostAddress("192.168.56.10");
-    ServerNetwork testServerNet;
-    testServerNet.setPassword(passwordServer);
-    testServerNet.initServer(ip);
-    QVector<bool> bUnitTest = testServerNet.getUnitTest();
+    ip = "192.168.56.10";
+    ServerNetwork testServerNet3;
+    testServerNet3.setPassword(passwordServer);
+    testServerNet3.initServer(ip);
+    testServerNet3.deleteLater();
 
-    // initServer not called twice
-    QVERIFY(bUnitTest[10] == false);
-
-    // IP should not be valid
-    QVERIFY(bUnitTest[11] == true);
-
-    // Server should be able to connect to port.
-    QVERIFY(bUnitTest[12] == false);
-
-    // The server is listening
-    QVERIFY(bUnitTest[13] == true);
-
-    testServerNet.deleteLater();
 
 }

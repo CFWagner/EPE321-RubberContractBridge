@@ -1,21 +1,18 @@
-//Unit tests
-#include "unit-tests/game-server/testbid.h"
-#include "unit-tests/game-server/testcard.h"
-#include "unit-tests/game-server/testcardset.h"
-#include "unit-tests/game-server/testservergamestate.h"
-#include "unit-tests/game-server/testplayergamestate.h"
+// This main is solely used for testing
+
+#include "unit-tests/testservernetwork.h"
+#include "unit-tests/testplayernetwork.h"
+#include "unit-tests/testclientnetwork.h"
 
 int main(int argc, char *argv[])
 {
-    //Unit tests
-//    TestBid testBid;
-//    QTest::qExec(&testBid);
-//    TestCard testCard;
-//    QTest::qExec(&testCard);
-//    TestCardSet testCardSet;
-//    QTest::qExec(&testCardSet);
-    TestServerGameState testServerGameState;
-    QTest::qExec(&testServerGameState);
-//    TestPlayerGameState testPlayerGameState;
-//    QTest::qExec(&testPlayerGameState);
+//     Test the main class
+    testServerNetwork testServerNet;
+    QTest::qExec(&testServerNet);
+    
+    testPlayerNetwork testPlayerNet;
+    QTest::qExec(&testPlayerNet);
+    
+    testClientNetwork testClientNet;
+    QTest::qExec(&testClientNet);
 }

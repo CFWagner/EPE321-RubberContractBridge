@@ -6,10 +6,10 @@
 #include <QTcpSocket>
 
 // This might not be needed but is included in the Fortune Server example.
-QT_BEGIN_NAMESPACE
-class QTcpSocket;
-class QTcpServer;
-QT_END_NAMESPACE
+//QT_BEGIN_NAMESPACE
+//class QTcpSocket;
+//class QTcpServer;
+//QT_END_NAMESPACE
 
 class ServerNetwork : public QObject
 {

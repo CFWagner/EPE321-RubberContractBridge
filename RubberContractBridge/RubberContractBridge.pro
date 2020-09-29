@@ -22,9 +22,12 @@ SOURCES += \
     game-server/servergamestate.cpp \
     main.cpp \
     mainwindow.cpp \
+    network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
     servergui.cpp \
+    servergui.cpp \
+    unit-tests/testservernetwork.cpp \
     servergui.cpp \
     unit-tests/testplayernetwork.cpp \
     servergui.cpp \
@@ -51,9 +54,12 @@ HEADERS += \
     game-server/server.h \
     game-server/servergamestate.h \
     mainwindow.h \
+    network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
     servergui.h \
+    servergui.h \
+    unit-tests/testservernetwork.h \
     servergui.h \
     unit-tests/testplayernetwork.h \
     servergui.h \

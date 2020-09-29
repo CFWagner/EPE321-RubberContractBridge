@@ -8,7 +8,6 @@ CONFIG += c++11
 #All sources classes of the project is addded below.
 SOURCES += \
     clientgui.cpp \
-    clientnetwork.cpp \
     game-server/bid.cpp \
     game-server/card.cpp \
     game-server/cardset.cpp \
@@ -22,8 +21,6 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     servergui.cpp \
-    servernetwork.cpp \
-    playernetwork.cpp \
     servergui.cpp
 
 #All header files of the project is addded below.
@@ -36,7 +33,6 @@ HEADERS += \
     enumerations/GamePhase.h \
     enumerations/PlayerPosition.h \
     enumerations/Team.h \
-    clientnetwork.h \
     game-server/bid.h \
     game-server/card.h \
     game-server/cardset.h \
@@ -49,8 +45,6 @@ HEADERS += \
     game-server/servergamestate.h \
     mainwindow.h \
     servergui.h \
-    servernetwork.h \
-    playernetwork.h \
     servergui.h
 
 #All UI windows are shown below.

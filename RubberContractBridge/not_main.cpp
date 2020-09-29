@@ -1,6 +1,6 @@
 // This main is solely used for testing
 
-//#include "testlogger.h"
+//#include "unit-tests/testlogger.h"
 
 int main(int argc, char *argv[])
 {

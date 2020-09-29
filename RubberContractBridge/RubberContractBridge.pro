@@ -20,6 +20,7 @@ SOURCES += \
     game-server/servergamestate.cpp \
     main.cpp \
     mainwindow.cpp \
+    playernetwork.cpp \
     servergui.cpp
 
 #All header files of the project is addded below.
@@ -43,6 +44,7 @@ HEADERS += \
     game-server/server.h \
     game-server/servergamestate.h \
     mainwindow.h \
+    playernetwork.h \
     servergui.h
 
 #All UI windows are shown below.

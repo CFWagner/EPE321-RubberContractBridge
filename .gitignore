@@ -21,3 +21,7 @@ Test applications/FortuneClientServer - 2 way/Client/fortuneclient.pro.user
 Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user
 
 Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user
+
+Server/fortuneserver.pro.user
+
+Client/fortuneclient.pro.user

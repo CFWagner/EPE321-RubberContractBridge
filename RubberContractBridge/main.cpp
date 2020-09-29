@@ -3,12 +3,15 @@
 #include "servergui.h"
 #include "playernetwork.h"
 #include "servernetwork.h"
+#include "clientnetwork.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
-    QApplication rcbApplication(argc, argv);
-    MainWindow entryWindow;
-    entryWindow.show();
-    return rcbApplication.exec();
+    ClientNetwork testClientNetwork;
+
+//    QApplication rcbApplication(argc, argv);
+//    MainWindow entryWindow;
+//    entryWindow.show();
+//    return rcbApplication.exec();
 }

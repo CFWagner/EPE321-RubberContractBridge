@@ -12,6 +12,9 @@ class testServerNetwork : public QObject
 public:
     explicit testServerNetwork(QObject *parent = nullptr);
 
+private slots:
+    void initServer();
+
 signals:
 
 };

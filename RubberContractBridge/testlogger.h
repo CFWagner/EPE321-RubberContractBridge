@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
+#include <QSignalSpy>
 #include "logger.h"
 
 class testLogger : public QObject
@@ -16,7 +17,7 @@ private slots:
     void testLog();
 
 signals:
-
+    void emitLog(QString context, QString msg);
 };
 
 #endif // TESTLOGGER_H

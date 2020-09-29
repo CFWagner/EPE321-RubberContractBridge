@@ -20,7 +20,7 @@ signals:
     void sendLog (QString context, QString msg) const;
 
 
-private slots:
+public slots:
     void log(QString context, QString msg);
 
 private:

@@ -1,13 +1,9 @@
-#include <QtTest/QtTest>
-#include "logger.h"
+#include "testlogger.h"
 
-class testLogger: public QObject
+testLogger::testLogger(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
-private slots:
-    void testLogEnabled();
-    void testLog();
-};
+
+}
 
 void testLogger::testLogEnabled()
 {
@@ -26,9 +22,4 @@ void testLogger::testLog()
 {
     Logger testLog;
     QCOMPARE(testLog.isLogEnabled(), true);
-
-
 }
-
-//QTEST_MAIN(testLogger)
-//#include "testlogger.moc"

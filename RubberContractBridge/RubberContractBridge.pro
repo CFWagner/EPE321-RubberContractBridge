@@ -23,7 +23,8 @@ SOURCES += \
     logger.cpp \
     main.cpp \
     mainwindow.cpp \
-    servergui.cpp
+    servergui.cpp \
+    testlogger.cpp
 
 #All header files of the project is addded below.
 HEADERS += \
@@ -47,7 +48,8 @@ HEADERS += \
     game-server/servergamestate.h \
     logger.h \
     mainwindow.h \
-    servergui.h
+    servergui.h \
+    testlogger.h
 
 #All UI windows are shown below.
 FORMS += \

@@ -6,16 +6,16 @@ ServerNetwork::ServerNetwork(QObject *parent, QString nameOfAI) : QObject(parent
     this->nameOfAI = nameOfAI;
     tcpServer = nullptr;
 
-    // Set a default password, this should be changed by the server/
+    // Set a default password, this should be changed by the server.
     password = "12340000";
     playerNames.clear();
     clientSoc.clear();
+    clientSocTemp.clear();
     tcpServer = nullptr;
 }
 
 ServerNetwork::~ServerNetwork()
 {
-    qInfo() << "ServerNetwork destructed";
     // Stop the server
     if (tcpServer != nullptr) {
         disconnect(tcpServer, &QTcpServer::newConnection, 0, 0);
@@ -41,7 +41,48 @@ void ServerNetwork::initServer(QHostAddress ip)
     // Open a port on the given ip address.
     // Use port 61074.
     // Start listening for clients that want to connect.
+    // The IP address can only be set once after the program has started.
+    qint16 port = 61074;
 
+    // Check if the server has been initialized.
+    if (tcpServer != nullptr){
+        qWarning() << "The IP address can only be set once. Nothing was changed.";
+    } else {
+        // Test if ip address is valid.
+        // If not valid, use local host, since it will be run on one machine.
+        // Print this descision to qWarning.
+
+        // Find all valid ipAdresses.
+        QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+
+        if ((ip.toString().isEmpty() == true) || (ipAddressesList.contains(ip) == false)) {
+            qWarning() << "The selected IP address (" << ip.toString() << ") for the server is not valid. Localhost will be used instead.";
+            ip = QHostAddress::LocalHost;
+        }
+
+        qInfo() << "Final IP used for the server: " << ip.toString();
+
+        // Disconnect the client
+        //    if (clientConnection != nullptr){
+        //        disconnect(clientConnection, &QIODevice::readyRead,0,0);
+        //        clientConnection->disconnectFromHost();
+        //        clientConnection = nullptr;
+        //    }
+
+        //    disconnect(tcpServer, &QTcpServer::newConnection, 0, 0);
+
+
+        tcpServer = new QTcpServer(this);
+
+        if (!tcpServer->listen(ip, port)) {
+            qCritical() << "DRCB - ServerNetwork" << "Unable to start the server: " << tcpServer->errorString();
+            return;
+        }
+
+        connect(tcpServer, &QTcpServer::newConnection, this, &ServerNetwork::connectClient);
+
+        qInfo() << "The server is listening for clients on " << ip.toString() << " with port: " << tcpServer->serverPort();
+    }
 
 }
 
@@ -59,31 +100,26 @@ QVector<bool> ServerNetwork::getUnitTest() const
 void ServerNetwork::connectClient()
 {
     // Accept new client connections.
+    // Add client to clientSocTemp.
+    // Make signal slot connections.
+
+
+}
+
+void ServerNetwork::validateClient()
+{
     // Validate the password and username.
     // If valid, add username and client socket.
     // Signal the GUI that a client has logged in.
     // If not valid, disconnect the client.
 
-    // Prepare bUnitTest
-    for (int i = 20; i <= 29; i++){
-        bUnitTest[i] = false;
-    }
+    // Get the sender's QTcpSocket
+    QObject* obj = sender();
+    QTcpSocket* tempSocket = qobject_cast<QTcpSocket*>(obj);
 
-    QTcpSocket* clientConnection = tcpServer->nextPendingConnection();
+    // Remove clientSock from the clientSocTemp.
+    clientSocTemp.removeAll(tempSocket);
 
-
-    if (!clientConnection) {
-        qWarning() << "Got invalid pending connection! Ignoring the connection.";
-        bUnitTest[20] = true;
-        return;
-    }
-
-    connect(clientConnection, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
-    connect(clientConnection, &QAbstractSocket::disconnected,this, &ServerNetwork::disconnectClient);
-    connect(clientConnection, &QAbstractSocket::disconnected,clientConnection, &QObject::deleteLater);
-
-    // Add to temp list.
-    clientSocTemp.append(clientConnection);
 }
 
 void ServerNetwork::validateClient()

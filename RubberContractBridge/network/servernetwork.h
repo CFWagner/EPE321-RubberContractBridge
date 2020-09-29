@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QtNetwork>
+#include <QDebug>
+#include <QDataStream>
 
 // This might not be needed but is included in the Fortune Server example.
 //QT_BEGIN_NAMESPACE
@@ -25,6 +28,7 @@ public:
 
 private slots:
     void connectClient();
+    void validateClient();
     void disconnectClient();
 
 signals:
@@ -38,6 +42,7 @@ private:
     QString nameOfAI;
     QVector<QString> playerNames;
     QVector<QTcpSocket*> clientSoc;
+    QVector<QTcpSocket*> clientSocTemp;
     QTcpServer* tcpServer;
 
 };

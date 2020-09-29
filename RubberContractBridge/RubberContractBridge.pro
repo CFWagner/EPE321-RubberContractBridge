@@ -20,6 +20,7 @@ SOURCES += \
     game-server/servergamestate.cpp \
     main.cpp \
     mainwindow.cpp \
+    network/playernetwork.cpp \
     servergui.cpp \
     servergui.cpp
 
@@ -44,6 +45,7 @@ HEADERS += \
     game-server/server.h \
     game-server/servergamestate.h \
     mainwindow.h \
+    network/playernetwork.h \
     servergui.h \
     servergui.h
 

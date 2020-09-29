@@ -55,32 +55,6 @@ void PlayerNetwork::gameTerminated(QString reason)
 
 }
 
-QString PlayerNetwork::getPlayerName() const
-{
-    return playerName;
-}
-
-PlayerPosition PlayerNetwork::getPosition() const
-{
-    return position;
-}
-
-Team PlayerNetwork::getTeam() const
-{
-    // TODO: get correct team.
-    return Team::E_W;
-}
-
-void PlayerNetwork::setPosition(PlayerPosition position)
-{
-    PlayerNetwork::position = position;
-}
-
-QString PlayerNetwork::toString() const
-{
-    return QString("Temp toString");
-}
-
 void PlayerNetwork::rxAll()
 {
 

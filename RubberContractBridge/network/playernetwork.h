@@ -29,11 +29,6 @@ public:
     void notifyMoveRejected(QString reason);
     void message(QString source, QString msg);
     void gameTerminated(QString reason);
-    QString getPlayerName() const;
-    PlayerPosition getPosition() const;
-    Team getTeam() const;
-    void setPosition(PlayerPosition position);
-    QString toString() const;
 
 private slots:
     void rxAll();

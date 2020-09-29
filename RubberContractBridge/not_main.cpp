@@ -1,10 +1,10 @@
 // This main is solely used for testing
 
-//#include "unit-tests/testlogger.h"
+#include "unit-tests/testservernetwork.h"
 
 int main(int argc, char *argv[])
 {
-    // Test the main class
-    //testLogger test1;
-    //QTest::qExec(&test1);
+//     Test the main class
+    testServerNetwork testServerNet;
+    QTest::qExec(&testServerNet);
 }

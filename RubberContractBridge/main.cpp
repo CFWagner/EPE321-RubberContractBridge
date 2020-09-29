@@ -1,10 +1,18 @@
-#include "mainwindow.h"
-#include <QApplication>
+// This main is solely used for testing
+
+#include "unit-tests/testservernetwork.h"
+#include "unit-tests/testplayernetwork.h"
+#include "unit-tests/testclientnetwork.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication rcbApplication(argc, argv);
-    MainWindow entryWindow;
-    entryWindow.show();
-    return rcbApplication.exec();
+//     Test the main class
+    testServerNetwork testServerNet;
+    QTest::qExec(&testServerNet);
+    
+    testPlayerNetwork testPlayerNet;
+    QTest::qExec(&testPlayerNet);
+    
+    testClientNetwork testClientNet;
+    QTest::qExec(&testClientNet);
 }

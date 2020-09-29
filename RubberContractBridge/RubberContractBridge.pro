@@ -1,9 +1,11 @@
 # The required libraries are added such as core and gui.
 QT       += core gui qml
+QT += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+CONFIG += no_testcase_installs
 
 #All sources classes of the project is addded below.
 SOURCES += \
@@ -20,8 +22,16 @@ SOURCES += \
     game-server/servergamestate.cpp \
     main.cpp \
     mainwindow.cpp \
+    network/servernetwork.cpp \
+    network/playernetwork.cpp \
+    network/clientnetwork.cpp \
     servergui.cpp \
-    servergui.cpp
+    servergui.cpp \
+    unit-tests/testservernetwork.cpp \
+    servergui.cpp \
+    unit-tests/testplayernetwork.cpp \
+    servergui.cpp \
+    unit-tests/testclientnetwork.cpp
 
 #All header files of the project is addded below.
 HEADERS += \
@@ -44,8 +54,16 @@ HEADERS += \
     game-server/server.h \
     game-server/servergamestate.h \
     mainwindow.h \
+    network/servernetwork.h \
+    network/playernetwork.h \
+    network/clientnetwork.h \
     servergui.h \
-    servergui.h
+    servergui.h \
+    unit-tests/testservernetwork.h \
+    servergui.h \
+    unit-tests/testplayernetwork.h \
+    servergui.h \
+    unit-tests/testclientnetwork.h
 
 #All UI windows are shown below.
 FORMS += \

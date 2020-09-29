@@ -8,21 +8,19 @@
 #include <QJsonObject>
 #include <QHostAddress>
 
+#include "game-server/player.h"
+#include "enumerations/PlayerPosition.h"
+#include "enumerations/Team.h"
+#include "game-server/bid.h"
+#include "game-server/card.h"
+#include "game-server/playergamestate.h"
 
-
-class PlayerNetwork : public QObject
+class PlayerNetwork : public Player
 {
     Q_OBJECT
 public:
     explicit PlayerNetwork(QObject *parent = nullptr, QString playerName = QString("Player"), QTcpSocket* clientSoc = nullptr);
     ~PlayerNetwork();
-    // TODO: Remove this enums and use the correct from the server.
-    enum Bid{};
-    enum Move{};
-    enum Team{};
-    class Card{};
-    class PlayerGameState{};
-    enum PlayerPosition{};
 
     void notifyBidTurn();
     void notifyMoveTurn();
@@ -31,11 +29,6 @@ public:
     void notifyMoveRejected(QString reason);
     void message(QString source, QString msg);
     void gameTerminated(QString reason);
-    QString getPlayerName() const;
-    PlayerPosition getPosition() const;
-    Team getTeam() const;
-    void setPosition(PlayerPosition position);
-    QString toString() const;
 
 private slots:
     void rxAll();
@@ -60,7 +53,6 @@ private:
     bool aliveFlag;
     QDataStream in;
     QDataStream out;
-    // playerName and playerPosition is declared in the parent class?
 };
 
 #endif // PLAYERNETWORK_H

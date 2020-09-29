@@ -1,10 +1,18 @@
 #include "playernetwork.h"
 
-PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *clientSoc) : QObject(parent)
+//PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *clientSoc) : QObject(parent)
+//{
+//    // Once ingerited, init the playerName.
+//    PlayerNetwork::playerName = playerName;
+//    PlayerNetwork::clientSoc = clientSoc;
+
+//}
+
+PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *clientSoc)
 {
     // Once ingerited, init the playerName.
+    PlayerNetwork::playerName = playerName;
     PlayerNetwork::clientSoc = clientSoc;
-
 }
 
 PlayerNetwork::~PlayerNetwork()
@@ -22,7 +30,7 @@ void PlayerNetwork::notifyMoveTurn()
 
 }
 
-void PlayerNetwork::updateGameState(PlayerNetwork::PlayerGameState gameState)
+void PlayerNetwork::updateGameState(PlayerGameState gameState)
 {
 
 }
@@ -43,31 +51,6 @@ void PlayerNetwork::message(QString source, QString msg)
 }
 
 void PlayerNetwork::gameTerminated(QString reason)
-{
-
-}
-
-QString PlayerNetwork::getPlayerName() const
-{
-
-}
-
-PlayerNetwork::PlayerPosition PlayerNetwork::getPosition() const
-{
-
-}
-
-PlayerNetwork::Team PlayerNetwork::getTeam() const
-{
-
-}
-
-void PlayerNetwork::setPosition(PlayerNetwork::PlayerPosition position)
-{
-
-}
-
-QString PlayerNetwork::toString() const
 {
 
 }

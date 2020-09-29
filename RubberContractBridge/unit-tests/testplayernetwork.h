@@ -2,6 +2,9 @@
 #define TESTPLAYERNETWORK_H
 
 #include <QObject>
+#include <QtTest/QtTest>
+#include <QSignalSpy>
+#include "network/playernetwork.h"
 
 class testPlayerNetwork : public QObject
 {

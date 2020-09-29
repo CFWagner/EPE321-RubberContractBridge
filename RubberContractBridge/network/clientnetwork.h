@@ -19,11 +19,13 @@ public:
     explicit ClientNetwork(QObject *parent = nullptr);
     ~ClientNetwork();
 
-private slots:
+public slots:
     void txRequestLogin(QHostAddress serverIP, QString playerName, QString password);
     void txBidSelected(Bid bid);
     void txMoveSelected(Card card);
     void txMessage(QString msg);
+
+private slots:
     void rxAll();
     void internalServerDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
 

@@ -103,7 +103,18 @@ void ServerNetwork::connectClient()
     // Add client to clientSocTemp.
     // Make signal slot connections.
 
+    QTcpSocket* clientConnection = tcpServer->nextPendingConnection();
 
+
+    if (!clientConnection) {
+        qWarning() << "Got invalid pending connection! Ignoring the connection.";
+        return;
+    }
+
+    connect(clientConnection, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
+    connect(clientConnection, &QAbstractSocket::disconnected,clientConnection, &QObject::deleteLater);
+
+    clientSocTemp.append(clientConnection);
 }
 
 void ServerNetwork::validateClient()
@@ -120,6 +131,23 @@ void ServerNetwork::validateClient()
     // Remove clientSock from the clientSocTemp.
     clientSocTemp.removeAll(tempSocket);
 
+    // Read data from the socket
+    in.setDevice(tempSocket);
+    in.setVersion(QDataStream::Qt_5_10);
+    // Read the data
+    in.startTransaction();
+    QJsonObject inputFromClient;
+    in >> inputFromClient;
+    if (!in.commitTransaction())
+        return;
+
+    // Validate and read the QJsonObject.
+    // Read the data. (Password and username.)
+    QString validateRes = "";
+
+
+    // TODO: Change this to test the actual username and password.
+    validateRes = validateLogin("","");
 }
 
 void ServerNetwork::validateClient()

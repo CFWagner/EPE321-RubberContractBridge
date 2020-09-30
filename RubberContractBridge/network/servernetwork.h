@@ -44,6 +44,8 @@ private:
     QVector<QTcpSocket*> clientSoc;
     QVector<QTcpSocket*> clientSocTemp;
     QTcpServer* tcpServer;
+    QDataStream in;
+    QDataStream out;
 
 };
 

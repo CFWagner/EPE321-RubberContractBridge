@@ -24,9 +24,9 @@ SOURCES += \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
-    unit-tests/testservernetwork.cpp \
-    unit-tests/testplayernetwork.cpp \
-    unit-tests/testclientnetwork.cpp
+    unit-tests/network/testclientnetwork.cpp \
+    unit-tests/network/testplayernetwork.cpp \
+    unit-tests/network/testservernetwork.cpp
 
 #All header files of the project is addded below.
 HEADERS += \
@@ -51,9 +51,9 @@ HEADERS += \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
-    unit-tests/testservernetwork.h \
-    unit-tests/testplayernetwork.h \
-    unit-tests/testclientnetwork.h
+    unit-tests/network/testclientnetwork.h \
+    unit-tests/network/testplayernetwork.h \
+    unit-tests/network/testservernetwork.h
 
 #All UI windows are shown below.
 FORMS += \

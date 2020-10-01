@@ -26,6 +26,9 @@ public:
     void initServer(QHostAddress ip);
     void stopListening();
 
+    // Unit test data
+    QVector<bool> getUnitTest() const;
+
 private slots:
     void connectClient();
     void validateClient();
@@ -46,6 +49,9 @@ private:
     QTcpServer* tcpServer;
     QDataStream in;
     QDataStream out;
+
+    // Unit testing datastructures
+    QVector<bool> bUnitTest;
 
 };
 

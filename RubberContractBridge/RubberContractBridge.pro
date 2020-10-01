@@ -9,7 +9,6 @@ CONFIG += no_testcase_installs
 
 #All sources classes of the project is addded below.
 SOURCES += \
-    clientgui.cpp \
     game-server/bid.cpp \
     game-server/card.cpp \
     game-server/cardset.cpp \
@@ -25,17 +24,12 @@ SOURCES += \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
-    servergui.cpp \
-    servergui.cpp \
     unit-tests/testservernetwork.cpp \
-    servergui.cpp \
     unit-tests/testplayernetwork.cpp \
-    servergui.cpp \
     unit-tests/testclientnetwork.cpp
 
 #All header files of the project is addded below.
 HEADERS += \
-    clientgui.h \
     enumerations/BidCall.h \
     enumerations/CardRank.h \
     enumerations/CardSuit.h \
@@ -57,19 +51,13 @@ HEADERS += \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
-    servergui.h \
-    servergui.h \
     unit-tests/testservernetwork.h \
-    servergui.h \
     unit-tests/testplayernetwork.h \
-    servergui.h \
     unit-tests/testclientnetwork.h
 
 #All UI windows are shown below.
 FORMS += \
-    clientgui.ui \
-    mainwindow.ui \
-    servergui.ui
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

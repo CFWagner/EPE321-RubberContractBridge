@@ -13,7 +13,7 @@ public:
     CardSuit getSuit();
     CardRank getRank();
     void read(const QJsonObject &json);
-    void write(const QJsonObject &json);
+    void write(QJsonObject &json) const;
 private:
     CardSuit suit;
     CardRank rank;

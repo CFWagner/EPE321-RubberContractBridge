@@ -13,9 +13,8 @@ int main(int argc, char *argv[])
 //    return rcbApplication.exec();
     TestCard testCard;
     QTest::qExec(&testCard);
-    TestBid testBid;
-    QTest::qExec(&testBid);
-    TestCardSet testCardSet;
-    QTest::qExec(&testCardSet);
+//    TestBid testBid;
+//    QTest::qExec(&testBid);
+//    TestCardSet testCardSet;
+//    QTest::qExec(&testCardSet);
 }
-s

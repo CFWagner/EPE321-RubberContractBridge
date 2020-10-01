@@ -13,6 +13,10 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
     // Once ingerited, init the playerName.
     PlayerNetwork::playerName = playerName;
     PlayerNetwork::clientSoc = clientSoc;
+
+    // Init unit test
+    bUnitTest.clear();
+    bUnitTest.fill(false,40);
 }
 
 PlayerNetwork::~PlayerNetwork()

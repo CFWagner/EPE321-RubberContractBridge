@@ -30,6 +30,9 @@ public:
     void message(QString source, QString msg);
     void gameTerminated(QString reason);
 
+    // Unit test data
+    QVector<bool> getUnitTest() const;
+
 private slots:
     void rxAll();
     void pingClient();
@@ -53,6 +56,9 @@ private:
     bool aliveFlag;
     QDataStream in;
     QDataStream out;
+
+    // Unit testing datastructures
+    QVector<bool> bUnitTest;
 };
 
 #endif // PLAYERNETWORK_H

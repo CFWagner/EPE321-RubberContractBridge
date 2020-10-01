@@ -55,6 +55,11 @@ void PlayerNetwork::gameTerminated(QString reason)
 
 }
 
+QVector<bool> PlayerNetwork::getUnitTest() const
+{
+    return bUnitTest;
+}
+
 void PlayerNetwork::rxAll()
 {
 

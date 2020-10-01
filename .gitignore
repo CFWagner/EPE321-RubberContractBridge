@@ -13,4 +13,6 @@ build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Release/
 
 Server/fortuneserver.pro.user
 
-Client/fortuneclient.pro.user
+Test applications/FortuneClientServer - 2 way/Client/fortuneclient.pro.user
+
+Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user

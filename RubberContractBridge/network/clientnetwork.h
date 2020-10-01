@@ -31,6 +31,7 @@ public slots:
 private slots:
     void rxAll();
     void internalServerDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
+    void socketError(QAbstractSocket::SocketError socError);
 
 signals:
     void serverNotFound(QString reason);

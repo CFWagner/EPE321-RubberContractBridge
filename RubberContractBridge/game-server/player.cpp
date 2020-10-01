@@ -1,9 +1,6 @@
 #include "player.h"
 
-Player::Player(QObject *parent) : QObject(parent)
-{
-
-}
+Player::Player(QObject *parent) : QObject(parent) {}
 
 QString Player::getPlayerName()
 {
@@ -18,8 +15,8 @@ PlayerPosition Player::getPosition()
 Team Player::getTeam()
 {
     switch (position) {
-        case N:
-        case S:
+        case NORTH:
+        case SOUTH:
             return N_S;
         default:
             return E_W;

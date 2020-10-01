@@ -25,8 +25,8 @@ CardRank Card::getRank()
 // Initialize card attributes from JSON object
 void Card::read(const QJsonObject &json)
 {
-    suit = CardSuit(qRound(json["suit"].toDouble()));
-    rank = CardRank(qRound(json["rank"].toDouble()));
+    suit = CardSuit(json["suit"].toInt());
+    rank = CardRank(json["rank"].toInt());
 }
 
 // Add Card instance attributes to the JSON object argument

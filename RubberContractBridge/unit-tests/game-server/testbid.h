@@ -13,7 +13,7 @@ public:
     explicit TestBid(QObject *parent = nullptr);
 
 private slots:
-    void dummy();
+    void testBid();
 
 };
 

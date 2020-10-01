@@ -19,8 +19,7 @@ public:
     CardSuit getTrumpSuit();
     qint8 getTricksAbove();
     void read(const QJsonObject &json);
-    void write(const QJsonObject &json);
-    QString toString();
+    void write(QJsonObject &json) const;
 private:
     PlayerPosition bidder;
     BidCall call;

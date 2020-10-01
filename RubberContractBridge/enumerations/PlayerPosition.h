@@ -3,10 +3,10 @@
 
 // Represents the position of a player in the game
 enum PlayerPosition{
-    N, // North
-    S, // South
-    E, // East
-    W // West
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST
 };
 
 #endif // PLAYERPOSITION_H

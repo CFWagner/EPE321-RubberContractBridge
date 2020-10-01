@@ -26,11 +26,12 @@ public:
     PlayerPosition getDeclarer();
     PlayerPosition getDummy();
     bool getTeamVulnerable(Team team);
-    void read(const QJsonObject &json);
-    void write(QJsonObject &json) const;
+    Score getScore();
+    virtual void read(const QJsonObject &json);
+    virtual void write(QJsonObject &json) const;
 protected:
     GamePhase phase;
-    Bid currenBid;
+    Bid currentBid;
     Bid contractBid;
     qint8 gameNumber;
     qint8 dealNumber;

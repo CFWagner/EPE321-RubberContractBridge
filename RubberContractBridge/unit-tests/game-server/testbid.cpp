@@ -2,6 +2,7 @@
 
 TestBid::TestBid(QObject *parent) : QObject(parent) {}
 
+// Test for correct construction and operation of Bid class instance
 void TestBid::testBid()
 {
     // Construct Bid object with valid constructor arguments when call is not BID

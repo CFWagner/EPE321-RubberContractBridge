@@ -14,6 +14,8 @@ public:
     CardRank getRank();
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
+    bool operator <(const Card& card);
+    bool operator ==(const Card& card);
 private:
     CardSuit suit;
     CardRank rank;

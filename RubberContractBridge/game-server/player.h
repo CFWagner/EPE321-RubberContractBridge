@@ -24,7 +24,6 @@ public:
     PlayerPosition getPosition();
     Team getTeam();
     void setPosition(PlayerPosition position);
-    QString toString();
 protected:
     QString playerName;
     PlayerPosition position;

@@ -35,3 +35,18 @@ void Card::write(QJsonObject &json) const
     json["suit"] = suit;
     json["rank"] = rank;
 }
+
+// Overloaded < relational operator for use in sorting cards
+// Cards are compared by suit first then rank according to the CardSuit and CardRank enums
+bool Card::operator <(const Card& card) {
+    if (suit == card.suit)
+        return rank < card.rank;
+    else
+        return suit < card.suit;
+}
+
+// Overloaded == relational operator to test for card equality
+// Two cards are equal if they have the same suit and rank
+bool Card::operator ==(const Card& card) {
+    return suit == card.suit && rank == card.rank;
+}

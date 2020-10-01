@@ -11,12 +11,11 @@ public:
     Card removeCard(qint8 position);
     Card getCard(qint8 position);
     qint8 getCardCount();
-    void orderHand(CardSuit trumpSuit);
+    void orderHand();
     void clearSet();
     void shuffle();
     void read(const QJsonObject &json);
-    void write(const QJsonObject &json);
-    QString toString();
+    void write(QJsonObject &json) const;
 private:
     QVector<Card> cards;
 };

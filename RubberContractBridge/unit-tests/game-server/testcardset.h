@@ -13,7 +13,7 @@ public:
     explicit TestCardSet(QObject *parent = nullptr);
 
 private slots:
-    void dummy();
+    void testCardSet();
 
 };
 

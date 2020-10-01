@@ -2,12 +2,19 @@
 
 ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
 {
-
+    // Init unit test
+    bUnitTest.clear();
+    bUnitTest.fill(false,40);
 }
 
 ClientNetwork::~ClientNetwork()
 {
 
+}
+
+QVector<bool> ClientNetwork::getUnitTest() const
+{
+    return bUnitTest;
 }
 
 void ClientNetwork::txRequestLogin(QHostAddress serverIP, QString playerName, QString password)

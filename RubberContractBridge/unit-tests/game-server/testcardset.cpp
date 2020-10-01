@@ -24,7 +24,6 @@ void TestCardSet::testCardSet()
     QCOMPARE(cardSet1.getCard(3) == card4, true);
     QCOMPARE(cardSet1.getCardCount() == 4, true);
 
-
     // Remove card
     Card removedCard1 = cardSet1.removeCard(1);
 
@@ -67,7 +66,7 @@ void TestCardSet::testCardSet()
     // Test that QJsonObject instance contains correct keys
     QCOMPARE(jsonCardSet.contains("cards"), true);
 
-    // Initialize Card object using QJsonObject instance
+    // Initialize CardSet object using QJsonObject instance
     CardSet cardSet2;
     cardSet2.read(jsonCardSet);
 

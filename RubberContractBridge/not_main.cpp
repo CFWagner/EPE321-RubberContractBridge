@@ -1,8 +1,8 @@
 // This main is solely used for testing
 
-#include "unit-tests/testservernetwork.h"
-#include "unit-tests/testplayernetwork.h"
-#include "unit-tests/testclientnetwork.h"
+#include "unit-tests/network/testservernetwork.h"
+#include "unit-tests/network/testplayernetwork.h"
+#include "unit-tests/network/testclientnetwork.h"
 
 int main(int argc, char *argv[])
 {

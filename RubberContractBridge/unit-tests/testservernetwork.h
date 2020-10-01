@@ -13,7 +13,8 @@ public:
     explicit testServerNetwork(QObject *parent = nullptr);
 
 private slots:
-    void initServer();
+    void initServer1();
+    void initServer2();
 
 signals:
 

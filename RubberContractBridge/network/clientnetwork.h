@@ -19,6 +19,9 @@ public:
     explicit ClientNetwork(QObject *parent = nullptr);
     ~ClientNetwork();
 
+    // Unit test data
+    QVector<bool> getUnitTest() const;
+
 public slots:
     void txRequestLogin(QHostAddress serverIP, QString playerName, QString password);
     void txBidSelected(Bid bid);
@@ -59,6 +62,9 @@ private:
     bool gameStarted;
     QDataStream in;
     QDataStream out;
+
+    // Unit testing datastructures
+    QVector<bool> bUnitTest;
 
 };
 

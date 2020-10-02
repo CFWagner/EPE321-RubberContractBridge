@@ -13,6 +13,10 @@ ServerNetwork::ServerNetwork(QObject *parent, QString nameOfAI) : QObject(parent
     clientSocTemp.clear();
     tcpServer = nullptr;
 
+    // List of possbile ports to use (may append more ports)
+    port.clear();
+    port.append(61074);
+
     // Init unit test
     bUnitTest.clear();
     bUnitTest.fill(false,40);
@@ -52,7 +56,11 @@ void ServerNetwork::initServer(QHostAddress ip)
     // Use port 61074.
     // Start listening for clients that want to connect.
     // The IP address can only be set once after the program has started.
-    qint16 port = 61074;
+
+    // A static port can be a weak point if the port is already in use.
+    // TODO: automatic switching between ports if a port is occupied.
+    // TODO: Increament i_port if the current port is occupied.
+    int i_port = 0;
 
     // Prepare bUnitTest
     for (int i = 10; i <= 19; i++){
@@ -91,7 +99,7 @@ void ServerNetwork::initServer(QHostAddress ip)
 
         tcpServer = new QTcpServer(this);
 
-        if (!tcpServer->listen(ip, port)) {
+        if (!tcpServer->listen(ip, port[i_port])) {
             qCritical() << "DRCB - ServerNetwork" << "Unable to start the server: " << tcpServer->errorString();
             bUnitTest[12] = true;
             return;

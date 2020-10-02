@@ -8,11 +8,16 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
     keepAlive = nullptr;
     tcpSoc = nullptr;
 
+    // List of possbile ports to use (may append more ports)
+    port.clear();
+    port.append(61074);
+
     // Init unit test
     bUnitTest.clear();
     bUnitTest.fill(false,40);
 
     //socketError can use 0 - 4
+    //txRequestLogin can use 10 - 19
 
     // Prepare the tcpSoc and datastream
     tcpSoc = new QTcpSocket(this);
@@ -39,6 +44,27 @@ QVector<bool> ClientNetwork::getUnitTest() const
 
 void ClientNetwork::txRequestLogin(QHostAddress serverIP, QString playerName, QString password)
 {
+    // Connect to the server.
+    // Make signal and slot conections.
+    // Create QJsonObject containting the playerName and password.
+    // Send the QJsonObject to the server.
+
+    // Prepare bUnitTest
+    for (int i = 10; i <= 19; i++){
+        bUnitTest[i] = false;
+    }
+
+    // A static port can be a weak point if the port is already in use.
+    // TODO: automatic switching between ports if a port is occupied.
+    // TODO: Increament i_port if the current port is occupied.
+    int i_port = 0;
+
+    tcpSoc->abort();
+    tcpSoc->connectToHost(serverIP, port[i_port]);
+
+    // If sucesfully connected to the host (server)
+    bUnitTest[10] = true;
+
 
 }
 
@@ -70,6 +96,7 @@ void ClientNetwork::internalServerDisconnected()
 void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
 {
     // Signal the client GUI if an connection error with the server occurs.
+
     // Prepare bUnitTest
     for (int i = 0; i <= 4; i++){
         bUnitTest[i] = false;

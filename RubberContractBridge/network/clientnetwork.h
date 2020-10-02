@@ -63,6 +63,8 @@ private:
     bool gameStarted;
     QDataStream in;
     QDataStream out;
+    QVector<qint16> port;
+
 
     // Unit testing datastructures
     QVector<bool> bUnitTest;

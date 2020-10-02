@@ -30,7 +30,8 @@ public slots:
 
 private slots:
     void rxAll();
-    void internalServerDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
+    void internalServerDisconnected(); // Notice the name change between this and the signal's name in the Group design doc.
+    void socketConnected(); // Notice that this function is not in UML diagram.
     void socketError(QAbstractSocket::SocketError socError);
 
 signals:
@@ -58,12 +59,15 @@ private:
     void rxPingReceived();
 
     QString playerName;
+    QString tempPlayerName;
+    QString tempPassword;
+    bool bLoggedIn;
     QTcpSocket* tcpSoc;
     QTimer* keepAlive;
     bool gameStarted;
     QDataStream in;
-    QDataStream out;
     QVector<qint16> port;
+    qint64 idCounter;
 
 
     // Unit testing datastructures

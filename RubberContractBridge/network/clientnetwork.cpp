@@ -179,7 +179,7 @@ void ClientNetwork::socketConnected()
 }
 
 /*!
- * \brief ClientNetwork::socketError Signal the client GUI if an connection error with the server occurs.
+ * \brief ClientNetwork::socketError Signal the client GUI if an connection error with the server occurs. Abort connection.
  * \param socError QAbstractSocket::SocketError
  */
 
@@ -210,6 +210,7 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
     }
 
     // TODO: disconnect try to connect again?
+    tcpSoc->abort();
 }
 
 /*!
@@ -280,6 +281,8 @@ void ClientNetwork::rxNotifyMoveRejected(QJsonObject reasonObj)
 {
 
 }
+
+// TODO: handel connection login result
 
 void ClientNetwork::rxLoginResult(QJsonObject resObj)
 {

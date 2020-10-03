@@ -92,8 +92,7 @@ void ClientNetwork::txMessage(QString msg)
 }
 
 /*!
- * \brief ClientNetwork::rxAll Read all data and call relevant function to prcess it.
- *
+ * Read all data and call relevant function to prcess it.
  * Data is avaliable on the in stream (from the server).
  * Read data, validate QJsonObject.
  * Choose next function to call
@@ -101,46 +100,85 @@ void ClientNetwork::txMessage(QString msg)
 
 void ClientNetwork::rxAll()
 {
-    // Prepare bUnitTest
-    for (int i = 20; i <= 29; i++){
-        bUnitTest[i] = false;
-    }
-
-    // Something was received
-    bUnitTest[20] = true;
-
     in.startTransaction();
 
     QJsonObject rxObj;
     in >> rxObj;
 
-    if (!in.commitTransaction())
-        emit generalError("Client: Datastream read error occured. It is suggested to restart the game.");
-        qWarning() << "Client: Datastream error occured.";
+    if (!in.commitTransaction()){
+        emit generalError("Datastream read error occured. It is suggested to restart the game.");
+        qWarning() << "Datastream error occured.";
         return;
+    }
 
     // Validate the QJsonObject
     // It should contain a Type field, with valid information in the string part.
     if (rxObj.contains("Type") && rxObj["Type"].isString() && rxObj.contains("ID") && rxObj["ID"].isDouble()){
         // QJsonObject received contained the expected data.
-        bUnitTest[21] = true;
-
         // Test if ID number is larger than prevID
-
-
+        if (rxObj["ID"].toInt() <= prevID) {
+            emit generalError("Outdated data was received. The data will be ignored.");
+            return;
+        }
 
     } else {
         // QJsonObject received had errors
-        bUnitTest[22] = true;
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "Client: Data received from server has been incorrectly formatted.";
+        qWarning() << "Data received from server has been incorrectly formatted.";
 
         // TODO: Handel case where data received was incorrect.
         // If not logged in, dissconnect and signal GUI
 
         // If logged in, request a resend of the data? Or ignaor it, or stop the client.
         // Maybe have a last message detail on server side?
+
+        return;
     }
+
+    // The data received is valid.
+    // Choose the function that will handel the data.
+    QString tempStr = rxObj["Type"].toString();
+    if (tempStr == "NOTIFY_BID_TURN") {
+        rxNotifyBidTurn();
+        return;
+    }
+    if (tempStr == "NOTIFY_MOVE_TRUN") {
+        rxNotifyMoveTurn();
+        return;
+    }
+    if (tempStr == "NOTIFY_BID_REJECTED") {
+        rxNotifyBidRejected(rxObj);
+        return;
+    }
+    if (tempStr == "NOTIFY_MOVE_REJECTED") {
+        rxNotifyMoveRejected(rxObj);
+        return;
+    }
+    if (tempStr == "LOGIN_RESULT") {
+        rxLoginResult(rxObj);
+        return;
+    }
+    if (tempStr == "UPDATE_GAME_STATE") {
+        rxUpdateGameState(rxObj);
+        return;
+    }
+    if (tempStr == "MESSAGE") {
+        rxMessage(rxObj);
+        return;
+    }
+    if (tempStr == "GAME_TERMINATED") {
+        rxGameTerminated(rxObj);
+        return;
+    }
+    if (tempStr == "PING_RECEIVED") {
+        rxPingReceived();
+        return;
+    }
+
+    // Default
+    emit generalError("An incorrect 'Type' has been received. The data will be ignored.");
+    return;
+
 
 }
 
@@ -211,6 +249,7 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
 
     // TODO: disconnect try to connect again?
     tcpSoc->abort();
+//    tcpSoc->close();
 }
 
 /*!
@@ -220,15 +259,14 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
 
 void ClientNetwork::txAll(QJsonObject data)
 {
-    qInfo() << "State of the socket: " << tcpSoc->state();
     // Cannot send data if not connected to the server.
-    if (tcpSoc->state() != QAbstractSocket::ConnectedState){
+    if (tcpSoc->isValid()){
         emit generalError("Not connected to the server. Cannot send data to the server.");
         return;
     }
 
     // Test to see if data that must be sent is valid
-    if (not data.contains("Type")){
+    if (!data.contains("Type")){
         emit generalError("Data to be sent does not contain 'Type' field. Data was not sent.");
         return;
     }
@@ -262,20 +300,38 @@ void ClientNetwork::txAll(QJsonObject data)
     }
 }
 
+/*!
+ * \brief ClientNetwork::rxNotifyBidTurn
+ */
+
 void ClientNetwork::rxNotifyBidTurn()
 {
 
 }
+
+/*!
+ * \brief ClientNetwork::rxNotifyMoveTurn
+ */
 
 void ClientNetwork::rxNotifyMoveTurn()
 {
 
 }
 
+/*!
+ * \brief ClientNetwork::rxNotifyBidRejected
+ * \param reasonObj QJsonObject with "Type" = "NOTIFY_BID_REJECTED".
+ */
+
 void ClientNetwork::rxNotifyBidRejected(QJsonObject reasonObj)
 {
 
 }
+
+/*!
+ * \brief ClientNetwork::rxNotifyMoveRejected
+ * \param reasonObj QJsonObject with "Type" = "NOTIFY_MOVE_REJECTED".
+ */
 
 void ClientNetwork::rxNotifyMoveRejected(QJsonObject reasonObj)
 {
@@ -283,26 +339,49 @@ void ClientNetwork::rxNotifyMoveRejected(QJsonObject reasonObj)
 }
 
 // TODO: handel connection login result
+/*!
+ * \brief ClientNetwork::rxLoginResult Handel the login result (accepted or rejected).
+ * \param resObj QJsonObject with "Type" = "LOGIN_RESULT".
+ */
 
 void ClientNetwork::rxLoginResult(QJsonObject resObj)
 {
 
 }
 
+/*!
+ * \brief ClientNetwork::rxUpdateGameState
+ * \param gsObj QJsonObject with "Type" = "UPDATE_GAME_STATE".
+ */
+
 void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
 {
 
 }
+
+/*!
+ * \brief ClientNetwork::rxMessage
+ * \param msgObj QJsonObject with "Type" = "MESSAGE".
+ */
 
 void ClientNetwork::rxMessage(QJsonObject msgObj)
 {
 
 }
 
+/*!
+ * \brief ClientNetwork::rxGameTerminated
+ * \param reasonObj QJsonObject with "Type" = "GAME_TERMINATED".
+ */
+
 void ClientNetwork::rxGameTerminated(QJsonObject reasonObj)
 {
 
 }
+
+/*!
+ * \brief ClientNetwork::rxPingReceived
+ */
 
 void ClientNetwork::rxPingReceived()
 {

@@ -38,6 +38,8 @@ private slots:
     void pingClient();
 
 signals:
+    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)
+    void generalError(QString errorMsg); // All errors. (Should be displayed to the administrator.)
     void bidSelected(Bid bid);
     void moveSelected(Card card);
     void messageGenerated(QString msg);

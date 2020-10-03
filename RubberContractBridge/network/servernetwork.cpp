@@ -50,17 +50,12 @@ void ServerNetwork::setPassword(QString password)
     this->password = password;
 }
 
-void ServerNetwork::initServer(QHostAddress ip)
+void ServerNetwork::initServer(QHostAddress ip, qint16 port)
 {
     // Open a port on the given ip address.
     // Use port 61074.
     // Start listening for clients that want to connect.
     // The IP address can only be set once after the program has started.
-
-    // A static port can be a weak point if the port is already in use.
-    // TODO: automatic switching between ports if a port is occupied.
-    // TODO: Increament i_port if the current port is occupied.
-    int i_port = 0;
 
     // Prepare bUnitTest
     for (int i = 10; i <= 19; i++){
@@ -69,20 +64,20 @@ void ServerNetwork::initServer(QHostAddress ip)
 
     // Check if the server has been initialized.
     if (tcpServer != nullptr){
-        qWarning() << "The IP address can only be set once. Nothing was changed.";
-        bUnitTest[10] = true;
+        emit generalInfo("The IP address can only be set once. Nothing was changed.");
+//        bUnitTest[10] = true;
+
     } else {
         // Test if ip address is valid.
-        // If not valid, use local host, since it will be run on one machine.
-        // Print this descision to qWarning.
 
         // Find all valid ipAdresses.
         QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
 
         if ((ip.toString().isEmpty() == true) || (ipAddressesList.contains(ip) == false)) {
-            qWarning() << "The selected IP address (" << ip.toString() << ") for the server is not valid. Localhost will be used instead.";
-            ip = QHostAddress::LocalHost;
-            bUnitTest[11] = true;
+//            emit generalInfo("The selected IP address (" << ip.toString() << ") for the server is not valid. Localhost will be used instead.");
+
+//            bUnitTest[11] = true;
+            emit connectionResult(1,ip,port);
         }
 
         qInfo() << "Final IP used for the server: " << ip.toString();

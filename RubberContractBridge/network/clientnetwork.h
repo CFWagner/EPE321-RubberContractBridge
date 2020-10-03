@@ -36,6 +36,8 @@ private slots:
 
 signals:
     void serverNotFound(QString reason);
+    void generalInfo(QString infoMsg); // All information. (Should be displayed to the player.)
+    void generalError(QString errorMsg); // All errors, except serverNotFound(). (Should be displayed to the player.)
     void notifyBidTurn();
     void notifyMoveTurn();
     void notifyBidRejected(QString reason);

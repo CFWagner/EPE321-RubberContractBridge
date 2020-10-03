@@ -6,6 +6,7 @@
 #include <QSignalSpy>
 #include "network/servernetwork.h"
 
+
 class testServerNetwork : public QObject
 {
     Q_OBJECT

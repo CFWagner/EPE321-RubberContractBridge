@@ -13,16 +13,12 @@ ServerNetwork::ServerNetwork(QObject *parent, QString nameOfAI) : QObject(parent
     clientSocTemp.clear();
     tcpServer = nullptr;
 
-    // List of possbile ports to use (may append more ports)
-    port.clear();
-    port.append(61074);
-
     // Init unit test
     bUnitTest.clear();
     bUnitTest.fill(false,40);
 
     //getPlayerSoc can use 0 - 9
-    //initServer can use 10 - 19
+    // <open> can use 10 - 19
     //connectClient can use 20 - 29
     //validateClient can use 30 - 39
 }
@@ -186,7 +182,7 @@ void ServerNetwork::validateClient()
     QJsonObject inputFromClient;
     in >> inputFromClient;
     if (!in.commitTransaction()) {
-        // If read error occured, this should not happen.
+        // Read error occured: this should not happen.
         // If this occurs, the connection to the client must be terminated.
         bUnitTest[32] = true;
         tempSocket->disconnectFromHost();
@@ -195,6 +191,7 @@ void ServerNetwork::validateClient()
 
     // Validate and read the QJsonObject.
     // Read the data. (Password and username.)
+    // ID should be 0
     QString validateRes = "";
 
 

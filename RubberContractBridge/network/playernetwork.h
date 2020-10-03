@@ -58,6 +58,8 @@ private:
     bool aliveFlag;
     QDataStream in;
     QDataStream out;
+    qint64 idCounter;
+    qint64 prevID;
 
     // Unit testing datastructures
     QVector<bool> bUnitTest;

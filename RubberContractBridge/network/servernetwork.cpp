@@ -123,17 +123,11 @@ void ServerNetwork::connectClient()
     // Add client to clientSocTemp.
     // Make signal slot connections.
 
-    // Prepare bUnitTest
-    for (int i = 20; i <= 29; i++){
-        bUnitTest[i] = false;
-    }
-
     QTcpSocket* clientConnection = tcpServer->nextPendingConnection();
 
 
     if (!clientConnection) {
-        qWarning() << "Got invalid pending connection! Ignoring the connection.";
-        bUnitTest[20] = true;
+        emit generalError("Got invalid pending connection! Ignoring the connection.");
         return;
     }
 
@@ -145,17 +139,18 @@ void ServerNetwork::connectClient()
     clientSocTemp.append(clientConnection);
 }
 
+/*!
+ * Validate the password and username.
+ * If valid, add username and client socket.
+ * Signal the GUI that a client has logged in.
+ * If invalid, disconnect the client.
+ */
+
 void ServerNetwork::validateClient()
 {
-    // Validate the password and username.
-    // If valid, add username and client socket.
-    // Signal the GUI that a client has logged in.
-    // If not valid, disconnect the client.
-
-    // Prepare bUnitTest
-    for (int i = 30; i <= 39; i++){
-        bUnitTest[i] = false;
-    }
+    // If avlidateRes is empty at the end of this function,
+    // no errors occured and the login request has been accepted.
+    QString validateRes = "";
 
     // Get the sender's QTcpSocket
     QObject* obj = sender();
@@ -166,17 +161,48 @@ void ServerNetwork::validateClient()
 
     // Check if tempSocket is the same as previously saved.
     if (numRemoved == 0){
-        bUnitTest[30] = true;
+        emit generalError("An unexpected client connected. Client forcefully removed.");
+        tempSocket->abort();
+        return;
     }
 
     // Check for unexpected sockets
     if (numRemoved > 1) {
-        bUnitTest[31] = true;
+        emit generalError("Duplicate clients existed and was removed. The error will be ignored.");
     }
 
     // Read data from the socket
     in.setDevice(tempSocket);
     in.setVersion(QDataStream::Qt_5_10);
+
+    in.startTransaction();
+
+    QJsonObject rxObj;
+    in >> rxObj;
+
+    if (!in.commitTransaction()){
+        emit generalError("Datastream read error occured. It is suggested to restart the game.");
+        qWarning() << "Datastream error occured.";
+        return;
+    }
+
+    // Validate the QJsonObject
+    // It should contain a Type field, with valid information in the string part.
+    if (rxObj.contains("Type") && rxObj["Type"].isString() && rxObj.contains("ID") && rxObj["ID"].isDouble()){
+        // QJsonObject received contained the expected data.
+        // Test if ID number is larger than prevID
+        if (rxObj["ID"].toInt() <= 0) {
+            emit generalError("Outdated data was received. The data will be ignored.");
+            validateRes.append("The login request was too old and thus not accepted.");
+        }
+
+    } else {
+        // QJsonObject received had errors
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qWarning() << "Data received from client has been incorrectly formatted.";
+        validateRes.append("The login request was not formatted correctly.");
+    }
+
     // Read the data
     in.startTransaction();
     QJsonObject inputFromClient;
@@ -192,7 +218,7 @@ void ServerNetwork::validateClient()
     // Validate and read the QJsonObject.
     // Read the data. (Password and username.)
     // ID should be 0
-    QString validateRes = "";
+//    QString validateRes = "";
 
 
     // TODO: Change this to test the actual username and password.

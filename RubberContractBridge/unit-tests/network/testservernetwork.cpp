@@ -8,33 +8,63 @@ testServerNetwork::testServerNetwork(QObject *parent) : QObject(parent)
 void testServerNetwork::initServer1()
 {
     QString passwordServer = "abcdef1234$#@";
+    qint16 port = 61074;
     QHostAddress ip = QHostAddress::LocalHost;
-    ServerNetwork testServerNet;
-    testServerNet.setPassword(passwordServer);
-    testServerNet.initServer(ip);
-    QVector<bool> bUnitTest = testServerNet.getUnitTest();
+    ServerNetwork testServerNet1;
+    testServerNet1.setPassword(passwordServer);
 
-    // IP should be valid
-    QVERIFY(bUnitTest[11] == false);
+    // Monitor the connectionResult signal
+    qRegisterMetaType<QHostAddress>();
+    QSignalSpy spy1(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,qint16,QString)));
+    QVERIFY(spy1.isValid());
 
     // Server should be able to connect to port.
-    QVERIFY(bUnitTest[12] == false);
+    testServerNet1.initServer(ip,port);
 
-    // The server is listening
-    QVERIFY(bUnitTest[13] == true);
+    QList<QVariant> arguments = spy1.takeFirst();
+    QVERIFY(arguments.at(0) == 0);
+    QVERIFY(qvariant_cast<QHostAddress>(arguments.at(1)) == ip);
+    QVERIFY(arguments.at(2) == port);
+    QVERIFY(arguments.at(3) == "");
 
-    // initServer not called twice
-    QVERIFY(bUnitTest[10] == false);
+    // Try to init the server again
+    testServerNet1.initServer(ip,port);
 
-    // Call ininServer a second time
-    testServerNet.initServer(ip);
-    bUnitTest = testServerNet.getUnitTest();
+    arguments = spy1.takeFirst();
+    QVERIFY(arguments.at(0) == 3);
+    QVERIFY(qvariant_cast<QHostAddress>(arguments.at(1)) == ip);
+    QVERIFY(arguments.at(2) == port);
+    QVERIFY(arguments.at(3) == "");
 
-    // Should not try to connect
-    QVERIFY(bUnitTest[10] == true);
-    QVERIFY(bUnitTest[13] == false);
+    // Try to connect with an invalid port (IP and port already bounded to this application
+    // (testServer1 is still using that port)
+    ServerNetwork testServerNet2;
+    testServerNet2.setPassword(passwordServer);
 
-    testServerNet.deleteLater();
+    // Monitor the connectionResult signal
+    QSignalSpy spy2(&testServerNet2, SIGNAL(connectionResult(int,QHostAddress,qint16,QString)));
+    QVERIFY(spy2.isValid());
+
+    testServerNet2.initServer(ip,port);
+
+    arguments = spy2.takeFirst();
+    QVERIFY(arguments.at(0) == 2);
+    QVERIFY(qvariant_cast<QHostAddress>(arguments.at(1)) == ip);
+    QVERIFY(arguments.at(2) == port);
+    QVERIFY(arguments.at(3) == "The bound address is already in use");
+
+    // Connecting with same ip on a different port: should work.
+    port = 61070;
+    testServerNet2.initServer(ip,port);
+
+    arguments = spy2.takeFirst();
+    QVERIFY(arguments.at(0) == 0);
+    QVERIFY(qvariant_cast<QHostAddress>(arguments.at(1)) == ip);
+    QVERIFY(arguments.at(2) == port);
+    QVERIFY(arguments.at(3) == "");
+
+    testServerNet1.deleteLater();
+    testServerNet2.deleteLater();
 
 }
 
@@ -42,24 +72,24 @@ void testServerNetwork::initServer2()
 {
     // Test invalid IP adress
     QString passwordServer = "abcdef1234$#@";
+    qint16 port = 61074;
     QHostAddress ip = QHostAddress("192.168.56.10");
-    ServerNetwork testServerNet;
-    testServerNet.setPassword(passwordServer);
-    testServerNet.initServer(ip);
-    QVector<bool> bUnitTest = testServerNet.getUnitTest();
+    ServerNetwork testServerNet1;
+    testServerNet1.setPassword(passwordServer);
 
-    // initServer not called twice
-    QVERIFY(bUnitTest[10] == false);
-
-    // IP should not be valid
-    QVERIFY(bUnitTest[11] == true);
+    // Monitor the connectionResult signal
+    qRegisterMetaType<QHostAddress>();
+    QSignalSpy spy1(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,qint16,QString)));
+    QVERIFY(spy1.isValid());
 
     // Server should be able to connect to port.
-    QVERIFY(bUnitTest[12] == false);
+    testServerNet1.initServer(ip,port);
 
-    // The server is listening
-    QVERIFY(bUnitTest[13] == true);
+    QList<QVariant> arguments = spy1.takeFirst();
+    QVERIFY(arguments.at(0) == 1);
+    QVERIFY(qvariant_cast<QHostAddress>(arguments.at(1)) == ip);
+    QVERIFY(arguments.at(2) == port);
+    QVERIFY(arguments.at(3) == "");
 
-    testServerNet.deleteLater();
-
+   testServerNet1.deleteLater();
 }

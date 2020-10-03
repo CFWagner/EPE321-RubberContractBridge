@@ -64,49 +64,51 @@ void ServerNetwork::initServer(QHostAddress ip, qint16 port)
 
     // Check if the server has been initialized.
     if (tcpServer != nullptr){
-        emit generalInfo("The IP address can only be set once. Nothing was changed.");
-//        bUnitTest[10] = true;
+        emit connectionResult(3, ip, port, "");
+        return;
 
-    } else {
-        // Test if ip address is valid.
-
-        // Find all valid ipAdresses.
-        QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-
-        if ((ip.toString().isEmpty() == true) || (ipAddressesList.contains(ip) == false)) {
-//            emit generalInfo("The selected IP address (" << ip.toString() << ") for the server is not valid. Localhost will be used instead.");
-
-//            bUnitTest[11] = true;
-            emit connectionResult(1,ip,port);
-        }
-
-        qInfo() << "Final IP used for the server: " << ip.toString();
-
-        // Disconnect the client
-        //    if (clientConnection != nullptr){
-        //        disconnect(clientConnection, &QIODevice::readyRead,0,0);
-        //        clientConnection->disconnectFromHost();
-        //        clientConnection = nullptr;
-        //    }
-
-        //    disconnect(tcpServer, &QTcpServer::newConnection, 0, 0);
-
-
-        tcpServer = new QTcpServer(this);
-
-        if (!tcpServer->listen(ip, port[i_port])) {
-            qCritical() << "DRCB - ServerNetwork" << "Unable to start the server: " << tcpServer->errorString();
-            bUnitTest[12] = true;
-            return;
-        }
-
-        connect(tcpServer, &QTcpServer::newConnection, this, &ServerNetwork::connectClient);
-
-        qInfo() << "The server is listening for clients on " << ip.toString() << " with port: " << tcpServer->serverPort();
-        bUnitTest[13] = true;
     }
 
+    // Test if ip address is valid.
+
+    // Find all valid ipAdresses.
+    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+
+    if ((ip.toString().isEmpty() == true) || (ipAddressesList.contains(ip) == false)) {
+        emit connectionResult(1, ip, port, "");
+        return;
+    }
+
+    // Disconnect the client
+    //    if (clientConnection != nullptr){
+    //        disconnect(clientConnection, &QIODevice::readyRead,0,0);
+    //        clientConnection->disconnectFromHost();
+    //        clientConnection = nullptr;
+    //    }
+
+    //    disconnect(tcpServer, &QTcpServer::newConnection, 0, 0);
+
+
+    tcpServer = new QTcpServer(this);
+
+    if (!tcpServer->listen(ip, port)) {
+        emit connectionResult(2, ip, port, tcpServer->errorString());
+
+        // Set tcpServer to null, so that a new QTcpServer can be constructed on the second try.
+        tcpServer->deleteLater();
+        tcpServer = nullptr;
+
+        return;
+    }
+
+    // The connection was successfull.
+    connect(tcpServer, &QTcpServer::newConnection, this, &ServerNetwork::connectClient);
+
+    qInfo() << "The server is listening for clients on " << ip.toString() << " with port: " << tcpServer->serverPort();
+    emit connectionResult(0,ip,port,"");
+
 }
+
 
 void ServerNetwork::stopListening()
 {

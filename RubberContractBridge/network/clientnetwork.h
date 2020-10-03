@@ -23,7 +23,7 @@ public:
     QVector<bool> getUnitTest() const;
 
 public slots:
-    void txRequestLogin(QHostAddress serverIP, QString playerName, QString password);
+    void txRequestLogin(QHostAddress serverIP, qint16 port, QString playerName, QString password);
     void txBidSelected(Bid bid);
     void txMoveSelected(Card card);
     void txMessage(QString msg);
@@ -35,7 +35,14 @@ private slots:
     void socketError(QAbstractSocket::SocketError socError);
 
 signals:
-    void serverNotFound(QString reason);
+    void connectionResult(int status, QString errorMsg);
+    // status = 0 :connection was successful
+    // status = 1 :connection was not successful, since the IP address or/and port are invalid. (See note regarding errorMsg.)
+    // status = 3 :already connected, old connection was kept. (Nothing was changed.)
+    // errorMsg is empty except when status = 1, then the actual error will be displayed.
+    // GUI is responsible for creating the messages regarding connection status. (genearl Info and warning signals will not be used for this.)
+
+//    void serverNotFound(QString reason);
     void generalInfo(QString infoMsg); // All information. (Should be displayed to the player.)
     void generalError(QString errorMsg); // All errors, except serverNotFound(). (Should be displayed to the player.)
     void notifyBidTurn();
@@ -68,8 +75,8 @@ private:
     QTimer* keepAlive;
     bool gameStarted;
     QDataStream in;
-    QVector<qint16> port;
     qint64 idCounter;
+    qint64 prevID;
 
 
     // Unit testing datastructures

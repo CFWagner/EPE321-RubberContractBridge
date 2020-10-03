@@ -13,10 +13,13 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
     // Once ingerited, init the playerName.
     PlayerNetwork::playerName = playerName;
     PlayerNetwork::clientSoc = clientSoc;
+    idCounter = 0;
+    prevID = 0; // The first message has been received and the ID was 0, thus prevID is 0.
 
     // Init unit test
     bUnitTest.clear();
     bUnitTest.fill(false,40);
+
 }
 
 PlayerNetwork::~PlayerNetwork()

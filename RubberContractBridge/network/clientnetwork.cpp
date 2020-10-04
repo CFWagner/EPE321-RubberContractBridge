@@ -254,7 +254,7 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
 void ClientNetwork::txAll(QJsonObject data)
 {
     // Cannot send data if not connected to the server.
-    if (tcpSoc->isValid()){
+    if (!tcpSoc->isValid()){
         emit generalError("Not connected to the server. Cannot send data to the server.");
         return;
     }

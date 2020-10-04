@@ -54,7 +54,8 @@ signals:
     // All errors. (Should be displayed to the administrator.)
 
     void playerJoined(QString playerName);
-    void playerDisconnected(QString playerName);
+    void playerDisconnected(QString playerName); // Disconnect from this signal before deleting the serverNetwork class.
+    // This is to avoid many unused clients from signaling you when they are deleted.
 
 private:
     QString validateLogin(QString playerName, QString password);
@@ -66,7 +67,6 @@ private:
     QVector<QTcpSocket*> clientSocTemp;
     QTcpServer* tcpServer;
     QDataStream in;
-    QDataStream out;
 
     // Unit testing datastructures
     QVector<bool> bUnitTest;

@@ -23,7 +23,7 @@ public:
     QVector<bool> getUnitTest() const;
 
 public slots:
-    void txRequestLogin(QHostAddress serverIP, qint16 port, QString playerName, QString password);
+    void txRequestLogin(QHostAddress serverIP, quint16 port, QString playerName, QString password);
     void txBidSelected(Bid bid);
     void txMoveSelected(Card card);
     void txMessage(QString msg);

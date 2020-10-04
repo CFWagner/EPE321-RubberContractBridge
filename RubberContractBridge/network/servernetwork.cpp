@@ -46,7 +46,7 @@ void ServerNetwork::setPassword(QString password)
     this->password = password;
 }
 
-void ServerNetwork::initServer(QHostAddress ip, qint16 port)
+void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 {
     // Open a port on the given ip address.
     // Use port 61074.

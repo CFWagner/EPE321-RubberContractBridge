@@ -47,7 +47,7 @@ QVector<bool> ClientNetwork::getUnitTest() const
     return bUnitTest;
 }
 
-void ClientNetwork::txRequestLogin(QHostAddress serverIP, qint16 port, QString playerName, QString password)
+void ClientNetwork::txRequestLogin(QHostAddress serverIP, quint16 port, QString playerName, QString password)
 {
     // Connect to the server.
     // Cannot Request a new login while connected to the host?

@@ -50,12 +50,6 @@ QVector<bool> ClientNetwork::getUnitTest() const
 void ClientNetwork::txRequestLogin(QHostAddress serverIP, qint16 port, QString playerName, QString password)
 {
     // Connect to the server.
-
-    // Prepare bUnitTest
-    for (int i = 5; i <= 9; i++){
-        bUnitTest[i] = false;
-    }
-
     // Cannot Request a new login while connected to the host?
     if (tcpSoc->state() != QAbstractSocket::UnconnectedState){
         emit connectionResult(3, "");
@@ -208,7 +202,7 @@ void ClientNetwork::socketConnected()
 
     // Create QJsonObject
     QJsonObject txObj;
-    txObj["Type"] = "CONNECT_REQUEST";
+    txObj["Type"] = "LOGIN_REQUEST";
     txObj["Password"] = tempPassword;
     txObj["Alias"] = tempPlayerName;
 
@@ -346,7 +340,27 @@ void ClientNetwork::rxNotifyMoveRejected(QJsonObject reasonObj)
 
 void ClientNetwork::rxLoginResult(QJsonObject resObj)
 {
+    // The client should not already be logged in.
+    if (bLoggedIn){
+        emit generalError("The client is already logged in, but a login result message has been received. The message will be ignored.");
+        return;
+    }
 
+    // The object validation has been done.
+    if (!resObj.contains("loginSuccessful") || !resObj.contains("reason")) {
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        return;
+    }
+
+    bLoggedIn = resObj["loginSuccessful"].toBool();
+
+    // Notify client GUI of login result.
+    emit loginResult(resObj["loginSuccessful"].toBool(), resObj["reason"].toString());
+
+    // If login was unsuccessful, disconnect from the host.
+    if (!bLoggedIn){
+        tcpSoc->abort();
+    }
 }
 
 /*!

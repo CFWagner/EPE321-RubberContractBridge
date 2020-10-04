@@ -177,52 +177,98 @@ void ServerNetwork::validateClient()
 
     in.startTransaction();
 
+    // Get the data from the
     QJsonObject rxObj;
     in >> rxObj;
 
     if (!in.commitTransaction()){
-        emit generalError("Datastream read error occured. It is suggested to restart the game.");
+        // Read error occured: this should not happen.
+        // If this occurs, the connection to the client must be terminated.
+        emit generalError("Datastream read error occured. Client forcefully removed.");
         qWarning() << "Datastream error occured.";
+        tempSocket->abort();
         return;
     }
 
     // Validate the QJsonObject
+    // ID should be 0
     // It should contain a Type field, with valid information in the string part.
     if (rxObj.contains("Type") && rxObj["Type"].isString() && rxObj.contains("ID") && rxObj["ID"].isDouble()){
         // QJsonObject received contained the expected data.
         // Test if ID number is larger than prevID
-        if (rxObj["ID"].toInt() <= 0) {
-            emit generalError("Outdated data was received. The data will be ignored.");
-            validateRes.append("The login request was too old and thus not accepted.");
+        if (rxObj["ID"].toInt() <= -1) {
+            emit generalError("Outdated data was received. The data will be ignored. Client forcefully removed.");
+//            validateRes.append("The login request was too old and thus not accepted.");
+            tempSocket->abort();
+            return;
         }
 
+        if (rxObj["Type"].toString() != "LOGIN_REQUEST" || !rxObj.contains("Alias") || !rxObj.contains("Password")){
+             emit generalError("The expected data has not been received. Client forcefully removed.");
+            tempSocket->abort();
+            return;
+        }
     } else {
         // QJsonObject received had errors
-        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        emit generalError("Data received from server has been incorrectly formatted. Client forcefully removed.");
         qWarning() << "Data received from client has been incorrectly formatted.";
-        validateRes.append("The login request was not formatted correctly.");
-    }
-
-    // Read the data
-    in.startTransaction();
-    QJsonObject inputFromClient;
-    in >> inputFromClient;
-    if (!in.commitTransaction()) {
-        // Read error occured: this should not happen.
-        // If this occurs, the connection to the client must be terminated.
-        bUnitTest[32] = true;
-        tempSocket->disconnectFromHost();
+        tempSocket->abort();
         return;
     }
 
-    // Validate and read the QJsonObject.
     // Read the data. (Password and username.)
-    // ID should be 0
-//    QString validateRes = "";
+    validateRes.append(validateLogin(rxObj["Alias"].toString(), rxObj["Password"].toString()));
 
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "LOGIN_RESULT";
+    txObj["ID"] = 0;
 
-    // TODO: Change this to test the actual username and password.
-    validateRes = validateLogin("","");
+    if (validateRes.isEmpty()){
+        // The login has been approved.
+        // Add client to logged-in pool and notify the client that the login was accepted.
+        clientSoc.append(tempSocket);
+        playerNames.append(rxObj["Alias"].toString());
+
+        // Notify the server GUI that a player successfully logged in.
+        emit playerJoined(playerNames.last());
+
+        // Notify the client of the successfull login.
+        txObj["loginSuccessful"] = true;
+        txObj["reason"] = "";
+
+    } else {
+        // The login was not accpeted.
+        // Notify the client with a reason and disconnect the client.
+        txObj["loginSuccessful"] = false;
+        txObj["reason"] = validateRes;
+    }
+
+    // Send data to clients
+    // Create transmitting communication data stream
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_10);
+
+    // Send the login request to the server
+    out << txObj;
+    int tempVal = clientSoc.last()->write(block);
+
+    qInfo() << "Number of bytes expected to be sent to the client: " << block.size();
+    qInfo() << "Number of bytes sent to client: " << tempVal;
+
+    if (tempVal == -1) {
+        // An error occured when writing the data block
+        emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
+    } else if (tempVal < block.size()) {
+        // The block written was too small (did not contain enough bytes).
+        emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
+    }
+
+    // After transmitting the data, disconnect the client if the login was not succsessfull.
+    if (!validateRes.isEmpty()){
+        tempSocket->disconnectFromHost();
+    }
 }
 
 void ServerNetwork::validateClient()
@@ -339,18 +385,70 @@ void ServerNetwork::disconnectClient()
 
     qInfo() << "Socket disconnected";
 
+    // Get the sender's QTcpSocket
+    QObject* obj = sender();
+    QTcpSocket* tempSocket = qobject_cast<QTcpSocket*>(obj);
+
+    if (clientSocTemp.contains(tempSocket)) {
+        // The client was not logged in
+        // Remove from clientSocTemp
+        clientSocTemp.removeAll(tempSocket);
+    }
+
+    if (clientSoc.contains(tempSocket)){
+        // The client was logged in
+        // Remove from clientSoc and playerNames
+        // Inform the serverGUI that the player disconnected.
+        // TODO: This signal emit can cause problems if all emitted when disconnecting, so check this out.
+        // Add description in header files.
+        QString tempPlayerName = playerNames.at(clientSoc.indexOf(tempSocket));
+        playerNames.removeAll(tempPlayerName);
+        clientSoc.removeAll(tempSocket);
+
+        emit playerDisconnected(tempPlayerName);
+    }
+
 }
+
+/*!
+ * Validate the password and playerName.
+ * If both are valid, return an empty string.
+ * Else return the reason for faliure.
+ * This message will be displayed to the user.
+ * Check if password match.
+ * Check if username is empty.
+ * Check if username is longer than 15 chars.
+ * Check if username correspons to an AI player.
+ * Check if the username has been used before.
+ * \param playerName QString
+ * \param password QString
+ * \return Error msg. If no error occured, an empty string will be returned.
+ */
 
 QString ServerNetwork::validateLogin(QString playerName, QString password)
 {
-    // Validate the password and playerName.
-    // If both are valid, return an empty string.
-    // Else return the reason for faliure. This message will be displayed to the user.
-    // Check if password match.
-    // Check if username is empty.
-    // Check if username is longer than 15 chars.
-    // Check if username correspons to an AI player.
-    // Check if the username has been used before.
 
-    return QString("Temp");
+    if (this->password != password){
+        return "The password is incorrect.";
+    }
+
+    if (playerName.isEmpty()) {
+        return "The player name must contain at least one character.";
+    }
+
+    if (playerName.length() > 15) {
+        return "The player name may not be longer than 15 chars.";
+    }
+
+    if (playerName == nameOfAI) {
+        return "The palyer may not be given the same name as an AI. AI's name is: " + nameOfAI;
+    }
+
+    if (playerNames.contains(playerName)){
+        return "The palyer's name has already been used, please choose another username.";
+    }
+
+    // General
+    return "";
+
 }

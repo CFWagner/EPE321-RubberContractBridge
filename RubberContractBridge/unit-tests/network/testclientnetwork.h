@@ -2,8 +2,6 @@
 #define TESTCLIENTNETWORK_H
 
 #include <QObject>
-#include <QApplication>
-#include <QThread>
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 #include "network/servernetwork.h"
@@ -14,11 +12,32 @@ class testClientNetwork : public QObject
     Q_OBJECT
 public:
     explicit testClientNetwork(QObject *parent = nullptr);
+    ~testClientNetwork();
+
 
 private slots:
     void Login();
 
+
 signals:
+
+private:
+
+
+    QString passwordServer;
+    quint16 port;
+    QHostAddress ip;
+    QString playerName;
+    ServerNetwork testServerNet1;
+    ClientNetwork testClient1;
+
+    QSignalSpy *spyServer;
+    QSignalSpy *spyServerPlayerJoined;
+    QSignalSpy *spyServerError;
+
+    QSignalSpy *spyClientConnectResult;
+    QSignalSpy *spyClientLoginResult;
+    QSignalSpy *spyClientError;
 
 };
 

@@ -137,6 +137,8 @@ void ServerNetwork::connectClient()
 
     // Add to temp list.
     clientSocTemp.append(clientConnection);
+
+    qInfo() << "client added to clientSocTemp";
 }
 
 /*!
@@ -148,6 +150,7 @@ void ServerNetwork::connectClient()
 
 void ServerNetwork::validateClient()
 {
+    qInfo() << "Incomming connection.";
     // If avlidateRes is empty at the end of this function,
     // no errors occured and the login request has been accepted.
     QString validateRes = "";
@@ -170,6 +173,8 @@ void ServerNetwork::validateClient()
     if (numRemoved > 1) {
         emit generalError("Duplicate clients existed and was removed. The error will be ignored.");
     }
+
+    qInfo() << "Sender object safely converted.";
 
     // Read data from the socket
     in.setDevice(tempSocket);

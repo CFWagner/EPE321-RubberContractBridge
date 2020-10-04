@@ -2,8 +2,11 @@
 #define TESTCLIENTNETWORK_H
 
 #include <QObject>
+#include <QApplication>
+#include <QThread>
 #include <QtTest/QtTest>
 #include <QSignalSpy>
+#include "network/servernetwork.h"
 #include "network/clientnetwork.h"
 
 class testClientNetwork : public QObject

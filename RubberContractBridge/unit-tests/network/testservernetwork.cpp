@@ -8,14 +8,14 @@ testServerNetwork::testServerNetwork(QObject *parent) : QObject(parent)
 void testServerNetwork::initServer1()
 {
     QString passwordServer = "abcdef1234$#@";
-    qint16 port = 61074;
+    quint16 port = 61074;
     QHostAddress ip = QHostAddress::LocalHost;
     ServerNetwork testServerNet1;
     testServerNet1.setPassword(passwordServer);
 
     // Monitor the connectionResult signal
     qRegisterMetaType<QHostAddress>();
-    QSignalSpy spy1(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,qint16,QString)));
+    QSignalSpy spy1(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,quint16,QString)));
     QVERIFY(spy1.isValid());
 
     // Server should be able to connect to port.
@@ -42,7 +42,7 @@ void testServerNetwork::initServer1()
     testServerNet2.setPassword(passwordServer);
 
     // Monitor the connectionResult signal
-    QSignalSpy spy2(&testServerNet2, SIGNAL(connectionResult(int,QHostAddress,qint16,QString)));
+    QSignalSpy spy2(&testServerNet2, SIGNAL(connectionResult(int,QHostAddress,quint16,QString)));
     QVERIFY(spy2.isValid());
 
     testServerNet2.initServer(ip,port);
@@ -72,14 +72,14 @@ void testServerNetwork::initServer2()
 {
     // Test invalid IP adress
     QString passwordServer = "abcdef1234$#@";
-    qint16 port = 61074;
+    quint16 port = 61074;
     QHostAddress ip = QHostAddress("192.168.56.10");
     ServerNetwork testServerNet1;
     testServerNet1.setPassword(passwordServer);
 
     // Monitor the connectionResult signal
     qRegisterMetaType<QHostAddress>();
-    QSignalSpy spy1(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,qint16,QString)));
+    QSignalSpy spy1(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,quint16,QString)));
     QVERIFY(spy1.isValid());
 
     // Server should be able to connect to port.

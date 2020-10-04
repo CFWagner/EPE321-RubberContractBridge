@@ -24,7 +24,7 @@ public:
 
     QTcpSocket* getPlayerSoc(QString playerName) const;
     void setPassword(QString password);
-    void initServer(QHostAddress ip, qint16 port);
+    void initServer(QHostAddress ip, quint16 port);
     void stopListening();
 
     // Unit test data
@@ -36,7 +36,7 @@ private slots:
     void disconnectClient();
 
 signals:
-    void connectionResult(int status, QHostAddress ip, qint16 port, QString errorMsg);
+    void connectionResult(int status, QHostAddress ip, quint16 port, QString errorMsg);
     // status = 0 :connection was successful
     // status = 1 :connection was not successful, since the IP address is invalid (no info regarding port number validness can be given).
     // status = 2 :connection was not successful, IP address is valid and port number is not valid. (See errorMsg description below.)

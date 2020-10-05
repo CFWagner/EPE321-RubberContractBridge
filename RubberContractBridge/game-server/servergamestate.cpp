@@ -1,11 +1,16 @@
 #include "servergamestate.h"
 
-ServerGameState::ServerGameState() {}
-
-// Initialize all server game state attributes to values for the start of the match
-void ServerGameState::initialize()
-{
-
+// Default constructor
+// Initialises all attributes to values for start of match
+ServerGameState::ServerGameState() {
+    phase = BIDDING;
+    currentBid = nullptr;
+    contractBid = nullptr;
+    gameNumber = 1;
+    dealNumber = 1;
+    trickNumber = 0;
+    teamVulnerable[N_S] = false;
+    teamVulnerable[E_W] = false;
 }
 
 // Update the game state based on the latest bid made
@@ -45,7 +50,7 @@ CardSet ServerGameState::getDeck()
 }
 
 // Generate and return the game state tailored for the player
-PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player)
+PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player, QVector<Player*> players)
 {
     // Create player game state here
     return PlayerGameState();

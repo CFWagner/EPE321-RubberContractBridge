@@ -9,6 +9,7 @@
 #include "score.h"
 #include <QVector>
 
+// Create new game state object for each new match
 class GameState
 {
 public:

@@ -19,8 +19,10 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
+    gui/clientgui.cpp \
+    gui/mainwindow.cpp \
+    gui/servergui.cpp \
     main.cpp \
-    mainwindow.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
@@ -50,7 +52,9 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
-    mainwindow.h \
+    gui/clientgui.h \
+    gui/mainwindow.h \
+    gui/servergui.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
@@ -63,7 +67,9 @@ HEADERS += \
 
 #All UI windows are shown below.
 FORMS += \
-    mainwindow.ui
+    gui/clientgui.ui \
+    gui/mainwindow.ui \
+    gui/servergui.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -71,4 +77,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    GUI.qrc
+    resource.qrc

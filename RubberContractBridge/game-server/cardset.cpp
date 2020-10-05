@@ -17,10 +17,32 @@ Card CardSet::removeCard(qint8 position)
     return cards.takeAt(position);
 }
 
+// Return and remove card at index 0 in the card set
+Card CardSet::removeTopCard()
+{
+    return cards.takeAt(0);
+}
+
 // Return and remove card at given position from set. The top of the set is located at index 0
 Card CardSet::getCard(qint8 position)
 {
     return cards.value(position);
+}
+
+// Check if the set of cards contains the specified card
+bool CardSet::containsCard(const Card &card)
+{
+    return cards.contains(card);
+}
+
+// Check if the set of cards contains at least one card with the specified suit
+bool CardSet::containsSuit(CardSuit suit)
+{
+    for(const Card &card: cards){
+        if(card.getSuit() == suit)
+            return true;
+    }
+    return false;
 }
 
 // Getter for number of cards currently in the card set
@@ -40,6 +62,7 @@ void CardSet::orderHand()
 void CardSet::clearSet()
 {
     cards.clear();
+    cards.contains(Card());
 }
 
 // Randomly reorder all the cards in the set

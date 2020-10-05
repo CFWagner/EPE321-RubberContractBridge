@@ -11,13 +11,13 @@ Card::Card(CardSuit suit, CardRank rank)
 }
 
 // Getter for card suit
-CardSuit Card::getSuit()
+CardSuit Card::getSuit() const
 {
     return suit;
 }
 
 // Getter for card rank
-CardRank Card::getRank()
+CardRank Card::getRank() const
 {
     return rank;
 }
@@ -38,7 +38,8 @@ void Card::write(QJsonObject &json) const
 
 // Overloaded < relational operator for use in sorting cards
 // Cards are compared by suit first then rank according to the CardSuit and CardRank enums
-bool Card::operator <(const Card& card) {
+bool Card::operator <(const Card& card) const
+{
     if (suit == card.suit)
         return rank < card.rank;
     else
@@ -47,6 +48,7 @@ bool Card::operator <(const Card& card) {
 
 // Overloaded == relational operator to test for card equality
 // Two cards are equal if they have the same suit and rank
-bool Card::operator ==(const Card& card) {
+bool Card::operator ==(const Card& card) const
+{
     return suit == card.suit && rank == card.rank;
 }

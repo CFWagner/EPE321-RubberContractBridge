@@ -11,8 +11,8 @@ public:
     Card removeCard(qint8 position);
     Card removeTopCard();
     Card getCard(qint8 position);
-    bool contains(const Card &card);
-    bool contains(CardSuit suit);
+    bool containsCard(const Card &card);
+    bool containsSuit(CardSuit suit);
     qint8 getCardCount();
     void orderHand();
     void clearSet();

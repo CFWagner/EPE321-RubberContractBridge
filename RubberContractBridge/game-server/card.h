@@ -10,12 +10,12 @@ class Card
 public:
     Card();
     Card(CardSuit suit, CardRank rank);
-    CardSuit getSuit();
-    CardRank getRank();
+    CardSuit getSuit() const;
+    CardRank getRank() const;
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
-    bool operator <(const Card& card);
-    bool operator ==(const Card& card);
+    bool operator <(const Card& card) const;
+    bool operator ==(const Card& card) const;
 private:
     CardSuit suit;
     CardRank rank;

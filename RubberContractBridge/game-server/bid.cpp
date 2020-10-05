@@ -20,25 +20,25 @@ Bid::Bid(PlayerPosition bidder, CardSuit trumpSuit, qint8 tricksAbove)
 }
 
 // Getter for the position of the player who made the call
-PlayerPosition Bid::getBidder()
+PlayerPosition Bid::getBidder() const
 {
     return bidder;
 }
 
 // Getter for the call made by the player
-BidCall Bid::getCall()
+BidCall Bid::getCall() const
 {
     return call;
 }
 
 // Getter for the trump suit suggested in the bid
-CardSuit Bid::getTrumpSuit()
+CardSuit Bid::getTrumpSuit() const
 {
     return trumpSuit;
 }
 
 // Getter for the number of tricks above 6 selected in the bid
-qint8 Bid::getTricksAbove()
+qint8 Bid::getTricksAbove() const
 {
     return tricksAbove;
 }
@@ -59,4 +59,18 @@ void Bid::write(QJsonObject &json) const
     json["call"] = call;
     json["trumpSuit"] = trumpSuit;
     json["tricksAbove"] = tricksAbove;
+}
+
+// Overloaded > relational operator. Returns true if bid argument has lower tricks above
+// or if the bid argument has a lower valued suit rank bid when the tricks above are the same.
+// If the tricks and trump suit are the same, the function returns true if the bid call of
+// the current bid instance is an update to the bid argumemt as defined in the BidCall enum
+bool Bid::operator >(const Bid& bid) const
+{
+    if(tricksAbove == bid.tricksAbove){
+        if(trumpSuit == bid.trumpSuit)
+            return call > bid.call;
+        return trumpSuit > bid.trumpSuit;
+    }
+    return tricksAbove > bid.tricksAbove;
 }

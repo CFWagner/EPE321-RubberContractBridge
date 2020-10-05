@@ -3,10 +3,7 @@
 #include <QJsonArray>
 
 // Default constructor
-CardSet::CardSet()
-{
-    cards = QVector<Card>();
-}
+CardSet::CardSet() {}
 
 // Add card to the bottom of the set. The top of the set is located at index 0
 void CardSet::addCard(Card card)

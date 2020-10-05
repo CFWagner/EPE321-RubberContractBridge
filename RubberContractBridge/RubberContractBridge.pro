@@ -1,14 +1,14 @@
 # The required libraries are added such as core and gui.
-QT       += core gui qml
+QT += core gui qml
 QT += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
 CONFIG += c++11
 CONFIG += no_testcase_installs
 
 #All sources classes of the project is addded below.
 SOURCES += \
+    ai/ai.cpp \
     game-server/bid.cpp \
     game-server/card.cpp \
     game-server/cardset.cpp \
@@ -24,6 +24,7 @@ SOURCES += \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
+    unit-tests/ai/testai.cpp \
     unit-tests/game-server/testbid.cpp \
     unit-tests/game-server/testcard.cpp \
     unit-tests/game-server/testcardset.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 
 #All header files of the project is addded below.
 HEADERS += \
+    ai/ai.h \
     enumerations/BidCall.h \
     enumerations/CardRank.h \
     enumerations/CardSuit.h \
@@ -54,6 +56,7 @@ HEADERS += \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
+    unit-tests/ai/testai.h \
     unit-tests/game-server/testbid.h \
     unit-tests/game-server/testcard.h \
     unit-tests/game-server/testcardset.h \

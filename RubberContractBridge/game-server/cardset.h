@@ -1,8 +1,6 @@
 #ifndef CARDSET_H
 #define CARDSET_H
-
 #include "card.h"
-
 class CardSet
 {
 public:

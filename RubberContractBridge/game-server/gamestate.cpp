@@ -2,20 +2,30 @@
 
 GameState::GameState() {}
 
+GameState::~GameState() {
+    delete currentBid;
+    delete contractBid;
+}
+
+
 GamePhase GameState::getPhase()
 {
     return phase;
 }
 
-Bid GameState::getCurrentBid()
+// Getter for the lasest standing bid made. Returns nullptr is there is no current bid
+const Bid* GameState::getCurrentBid()
 {
     return currentBid;
 }
 
-Bid GameState::getContractBid()
+
+// Getter for the bid selected as the contract. Returns nullptr is there is no contract bid
+const Bid* GameState::getContractBid()
 {
     return contractBid;
 }
+
 
 qint8 GameState::getGameNumber()
 {

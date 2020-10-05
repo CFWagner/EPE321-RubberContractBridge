@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>guiResources/background/background1.png</file>
+        <file>guiResources/background/background2.png</file>
+        <file>guiResources/background/background3.png</file>
+        <file>guiResources/background/serverButton2.png</file>
+        <file>guiResources/background/clientButton2.png</file>
+    </qresource>
+</RCC>

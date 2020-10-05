@@ -27,7 +27,6 @@ void TestBid::testBid()
     QCOMPARE(trumpSuit, bid1.getTrumpSuit());
     QCOMPARE(tricksAbove, bid1.getTricksAbove());
 
-
     // Generate QJsonObject instance from Bid object
     QJsonObject jsonBid;
     bid1.write(jsonBid);

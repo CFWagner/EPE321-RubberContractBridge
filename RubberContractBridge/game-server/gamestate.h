@@ -27,8 +27,6 @@ public:
     PlayerPosition getDummy();
     bool getTeamVulnerable(Team team);
     Score getScore();
-    virtual void read(const QJsonObject &json);
-    virtual void write(QJsonObject &json) const;
 protected:
     GamePhase phase;
     Bid currentBid;

@@ -80,13 +80,3 @@ Score GameState::getScore()
 {
     return score;
 }
-
-void GameState::read(const QJsonObject &json)
-{
-
-}
-
-void GameState::write(QJsonObject &json) const
-{
-
-}

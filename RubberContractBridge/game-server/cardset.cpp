@@ -26,6 +26,7 @@ Card CardSet::getCard(qint8 position)
     return cards.value(position);
 }
 
+// Getter for number of cards currently in the card set
 qint8 CardSet::getCardCount()
 {
     return cards.count();
@@ -56,7 +57,7 @@ void CardSet::read(const QJsonObject &json)
     QJsonArray jsonCards = json["cards"].toArray();
     cards.clear();
     cards.reserve(jsonCards.size());
-    for (int index = 0; index < jsonCards.size(); ++ index) {
+    for (qint8 index = 0; index < jsonCards.size(); ++index) {
         QJsonObject jsonCard = jsonCards[index].toObject();
         Card card;
         card.read(jsonCard);

@@ -42,13 +42,3 @@ PlayerGameState ServerGameState::getPlayerGameState()
     // Create player game state here
     return PlayerGameState();
 }
-
-void ServerGameState::read(const QJsonObject &json)
-{
-
-}
-
-void ServerGameState::write(QJsonObject &json) const
-{
-
-}

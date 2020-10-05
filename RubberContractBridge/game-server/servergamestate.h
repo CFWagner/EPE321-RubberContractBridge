@@ -16,8 +16,6 @@ public:
     void setDeclarer(PlayerPosition player);
     CardSet getDeck();
     PlayerGameState getPlayerGameState();
-    void read(const QJsonObject &json);
-    void write(QJsonObject &json) const;
 private:
     QMap<PlayerPosition, CardSet> playerHands;
     CardSet deck;

@@ -3,10 +3,7 @@
 #include <QJsonArray>
 
 // Default constructor
-CardSet::CardSet()
-{
-    cards = QVector<Card>();
-}
+CardSet::CardSet() {}
 
 // Add card to the bottom of the set. The top of the set is located at index 0
 void CardSet::addCard(Card card)
@@ -20,12 +17,35 @@ Card CardSet::removeCard(qint8 position)
     return cards.takeAt(position);
 }
 
+// Return and remove card at index 0 in the card set
+Card CardSet::removeTopCard()
+{
+    return cards.takeAt(0);
+}
+
 // Return and remove card at given position from set. The top of the set is located at index 0
 Card CardSet::getCard(qint8 position)
 {
     return cards.value(position);
 }
 
+// Check if the set of cards contains the specified card
+bool CardSet::containsCard(const Card &card)
+{
+    return cards.contains(card);
+}
+
+// Check if the set of cards contains at least one card with the specified suit
+bool CardSet::containsSuit(CardSuit suit)
+{
+    for(const Card &card: cards){
+        if(card.getSuit() == suit)
+            return true;
+    }
+    return false;
+}
+
+// Getter for number of cards currently in the card set
 qint8 CardSet::getCardCount()
 {
     return cards.count();
@@ -42,6 +62,7 @@ void CardSet::orderHand()
 void CardSet::clearSet()
 {
     cards.clear();
+    cards.contains(Card());
 }
 
 // Randomly reorder all the cards in the set
@@ -56,7 +77,7 @@ void CardSet::read(const QJsonObject &json)
     QJsonArray jsonCards = json["cards"].toArray();
     cards.clear();
     cards.reserve(jsonCards.size());
-    for (int index = 0; index < jsonCards.size(); ++ index) {
+    for (qint8 index = 0; index < jsonCards.size(); ++index) {
         QJsonObject jsonCard = jsonCards[index].toObject();
         Card card;
         card.read(jsonCard);

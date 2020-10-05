@@ -50,7 +50,7 @@ signals:
     void notifyBidRejected(QString reason);
     void notifyMoveRejected(QString reason);
     void loginResult(bool loginSuccessful, QString reason);
-    void updateGameState(GameState gameState);
+    void updateGameState(PlayerGameState gameState);
     void messageReceived(QString source, QString msg);
     void serverDisconnected();
     void gameTerminated(QString reason);

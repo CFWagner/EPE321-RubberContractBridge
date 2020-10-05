@@ -2,23 +2,28 @@
 #include <QJsonArray>
 #include <QVariantMap>
 
+// Default constructor
 PlayerGameState::PlayerGameState() {}
 
+// Getter for the latest game event occurence
 GameEvent PlayerGameState::getEvent()
 {
     return gameEvent;
 }
 
+// Getter for the cards in the player's hand
 CardSet PlayerGameState::getPlayerHand()
 {
     return playerHand;
 }
 
+// Getter for the cards in the dummy's hand
 CardSet PlayerGameState::getDummyHand()
 {
     return dummyHand;
 }
 
+// Getter for the name of the player in the position specified by the position argument
 QString PlayerGameState::getPlayerName(PlayerPosition position)
 {
     return playerPositions.value(position);
@@ -38,8 +43,8 @@ void PlayerGameState::read(const QJsonObject &json)
     declarer = PlayerPosition(json["declarer"].toInt());
 
     // Read GameState non-list non-object attributes from JSON object
-    currentBid.read(json["currentBid"].toObject());
-    contractBid.read(json["contractBid"].toObject());
+    currentBid->read(json["currentBid"].toObject());
+    contractBid->read(json["contractBid"].toObject());
     score.read(json["score"].toObject());
 
     // Read PlayerGameState non-list non-object attributes from JSON object
@@ -94,10 +99,10 @@ void PlayerGameState::write(QJsonObject &json) const
 
     // Add GameState non-list object attributes to JSON object
     QJsonObject jsonCurrentBid;
-    currentBid.write(jsonCurrentBid);
+    currentBid->write(jsonCurrentBid);
     json["currentBid"] = jsonCurrentBid;
     QJsonObject jsonContractBid;
-    contractBid.write(jsonContractBid);
+    contractBid->write(jsonContractBid);
     json["contractBid"] = jsonContractBid;
     QJsonObject jsonScore;
     score.write(jsonScore);

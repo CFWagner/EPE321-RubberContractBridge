@@ -13,13 +13,14 @@ class GameState
 {
 public:
     GameState();
+    ~GameState();
     GamePhase getPhase();
-    Bid getCurrentBid();
-    Bid getContractBid();
+    const Bid* getCurrentBid();
+    const Bid* getContractBid();
     qint8 getGameNumber();
     qint8 getDealNumber();
     qint8 getTrickNumber();
-    QVector<CardSet> getTricks();
+    const QVector<CardSet> getTricks();
     PlayerPosition getPlayerTurn();
     PlayerPosition getHandToPlay();
     PlayerPosition getDealer();
@@ -29,8 +30,8 @@ public:
     Score getScore();
 protected:
     GamePhase phase;
-    Bid currentBid;
-    Bid contractBid;
+    Bid* currentBid;
+    Bid* contractBid;
     qint8 gameNumber;
     qint8 dealNumber;
     qint8 trickNumber;

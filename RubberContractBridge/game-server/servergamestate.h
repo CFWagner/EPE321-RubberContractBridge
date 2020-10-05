@@ -15,7 +15,7 @@ public:
     void setDealer(PlayerPosition player);
     void setDeclarer(PlayerPosition player);
     CardSet getDeck();
-    PlayerGameState getPlayerGameState();
+    PlayerGameState getPlayerGameState(PlayerPosition player);
 private:
     QMap<PlayerPosition, CardSet> playerHands;
     CardSet deck;

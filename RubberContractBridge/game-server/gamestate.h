@@ -14,7 +14,9 @@ class GameState
 {
 public:
     GameState();
+    GameState(const GameState &gameState);
     ~GameState();
+    GameState& operator = (const GameState &gameState);
     GamePhase getPhase() const;
     const Bid* getCurrentBid() const;
     const Bid* getContractBid() const;

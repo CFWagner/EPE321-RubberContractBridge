@@ -3,6 +3,45 @@
 // Default constructor
 GameState::GameState() {}
 
+// Copy constructor
+GameState::GameState(const GameState &gameState)
+{
+    this->phase = gameState.phase;
+    this->currentBid = new Bid(*gameState.currentBid);
+    this->contractBid = new Bid(*gameState.contractBid);
+    this->gameNumber = gameState.gameNumber;
+    this->dealNumber = gameState.dealNumber;
+    this->trickNumber = gameState.trickNumber;
+    this->tricks = gameState.tricks;
+    this->playerTurn = gameState.playerTurn;
+    this->handToPlay = gameState.handToPlay;
+    this->dealer = gameState.dealer;
+    this->declarer = gameState.declarer;
+    this->teamVulnerable[N_S] = gameState.teamVulnerable[N_S];
+    this->teamVulnerable[E_W] = gameState.teamVulnerable[E_W];
+    this->score = gameState.score;
+}
+
+// Copy assignment operator
+GameState& GameState::operator = (const GameState &gameState)
+{
+    this->phase = gameState.phase;
+    this->currentBid = new Bid(*gameState.currentBid);
+    this->contractBid = new Bid(*gameState.contractBid);
+    this->gameNumber = gameState.gameNumber;
+    this->dealNumber = gameState.dealNumber;
+    this->trickNumber = gameState.trickNumber;
+    this->tricks = gameState.tricks;
+    this->playerTurn = gameState.playerTurn;
+    this->handToPlay = gameState.handToPlay;
+    this->dealer = gameState.dealer;
+    this->declarer = gameState.declarer;
+    this->teamVulnerable[N_S] = gameState.teamVulnerable[N_S];
+    this->teamVulnerable[E_W] = gameState.teamVulnerable[E_W];
+    this->score = gameState.score;
+    return *this;
+}
+
 // Destructor
 GameState::~GameState() {
     delete currentBid;

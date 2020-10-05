@@ -27,10 +27,8 @@ QString PlayerGameState::getPlayerName(PlayerPosition position)
 // Initialize player game state attributes from JSON object
 void PlayerGameState::read(const QJsonObject &json)
 {
-    // Read GameState non-list attributes from JSON object
+    // Read GameState non-list non-object attributes from JSON object
     phase = GamePhase(json["phase"].toInt());
-    currentBid.read(json["currentBid"].toObject());
-    contractBid.read(json["contractBid"].toObject());
     gameNumber = json["gameNumber"].toInt();
     dealNumber = json["dealNumber"].toInt();
     trickNumber = json["trickNumber"].toInt();
@@ -38,10 +36,16 @@ void PlayerGameState::read(const QJsonObject &json)
     handToPlay = PlayerPosition(json["handToPlay"].toInt());
     dealer = PlayerPosition(json["dealer"].toInt());
     declarer = PlayerPosition(json["declarer"].toInt());
-    score.read(json);
 
-    // Read PlayerGameState non-list attributes from JSON object
+    // Read GameState non-list non-object attributes from JSON object
+    currentBid.read(json["currentBid"].toObject());
+    contractBid.read(json["contractBid"].toObject());
+    score.read(json["score"].toObject());
+
+    // Read PlayerGameState non-list non-object attributes from JSON object
     gameEvent = GameEvent(json["gameEvent"].toInt());
+
+    // Read PlayerGameState non-list object attributes from JSON object
     playerHand.read(json["playerHand"].toObject());
     dummyHand.read(json["dummyHand"].toObject());
 
@@ -57,18 +61,17 @@ void PlayerGameState::read(const QJsonObject &json)
         tricks.append(trick);
     }
 
-    // Read GameState team vunerable vector from JSON object
-    QJsonArray jsonTeamVulnerableArray = json["tricks"].toArray();
+    // Read GameState team vunerable array from JSON object
+    QJsonArray jsonTeamVulnerableArray = json["teamVulnerable"].toArray();
     for (qint8 index = 0; index < jsonTeamVulnerableArray.size(); ++ index) {
         bool teamVulnerableElement = jsonTeamVulnerableArray[index].toBool();
         teamVulnerable[index] = teamVulnerableElement;
-
     }
 
     // Read PlayerGameState player positions map from JSON object
     playerPositions.clear();
-    QJsonArray playerPositionKeys;
-    QJsonArray playerPositionValues;
+    QJsonArray playerPositionKeys = json["playerPositionKeys"].toArray();
+    QJsonArray playerPositionValues = json["playerPositionValues"].toArray();
     for(qint8 index = 0; index < playerPositionKeys.size(); ++index){
         PlayerPosition key = PlayerPosition(playerPositionKeys[index].toInt());
         QString value = playerPositionValues[index].toString();
@@ -79,6 +82,54 @@ void PlayerGameState::read(const QJsonObject &json)
 // Add PlayerGameState instance attributes to the JSON object argument
 void PlayerGameState::write(QJsonObject &json) const
 {
+    // Add GameState non-list non-object attributes to JSON object
+    json["phase"] = phase;
+    json["gameNumber"] = gameNumber;
+    json["dealNumber"] = dealNumber;
+    json["trickNumber"] = trickNumber;
+    json["playerTurn"] = playerTurn;
+    json["handToPlay"] = handToPlay;
+    json["dealer"] = dealer;
+    json["declarer"] = declarer;
+
+    // Add GameState non-list object attributes to JSON object
+    QJsonObject jsonCurrentBid;
+    currentBid.write(jsonCurrentBid);
+    json["currentBid"] = jsonCurrentBid;
+    QJsonObject jsonContractBid;
+    contractBid.write(jsonContractBid);
+    json["contractBid"] = jsonContractBid;
+    QJsonObject jsonScore;
+    score.write(jsonScore);
+    json["score"] = jsonScore;
+
+    // Add PlayerGameState non-list non-object attributes to JSON object
+    json["gameEvent"] = gameEvent;
+
+    // Add PlayerGameState non-list object attributes to JSON object
+    QJsonObject jsonPlayerHand;
+    playerHand.write(jsonPlayerHand);
+    json["playerHand"] = jsonPlayerHand;
+    QJsonObject jsonDummyHand;
+    dummyHand.write(jsonDummyHand);
+    json["dummyHand"] = jsonDummyHand;
+
+
+    // Add GameState tricks vector to JSON object
+    QJsonArray jsonTricks;
+    for (const CardSet &trick: tricks) {
+        QJsonObject jsonTrick;;
+        trick.write(jsonTrick);
+        jsonTricks.append(jsonTrick);
+    }
+    json["tricks"] = jsonTricks;
+
+    // Add GameState team vunerable array to JSON object
+    QJsonArray jsonTeamVulnerableArray;
+    for (const bool &teamVulnerableElement: teamVulnerable)
+        jsonTeamVulnerableArray.append(teamVulnerableElement);
+    json["teamVulnerable"];
+
     // Add PlayerGameState player positions map to JSON object
     QMapIterator<PlayerPosition, QString> iter(playerPositions);
     QJsonArray playerPositionKeys;

@@ -1,9 +1,11 @@
-#include "unit-tests/ai/testai.h"
-#include <QtTest/QtTest>
-
+#include "mainwindow.h"
+#include <QApplication>
 int main(int argc, char *argv[])
 {
-    // Test the main class
-    testai test1;
-    QTest::qExec(&test1);
+    QApplication rcbApplication(argc, argv);
+    MainWindow entryWindow;
+    entryWindow.show();
+
+    return rcbApplication.exec();
+
 }

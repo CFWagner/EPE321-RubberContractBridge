@@ -15,20 +15,20 @@ class GameState
 public:
     GameState();
     ~GameState();
-    GamePhase getPhase();
-    const Bid* getCurrentBid();
-    const Bid* getContractBid();
-    qint8 getGameNumber();
-    qint8 getDealNumber();
-    qint8 getTrickNumber();
-    const QVector<CardSet> getTricks();
-    PlayerPosition getPlayerTurn();
-    PlayerPosition getHandToPlay();
-    PlayerPosition getDealer();
-    PlayerPosition getDeclarer();
-    PlayerPosition getDummy();
-    bool getTeamVulnerable(Team team);
-    Score getScore();
+    GamePhase getPhase() const;
+    const Bid* getCurrentBid() const;
+    const Bid* getContractBid() const;
+    qint8 getGameNumber() const;
+    qint8 getDealNumber() const;
+    qint8 getTrickNumber() const;
+    const QVector<CardSet> getTricks() const;
+    PlayerPosition getPlayerTurn() const;
+    PlayerPosition getHandToPlay() const;
+    PlayerPosition getDealer() const;
+    PlayerPosition getDeclarer() const;
+    PlayerPosition getDummy() const;
+    bool getTeamVulnerable(Team team) const;
+    Score getScore() const;
 protected:
     GamePhase phase;
     Bid* currentBid;

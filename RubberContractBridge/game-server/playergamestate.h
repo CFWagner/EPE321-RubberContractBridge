@@ -8,6 +8,9 @@ class PlayerGameState: public GameState
 {
 public:
     PlayerGameState();
+    PlayerGameState(const GameState &gameState, GameEvent gameEvent,
+                    QMap<PlayerPosition, QString> playerPositions,
+                    CardSet playerHand, CardSet dummyHand);
     GameEvent getEvent();
     CardSet getPlayerHand();
     CardSet getDummyHand();

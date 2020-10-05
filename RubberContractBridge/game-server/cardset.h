@@ -10,10 +10,10 @@ public:
     void addCard(Card card);
     Card removeCard(qint8 position);
     Card removeTopCard();
-    Card getCard(qint8 position);
-    bool containsCard(const Card &card);
-    bool containsSuit(CardSuit suit);
-    qint8 getCardCount();
+    Card getCard(qint8 position) const;
+    bool containsCard(const Card &card) const;
+    bool containsSuit(CardSuit suit) const;
+    qint8 getCardCount() const;
     void orderHand();
     void clearSet();
     void shuffle();

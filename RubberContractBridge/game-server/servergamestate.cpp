@@ -133,20 +133,21 @@ void ServerGameState::updatePlayState(Card card)
 
     // Check if trick is complete
     if(currentTrick->getCardCount() == 4){
+        // Determine winner
+        PlayerPosition winner = determineTrickWinner();
 
+        // TO ADD: UPDATE SCORE
+
+        // Check if deal round is complete
+        if(tricks.size() == 13){
+            nextDeal();
+            return;
+        }
+
+        // Winner plays first next
+        playerTurn = winner;
+        nextTrick();
     }
-}
-
-// Setter for the player who is the dealer
-void ServerGameState::setDealer(PlayerPosition player)
-{
-    this->dealer = dealer;
-}
-
-// Setter for the player who is the declarer
-void ServerGameState::setDeclarer(PlayerPosition player)
-{
-    this->declarer = declarer;
 }
 
 // Getter for the cards currently in the deck
@@ -220,4 +221,31 @@ Team ServerGameState::getPlayerTeam(PlayerPosition player){
         default:
             return E_W;
     }
+}
+
+// Determine the player which won the most recently played trick
+PlayerPosition ServerGameState::determineTrickWinner(){
+    const CardSet &trick = tricks[trickNumber - 1];
+    qint8 bestIndex = 0;
+    for(qint8 index = 1; index < 4; ++ index){
+        const Card &bestCard = trick.getCard(bestIndex);
+        const Card &card = trick.getCard(index);
+        CardSuit trumpSuit = contractBid->getTrumpSuit();
+        bool updateBestCard = false;
+
+        // Check if card suit is trump suit
+        if(card.getSuit() == trumpSuit && bestCard.getSuit() != trumpSuit)
+            updateBestCard = true;
+        // Check if card is better than best card if the same suit
+        else if(card.getSuit() == bestCard.getSuit() && bestCard < card)
+            updateBestCard = true;
+        // Update best card
+        if(updateBestCard)
+            bestIndex = index;
+    }
+
+    // Identify winning player
+    // playerTurn refers to player that played last card in trick
+    // Add 1 to get player that played first card then add bestIndex to get winning player
+    return PlayerPosition((playerTurn + bestIndex + 1) % 4);
 }

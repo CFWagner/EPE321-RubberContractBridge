@@ -24,19 +24,19 @@ Card CardSet::removeTopCard()
 }
 
 // Return and remove card at given position from set. The top of the set is located at index 0
-Card CardSet::getCard(qint8 position)
+Card CardSet::getCard(qint8 position) const
 {
     return cards.value(position);
 }
 
 // Check if the set of cards contains the specified card
-bool CardSet::containsCard(const Card &card)
+bool CardSet::containsCard(const Card &card) const
 {
     return cards.contains(card);
 }
 
 // Check if the set of cards contains at least one card with the specified suit
-bool CardSet::containsSuit(CardSuit suit)
+bool CardSet::containsSuit(CardSuit suit) const
 {
     for(const Card &card: cards){
         if(card.getSuit() == suit)
@@ -46,7 +46,7 @@ bool CardSet::containsSuit(CardSuit suit)
 }
 
 // Getter for number of cards currently in the card set
-qint8 CardSet::getCardCount()
+qint8 CardSet::getCardCount() const
 {
     return cards.count();
 }

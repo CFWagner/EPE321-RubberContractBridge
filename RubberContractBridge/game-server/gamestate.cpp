@@ -10,38 +10,38 @@ GameState::~GameState() {
 }
 
 // Getter for the current game phase
-GamePhase GameState::getPhase()
+GamePhase GameState::getPhase() const
 {
     return phase;
 }
 
 // Getter for the lasest standing bid made. Returns nullptr is there is no current bid
-const Bid* GameState::getCurrentBid()
+const Bid* GameState::getCurrentBid() const
 {
     return currentBid;
 }
 
 
 // Getter for the bid selected as the contract. Returns nullptr is there is no contract bid
-const Bid* GameState::getContractBid()
+const Bid* GameState::getContractBid() const
 {
     return contractBid;
 }
 
 // Getter for the current game number
-qint8 GameState::getGameNumber()
+qint8 GameState::getGameNumber() const
 {
     return gameNumber;
 }
 
 // Getter for the current deal number
-qint8 GameState::getDealNumber()
+qint8 GameState::getDealNumber() const
 {
     return dealNumber;
 }
 
 // Getter for the current trick number
-qint8 GameState::getTrickNumber()
+qint8 GameState::getTrickNumber() const
 {
     return trickNumber;
 }
@@ -50,7 +50,7 @@ qint8 GameState::getTrickNumber()
 // The element at index 0 is the first trick played and the last element is the latest trick
 // The element at index 0 in the card set is the first card played in the trick and the last
 // element is the last card played in the trick
-const QVector<CardSet> GameState::getTricks()
+const QVector<CardSet> GameState::getTricks() const
 {
     return tricks;
 }
@@ -58,7 +58,7 @@ const QVector<CardSet> GameState::getTricks()
 // Getter for the player who's turn it is to play. The turn refers to which player is called
 // to action. For example, when a card is to be played from the dummy's hand, this returns
 // the player that is the declarer as action is required from them.
-PlayerPosition GameState::getPlayerTurn()
+PlayerPosition GameState::getPlayerTurn() const
 {
     return playerTurn;
 }
@@ -67,25 +67,25 @@ PlayerPosition GameState::getPlayerTurn()
 // card must be played onto the trick from. For example, when a card is to be played from the
 // dummy's hand by the declarer, this returns the player that is the dummy as it is there hand
 // that a card must be played from.
-PlayerPosition GameState::getHandToPlay()
+PlayerPosition GameState::getHandToPlay() const
 {
     return handToPlay;
 }
 
 // Getter for the player that is the dealer
-PlayerPosition GameState::getDealer()
+PlayerPosition GameState::getDealer() const
 {
     return dealer;
 }
 
 // Getter for the player that is the declarer
-PlayerPosition GameState::getDeclarer()
+PlayerPosition GameState::getDeclarer() const
 {
     return declarer;
 }
 
 // Getter for the player that is the dummy
-PlayerPosition GameState::getDummy()
+PlayerPosition GameState::getDummy() const
 {
     switch (declarer) {
         case NORTH:
@@ -100,13 +100,13 @@ PlayerPosition GameState::getDummy()
 }
 
 // Returns whether the specified team is in the vulnerable state
-bool GameState::getTeamVulnerable(Team team)
+bool GameState::getTeamVulnerable(Team team) const
 {
     return teamVulnerable[team];
 }
 
 // Getter for the score for the current match
-Score GameState::getScore()
+Score GameState::getScore() const
 {
     return score;
 }

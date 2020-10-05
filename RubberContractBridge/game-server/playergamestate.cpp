@@ -5,6 +5,30 @@
 // Default constructor
 PlayerGameState::PlayerGameState() {}
 
+PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent,
+                                 QMap<PlayerPosition, QString> playerPositions,
+                                 CardSet playerHand, CardSet dummyHand)
+{
+    phase = gameState.getPhase();
+    currentBid = new Bid(*gameState.getCurrentBid());
+    currentBid = new Bid(*gameState.getCurrentBid());
+    gameNumber = gameState.getGameNumber();
+    dealNumber = gameState.getDealNumber();
+    trickNumber = gameState.getTrickNumber();
+    tricks = gameState.getTricks();
+    playerTurn = gameState.getPlayerTurn();
+    handToPlay = gameState.getHandToPlay();
+    dealer = gameState.getDealer();
+    declarer = gameState.getDeclarer();
+    teamVulnerable[N_S] = gameState.getTeamVulnerable(N_S);
+    teamVulnerable[E_W] = gameState.getTeamVulnerable(E_W);
+    score = gameState.getScore();
+    this->gameEvent = gameEvent;
+    this->playerPositions = playerPositions;
+    this->playerHand = playerHand;
+    this->dummyHand = dummyHand;
+}
+
 // Getter for the latest game event occurence
 GameEvent PlayerGameState::getEvent()
 {

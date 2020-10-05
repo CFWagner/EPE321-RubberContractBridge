@@ -13,16 +13,15 @@ public:
     void nextTrick();
     void updateBidState(Bid* bid);
     void updatePlayState(Card card);
-    void setDealer(PlayerPosition player);
-    void setDeclarer(PlayerPosition player);
+    bool isBidValid(const Bid* bid);
+    bool isCardValid(const Card card);
     CardSet getDeck();
     PlayerGameState getPlayerGameState(PlayerPosition player, QVector<Player*> players);
 private:
     QMap<PlayerPosition, CardSet> playerHands;
     CardSet deck;
     qint8 passCount;
-    bool isBidValid(const Bid* bid);
-    bool isCardValid(const Card card);
+    PlayerPosition determineTrickWinner();
     static Team getPlayerTeam(PlayerPosition position);
 };
 

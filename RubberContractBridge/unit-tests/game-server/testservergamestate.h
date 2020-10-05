@@ -9,6 +9,8 @@ class TestServerGameState : public QObject
     Q_OBJECT
 public:
     explicit TestServerGameState(QObject *parent = nullptr);
+
+private slots:
     void testServerGameState();
 };
 

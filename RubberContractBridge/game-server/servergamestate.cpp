@@ -157,10 +157,15 @@ CardSet ServerGameState::getDeck()
 }
 
 // Generate and return the game state tailored for the player
-PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player, QVector<Player*> players)
+PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player, QVector<Player*> players, GameEvent gameEvent)
 {
-    // Create player game state here
-    return PlayerGameState();
+    QMap<PlayerPosition, QString> playerPositions;
+    for(const Player* player: players)
+        playerPositions.insert(player->getPosition(), player->getPlayerName());
+    CardSet dummyHand;
+    if(phase == CARDPLAY)
+        dummyHand = playerHands[getDummy()];
+    return PlayerGameState(*this, gameEvent, playerPositions, playerHands[player], dummyHand);
 }
 
 // Check if the new bid is valid given the current bid. Passing nullptr as the current bid

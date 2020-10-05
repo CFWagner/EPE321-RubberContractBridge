@@ -16,7 +16,8 @@ public:
     bool isBidValid(const Bid* bid);
     bool isCardValid(const Card card);
     CardSet getDeck();
-    PlayerGameState getPlayerGameState(PlayerPosition player, QVector<Player*> players);
+    PlayerGameState getPlayerGameState(PlayerPosition player, QVector<Player*> players,
+                                       GameEvent gameEvent);
 private:
     QMap<PlayerPosition, CardSet> playerHands;
     CardSet deck;

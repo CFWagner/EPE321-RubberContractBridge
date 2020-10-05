@@ -20,9 +20,9 @@ public:
     virtual void notifyMoveRejected(QString reason) = 0;
     virtual void message(QString source, QString message) = 0;
     virtual void gameTerminated(QString reason) = 0;
-    QString getPlayerName();
-    PlayerPosition getPosition();
-    Team getTeam();
+    QString getPlayerName() const;
+    PlayerPosition getPosition() const;
+    Team getTeam() const;
     void setPosition(PlayerPosition position);
 protected:
     QString playerName;

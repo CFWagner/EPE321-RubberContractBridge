@@ -43,6 +43,11 @@ qint8 Bid::getTricksAbove() const
     return tricksAbove;
 }
 
+// Setter for the bid call
+void Bid::setCall(BidCall call){
+    this->call = call;
+}
+
 // Initialize bid attributes from JSON object
 void Bid::read(const QJsonObject &json)
 {
@@ -73,4 +78,17 @@ bool Bid::operator >(const Bid& bid) const
         return trumpSuit > bid.trumpSuit;
     }
     return tricksAbove > bid.tricksAbove;
+}
+
+// Overloaded == relational operator. Does not consider bidder when testing for equality
+bool Bid::operator ==(const Bid& bid) const
+{
+    if(call == PASS && bid.call == PASS){
+        return true;
+    }
+    else if(call == bid.call && trumpSuit == bid.trumpSuit
+            && tricksAbove == bid.tricksAbove){
+        return true;
+    }
+    return false;
 }

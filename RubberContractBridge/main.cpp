@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
 //    return rcbApplication.exec();
     //Unit tests
     // Test the main class
-    TestPlayerGameState testServerGameState;
+    TestServerGameState testServerGameState;
     QTest::qExec(&testServerGameState);
-    TestPlayerGameState testPlayerGameState;
-    QTest::qExec(&testPlayerGameState);
+//    TestPlayerGameState testPlayerGameState;
+//    QTest::qExec(&testPlayerGameState);
 }

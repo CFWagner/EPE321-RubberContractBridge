@@ -33,8 +33,8 @@ public:
     Score getScore() const;
 protected:
     GamePhase phase;
-    Bid* currentBid;
-    Bid* contractBid;
+    Bid* currentBid = nullptr;
+    Bid* contractBid = nullptr;
     qint8 gameNumber;
     qint8 dealNumber;
     qint8 trickNumber;

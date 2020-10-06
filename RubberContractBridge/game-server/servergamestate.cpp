@@ -1,20 +1,23 @@
 #include "servergamestate.h"
 
 // Default constructor
+ServerGameState::ServerGameState() {}
+
 // Initialises all attributes to values for start of match
-ServerGameState::ServerGameState()
+ServerGameState::ServerGameState(PlayerPosition dealer)
 {
     // Initialise attributes
     phase = BIDDING;
-    currentBid = nullptr;
-    contractBid = nullptr;
-    gameNumber =0;
+    gameNumber = 1;
     dealNumber = 0;
     trickNumber = 0;
     teamVulnerable[N_S] = false;
     teamVulnerable[E_W] = false;
     passCount = 0;
-    dealer = NORTH;
+    this->dealer = dealer;
+    playerTurn = dealer;
+    handToPlay = NORTH;
+    declarer = NORTH;
 
     // Initialise player hands
     for(qint8 player = NORTH; player <= WEST; ++player)
@@ -36,7 +39,8 @@ ServerGameState::ServerGameState()
 void ServerGameState::nextDeal()
 {
     // Select player to left of current dealer as new dealer
-    dealer = PlayerPosition((dealer + 1) % 4);
+    if(dealNumber > 0 || gameNumber > 1)
+        dealer = PlayerPosition((dealer + 1) % 4);
 
     // Reset attributes
     phase = BIDDING;
@@ -61,8 +65,8 @@ void ServerGameState::nextDeal()
         playerHands[targetPlayer].addCard(deck.removeTopCard());
     }
 
-    // Select player to left of dealer for first turn
-    playerTurn = PlayerPosition((dealer + 1) % 4);
+    // Select dealer for first turn
+    playerTurn = dealer;
 }
 
 // Prepare game for next trick
@@ -74,22 +78,26 @@ void ServerGameState::nextTrick()
 
 
 // Update the game state based on the latest bid made
-// This ServerGameState instance is responsible for the memory management of the bid argument
 // Does nothing if the bid is invalid. Bid validity must be checked seperately prior to
 // calling this function isBidValid()
-void ServerGameState::updateBidState(Bid* bid)
+void ServerGameState::updateBidState(const Bid &bid)
 {
     // Count number of passes in a row
-    if(bid->getCall() == PASS){
+    if(bid.getCall() == PASS){
         ++ passCount;
-        delete bid;
     }
+    // Check if bid is valid
     else if(isBidValid(bid)){
-        delete currentBid;
-        currentBid = bid;
+        // Update bid
+        if(bid.getCall() == DOUBLE || bid.getCall() == REDOUBLE){
+            currentBid->setCall(bid.getCall());
+        }
+        else{
+            delete currentBid;
+            currentBid = new Bid(bid);
+        }
     }
     else {
-        delete bid;
         return;
     }
 
@@ -121,7 +129,7 @@ void ServerGameState::updateBidState(Bid* bid)
 // Assumes card is played from handToPlay by the PlayerTurn player
 // Does nothing if the bid is invalid. Card validity must be checked seperately prior to
 // calling this function using isCardValid()
-void ServerGameState::updatePlayState(Card card)
+void ServerGameState::updatePlayState(const Card &card)
 {
     // Check if card played is valid
     if(!isCardValid(card))
@@ -151,7 +159,7 @@ void ServerGameState::updatePlayState(Card card)
 }
 
 // Getter for the cards currently in the deck
-CardSet ServerGameState::getDeck()
+const CardSet& ServerGameState::getDeck()
 {
     return deck;
 }
@@ -170,34 +178,38 @@ PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player, QVect
 
 // Check if the new bid is valid given the current bid. Passing nullptr as the current bid
 // argument implies there is no current bid
-bool ServerGameState::isBidValid(const Bid* bid)
+bool ServerGameState::isBidValid(const Bid &bid) const
 {
     // Check if new bid is valid given no bid has been made yet
-    if(currentBid == nullptr){
-        return bid->getCall() == PASS || bid->getCall() == BID;
-    }
-    // Check if new bid is a higher bid than the current bid
-    else if(*bid > *currentBid){
-        Team currentBidderTeam = getPlayerTeam(currentBid->getBidder());
-        Team newBidderTeam = getPlayerTeam(bid->getBidder());
-        // Double is invalid if bid was made by a member of the same team
-        if(bid->getCall() == DOUBLE && newBidderTeam == currentBidderTeam){
-            return false;
-        }
-        // Redouble is invalid if the bid was made by a member of the opposing team or
-        // the bid was not doubled
-        else if(bid->getCall() == REDOUBLE && (newBidderTeam != currentBidderTeam
-                                                  || currentBid->getCall() != DOUBLE)){
-            return false;
-        }
+    if(bid.getCall() == PASS){
         return true;
+    }
+    else if(currentBid == nullptr){
+        return bid.getCall() == BID;
+    }
+    else{
+        Team currentBidderTeam = getPlayerTeam(currentBid->getBidder());
+        Team newBidderTeam = getPlayerTeam(bid.getBidder());
+        if(bid.getCall() == DOUBLE){
+            // Double is invalid if bid was made by a member of the same team
+            return newBidderTeam != currentBidderTeam && currentBid->getCall() == BID;
+        }
+        else if(bid.getCall() == REDOUBLE){
+            // Redouble is invalid if the bid was made by a member of the opposing team or
+            // the bid was not doubled
+            return newBidderTeam == currentBidderTeam && currentBid->getCall() == DOUBLE;
+        }
+        // Check if new bid is a higher bid than the current bid
+        else if(bid > *currentBid){
+            return true;
+        }
     }
     return false;
 }
 
 // Check if the card is valid to play in the current trick. Assumes the card is played from
 // the hand indicated by handToPlay
-bool ServerGameState::isCardValid(const Card card)
+bool ServerGameState::isCardValid(const Card &card) const
 {
     // Check if card is in hand to play
     if(!playerHands[handToPlay].containsCard(card))
@@ -229,7 +241,7 @@ Team ServerGameState::getPlayerTeam(PlayerPosition player){
 }
 
 // Determine the player which won the most recently played trick
-PlayerPosition ServerGameState::determineTrickWinner(){
+PlayerPosition ServerGameState::determineTrickWinner() const{
     const CardSet &trick = tricks[trickNumber - 1];
     qint8 bestIndex = 0;
     for(qint8 index = 1; index < 4; ++ index){

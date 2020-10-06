@@ -24,6 +24,11 @@ public:
     //Don't need message so won't implement?????
     void gameTerminated(QString reason);
     void message(QString source, QString message);
+    //getters for testing
+    CardSet getHand();
+    //setters for testing
+    void setCurrentBid(Bid bidding);
+    void setContractBid(Bid contracter);
 private:
     void initialMainSet();
     void generateAvailableCards();
@@ -47,6 +52,8 @@ private:
     Card cardPlayed;
     CardSet deck;
     QVector<Bid> bidlist;
+
+
 
 
 signals:

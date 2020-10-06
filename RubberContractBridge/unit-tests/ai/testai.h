@@ -9,7 +9,7 @@ public:
     explicit testai(QObject *parent = nullptr);
 
 private slots:
-    void testDeckGenerate();
+    void testHandGenerate();
 
 };
 

@@ -582,3 +582,19 @@ Bid AI::guessBid()
     }
     return idea;
 }
+
+
+CardSet AI::getHand()
+{
+    return myhand;
+}
+
+void AI::setCurrentBid(Bid bidding)
+{
+    currentbid = bidding;
+}
+
+void AI::setContractBid(Bid contracter)
+{
+    contract=contracter;
+}

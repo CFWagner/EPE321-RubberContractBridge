@@ -1,8 +1,10 @@
-#include "unit-tests/logger/testlogger.h"
+#include "mainwindow.h"
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
-    // Test the main class
-    testLogger test1;
-    QTest::qExec(&test1);
+    QApplication rcbApplication(argc, argv);
+    MainWindow entryWindow;
+    entryWindow.show();
+    return rcbApplication.exec();
 }

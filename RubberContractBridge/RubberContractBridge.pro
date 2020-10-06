@@ -19,7 +19,8 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
-    gui/clientgui.cpp \
+    gui/clientlogingui.cpp \
+    hover.cpp \
     gui/mainwindow.cpp \
     gui/servergui.cpp \
     main.cpp \
@@ -52,7 +53,8 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
-    gui/clientgui.h \
+    gui/clientlogingui.h \
+    hover.h \
     gui/mainwindow.h \
     gui/servergui.h \
     network/servernetwork.h \
@@ -67,7 +69,7 @@ HEADERS += \
 
 #All UI windows are shown below.
 FORMS += \
-    gui/clientgui.ui \
+    gui/clientlogingui.ui \
     gui/mainwindow.ui \
     gui/servergui.ui
 

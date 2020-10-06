@@ -5,5 +5,8 @@
         <file>guiResources/background/background3.png</file>
         <file>guiResources/background/serverButton2.png</file>
         <file>guiResources/background/clientButton2.png</file>
+        <file>guiResources/background/unselectedButton.png</file>
+        <file>guiResources/background/selectedButton.png</file>
+        <file>guiResources/background/login.png</file>
     </qresource>
 </RCC>

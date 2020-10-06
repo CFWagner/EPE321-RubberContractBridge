@@ -5,6 +5,34 @@
 // Default constructor
 PlayerGameState::PlayerGameState() {}
 
+PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const Bid* contractBid,
+                                 qint8 gameNumber, qint8 dealNumber, qint8 trickNumber,
+                                 QVector<CardSet> tricks, PlayerPosition playerTurn,
+                                 PlayerPosition handToPlay, PlayerPosition dealer,
+                                 PlayerPosition declarer, bool teamVulnerable[2], Score score,
+                                 GameEvent gameEvent, QMap<PlayerPosition, QString> playerPositions,
+                                 CardSet playerHand, CardSet dummyHand)
+{
+    this->phase = phase;
+    this->currentBid = new Bid(*currentBid);
+    this->contractBid = new Bid(*contractBid);
+    this->gameNumber = gameNumber;
+    this->dealNumber =dealNumber;
+    this->trickNumber = trickNumber;
+    this->tricks = tricks;
+    this->playerTurn = playerTurn;
+    this->handToPlay = handToPlay;
+    this->dealer = dealer;
+    this->declarer = declarer;
+    this->teamVulnerable[N_S] = teamVulnerable[N_S];
+    this->teamVulnerable[E_W] = teamVulnerable[E_W];
+    this->score = score;
+    this->gameEvent = gameEvent;
+    this->playerPositions = playerPositions;
+    this->playerHand = playerHand;
+    this->dummyHand = dummyHand;
+}
+
 PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent,
                                  QMap<PlayerPosition, QString> playerPositions,
                                  CardSet playerHand, CardSet dummyHand)

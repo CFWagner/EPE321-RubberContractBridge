@@ -14,12 +14,15 @@ public:
     Bid();
     Bid(PlayerPosition bidder, BidCall call);
     Bid(PlayerPosition bidder, CardSuit trumpSuit, qint8 tricksAbove);
-    PlayerPosition getBidder();
-    BidCall getCall();
-    CardSuit getTrumpSuit();
-    qint8 getTricksAbove();
+    PlayerPosition getBidder() const;
+    BidCall getCall() const;
+    CardSuit getTrumpSuit() const;
+    qint8 getTricksAbove() const;
+    void setCall(BidCall call);
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
+    bool operator >(const Bid& bid) const;
+    bool operator ==(const Bid& bid) const;
 private:
     PlayerPosition bidder;
     BidCall call;

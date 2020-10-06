@@ -4,19 +4,19 @@
 Player::Player(QObject *parent) : QObject(parent) {}
 
 // Getter for the name of the player
-QString Player::getPlayerName()
+QString Player::getPlayerName() const
 {
     return playerName;
 }
 
 // Getter for the position of the player
-PlayerPosition Player::getPosition()
+PlayerPosition Player::getPosition() const
 {
     return position;
 }
 
 // Get the team the player belongs to based on their position
-Team Player::getTeam()
+Team Player::getTeam() const
 {
     switch (position) {
         case NORTH:

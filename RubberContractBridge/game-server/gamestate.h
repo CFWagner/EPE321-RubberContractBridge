@@ -9,39 +9,49 @@
 #include "score.h"
 #include <QVector>
 
+// Create new game state object for each new match
 class GameState
 {
 public:
     GameState();
+    GameState(const GameState &gameState);
     ~GameState();
-    GamePhase getPhase();
-    const Bid* getCurrentBid();
-    const Bid* getContractBid();
-    qint8 getGameNumber();
-    qint8 getDealNumber();
-    qint8 getTrickNumber();
-    QVector<CardSet> getTricks();
-    PlayerPosition getPlayerTurn();
-    PlayerPosition getHandToPlay();
-    PlayerPosition getDealer();
-    PlayerPosition getDeclarer();
-    PlayerPosition getDummy();
-    bool getTeamVulnerable(Team team);
-    Score getScore();
-    virtual void read(const QJsonObject &json);
-    virtual void write(QJsonObject &json) const;
+    GameState& operator = (const GameState &gameState);
+    GamePhase getPhase() const;
+    const Bid* getCurrentBid() const;
+    const Bid* getContractBid() const;
+    qint8 getGameNumber() const;
+    qint8 getDealNumber() const;
+    qint8 getTrickNumber() const;
+    const QVector<CardSet> getTricks() const;
+    PlayerPosition getPlayerTurn() const;
+    PlayerPosition getHandToPlay() const;
+    PlayerPosition getDealer() const;
+    PlayerPosition getDeclarer() const;
+    PlayerPosition getDummy() const;
+    bool getTeamVulnerable(Team team) const;
+    Score getScore() const;
 protected:
     GamePhase phase;
-    Bid* currentBid;
-    Bid* contractBid;
+    // currentBid refers to the most recent valid bid made during the bidding phase
+    // nullptr if no bid has been made or phase is CARDPLAY
+    Bid* currentBid = nullptr;
+    // contractBid refers to the bid accepted as the contract for the game
+    // nullptr if phase is BIDDING
+    Bid* contractBid = nullptr;
     qint8 gameNumber;
-    qint8 dealNumber;
-    qint8 trickNumber;
+    qint8 dealNumber; // Zero before first deal
+    qint8 trickNumber; // Zero during BIDDING phase
     QVector<CardSet> tricks;
+    // PlayerTurn refers to the position of the player who has to select the card to play
+    // When it is time to play from the dummy's hand, playerTurn refers to the declarer's position
     PlayerPosition playerTurn;
+    // handToPlay refers to the position of the player whose hand the card must be played from
+    // When it is time to play from the dummy's hand, handToPlay refers to the dummy's position
     PlayerPosition handToPlay;
     PlayerPosition dealer;
     PlayerPosition declarer;
+    // Use team enum as indices: N_S = 0, E_W = 1
     bool teamVulnerable[2];
     Score score;
 };

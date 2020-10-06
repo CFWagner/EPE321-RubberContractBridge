@@ -3,6 +3,8 @@
 
 #include "card.h"
 
+// Represents any collection of cards that occurs during the bridge game
+// For example, deck, hand and trick are all card sets
 class CardSet
 {
 public:

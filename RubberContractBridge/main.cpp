@@ -1,19 +1,21 @@
-#include "gui/mainwindow.h"
-#include <QApplication>
 //Unit tests
+#include "unit-tests/game-server/testbid.h"
+#include "unit-tests/game-server/testcard.h"
+#include "unit-tests/game-server/testcardset.h"
 #include "unit-tests/game-server/testservergamestate.h"
 #include "unit-tests/game-server/testplayergamestate.h"
 
 int main(int argc, char *argv[])
 {
-//    QApplication rcbApplication(argc, argv);
-//    MainWindow entryWindow;
-//    entryWindow.show();
-//    return rcbApplication.exec();
     //Unit tests
-    // Test the main class
+    TestBid testBid;
+    QTest::qExec(&testBid);
+    TestCard testCard;
+    QTest::qExec(&testCard);
+    TestCardSet testCardSet;
+    QTest::qExec(&testCardSet);
     TestServerGameState testServerGameState;
     QTest::qExec(&testServerGameState);
-//    TestPlayerGameState testPlayerGameState;
-//    QTest::qExec(&testPlayerGameState);
+    TestPlayerGameState testPlayerGameState;
+    QTest::qExec(&testPlayerGameState);
 }

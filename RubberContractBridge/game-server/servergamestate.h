@@ -5,6 +5,7 @@
 #include "player.h"
 #include "playergamestate.h"
 
+// Represents the complete state of the game for all players at a given instance in time
 class ServerGameState: public GameState
 {
 public:
@@ -20,9 +21,9 @@ public:
     PlayerGameState getPlayerGameState(PlayerPosition player, QVector<Player*> players,
                                        GameEvent gameEvent);
 private:
-    QMap<PlayerPosition, CardSet> playerHands;
-    CardSet deck;
-    qint8 passCount;
+    QMap<PlayerPosition, CardSet> playerHands; // List of cards in each players hand
+    CardSet deck; // Set of 52 unique cards that are dealt at the start of each round
+    qint8 passCount; // Number of consecutive passes made during the bidding phase
     PlayerPosition determineTrickWinner() const;
     static Team getPlayerTeam(PlayerPosition position);
 };

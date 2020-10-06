@@ -6,6 +6,8 @@
 #include "enumerations/GameEvent.h"
 #include <QObject>
 
+// Class responsible for controlling the game at a high level and
+// interfacing the players with the game logic and state
 class GameServer : public QObject
 {
     Q_OBJECT

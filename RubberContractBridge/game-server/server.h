@@ -5,6 +5,8 @@
 #include <QHostAddress>
 #include <QObject>
 
+// Highest level class on the server side
+// Purpose is to connect server interface, game server and server networking components
 class Server : public QObject
 {
     Q_OBJECT

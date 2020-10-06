@@ -8,6 +8,7 @@
 #include <QtGlobal>
 #include <optional>
 
+// Represents a bid made by a player during the bidding phase
 class Bid
 {
 public:
@@ -24,10 +25,10 @@ public:
     bool operator >(const Bid& bid) const;
     bool operator ==(const Bid& bid) const;
 private:
-    PlayerPosition bidder;
-    BidCall call;
-    CardSuit trumpSuit;
-    qint8 tricksAbove;
+    PlayerPosition bidder; // Position of the player that made the bid
+    BidCall call; // Call made by the player during their bidding turn
+    CardSuit trumpSuit; // Suit bid as trump suit. Only relevant if call is BID
+    qint8 tricksAbove; // Number of tricks bid. Only relevant if call is BID
 };
 
 #endif // BID_H

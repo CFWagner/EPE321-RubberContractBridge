@@ -4,6 +4,9 @@
 #include "gamestate.h"
 #include "enumerations/GameEvent.h"
 
+// Represents the state of the game at a given instance in time
+// Game state is tailored for a specific player so they can only
+// access game state information that is allowed for them
 class PlayerGameState: public GameState
 {
 public:
@@ -25,11 +28,10 @@ public:
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
 private:
-    GameEvent gameEvent;
-    // Map of the postions of the players to the name of the players ine each position
-    QMap<PlayerPosition, QString> playerPositions;
-    CardSet playerHand;
-    CardSet dummyHand;
+    GameEvent gameEvent; // Most recent event in the game that can be used to identify which attributes likely changed
+    QMap<PlayerPosition, QString> playerPositions; // Map of the postions of the players to the name of the players ine each position
+    CardSet playerHand; // Cards in the hand of the player for which the game state was created
+    CardSet dummyHand; // Cards in the dummy's hand. Nullptr if the gamestate is BIDDING
 };
 
 #endif // PLAYERGAMESTATE_H

@@ -3,8 +3,7 @@
 
 #include <QJsonObject>
 
-
-
+// Contains the various components of the team scores throughout the game
 class Score
 {
 public:

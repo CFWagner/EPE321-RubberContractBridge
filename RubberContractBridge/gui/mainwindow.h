@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "servergui.h"
-#include "clientgui.h"
+#include "clientlogingui.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,7 +24,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    clientGUI *clientWindow;
+    clientLoginGUI * clientLoginWindow;
     serverGUI *serverWindow;
 };
 

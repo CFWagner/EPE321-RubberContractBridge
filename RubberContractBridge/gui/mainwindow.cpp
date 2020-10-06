@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QPalette palette;
     palette.setBrush(QPalette::Background, bkgnd);
     this->setPalette(palette);
-    this->setFixedSize(960,560);
+    this->setFixedSize(415,520);
     QWidget::setWindowTitle ("Rubber Contract Bridge");
-    ui->clientButton->setIcon(QIcon(":/resources/guiResources/background/clientButton2.png"));
-    ui->serverButton->setIcon(QIcon(":/resources/guiResources/background/serverButton2.png"));
+    ui->clientButton->setIcon(QIcon(":/resources/guiResources/background/unselectedButton.png"));
+    ui->serverButton->setIcon(QIcon(":/resources/guiResources/background/unselectedButton.png"));
 }
 
 MainWindow::~MainWindow()
@@ -25,8 +25,8 @@ MainWindow::~MainWindow()
 void MainWindow::on_clientButton_clicked()
 {
     this->close();
-    clientWindow = new clientGUI();
-    clientWindow->show();
+    clientLoginWindow = new clientLoginGUI();
+    clientLoginWindow->show();
 
 }
 

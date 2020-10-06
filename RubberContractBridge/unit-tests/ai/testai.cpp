@@ -1,6 +1,7 @@
 #include "testai.h"
 #include <QtTest/QtTest>
-
+//No continious game need to be simulated since everything stems from a gamestate so I will receive a knew one every time
+//TLDR found edge case when dummy is null and trick amount is null
 testai::testai(QObject *parent) : QObject(parent)
 {
 }
@@ -32,8 +33,6 @@ void testai::setInitial()
     player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,3,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
                                               testScore,PLAY_START,testMap,testAiHand,testDummyHand);
 }
-
-
 void testai::testHandGenerate()
 {
     setInitial();
@@ -79,7 +78,7 @@ void testai::testBidGenerate()
 }
 
 //next test will follow the same but bid is Hearts thus check winning bid
-//winning bid must be spades 2
+//winning bid must be spades 2 since i have high card ACE
 void testai::setInitial2()
 {
     QMap<PlayerPosition,QString> testMap;
@@ -162,8 +161,8 @@ void testai::testMoveGanerate2()
 //what happens no dummy knowledge and first turn?
 //setup H (2,3,4)
 //S(j,k,q)
-//trump suit it hearts
-//so 2 Hearts???
+//trump suit is hearts
+//so 2 Hearts since no knowledge???
 //from pool should be 3 cards
 
 void testai::setInitial4()
@@ -198,11 +197,99 @@ void testai::testMoveGanerate3()
     Card testmove;
     testmove = playerAI.guessMove();
     qDebug() <<"Did AI play correct card?";
-    //test if order works
+    //test if selection generator has worked
     QCOMPARE(playerAI.canPlay.getCard(0).getRank(),TWO);
     QCOMPARE(playerAI.canPlay.getCardCount(),3);
-    qDebug()<<"Test second move";
+    qDebug()<<"Test third move";
     QCOMPARE(testmove.getRank(),TWO);
     QCOMPARE(testmove.getSuit(),HEARTS);
+
+}
+//What happens if NT and low cards from different suits but I have a winning card highest suit
+//I am last in the round as defender
+//The tricks will be D2,H2,S5
+//my hand will be H3,H4,D3,S6
+//S6 wins this trick so expected to play that
+//Available card pool should be one since only S6 wins
+void testai::setInitial5()
+{
+    QMap<PlayerPosition,QString> testMap;
+    Score testScore=Score();
+    bool testVulnerable[2];
+    const Bid* testcontractBid;
+    CardSet testSet;
+    CardSet testAiHand;
+    CardSet testDummyHand;
+    testDummyHand.addCard(Card(SPADES,ACE));
+    testAiHand.addCard(Card(HEARTS,THREE));
+    testAiHand.addCard(Card(HEARTS,FOUR));
+    testAiHand.addCard(Card(SPADES,SIX));
+    testAiHand.addCard(Card(DIAMONDS,SIX));
+    //CardSuit suit, CardRank rank
+    testSet.addCard(Card(DIAMONDS,TWO));
+    testSet.addCard(Card(HEARTS,TWO));
+    testSet.addCard(Card(SPADES,FIVE));
+    QVector<CardSet> testTricks;
+    testTricks.append(testSet);
+    testcontractBid = new Bid(NORTH,NONE,1);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
+                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+}
+void testai::testMoveGanerate4()
+{
+    setInitial5();
+    playerAI.updateGameState(player1);
+    playerAI.initialMainSet();
+    Card testmove;
+    testmove = playerAI.guessMove();
+    qDebug() <<"Did AI play correct card?";
+    //test if selection of available condidates works
+    QCOMPARE(playerAI.canPlay.getCard(0).getRank(),SIX);
+    QCOMPARE(playerAI.canPlay.getCardCount(),1);
+    qDebug()<<"Test fourth move";
+    QCOMPARE(testmove.getRank(),SIX);
+    QCOMPARE(testmove.getSuit(),SPADES);
+
+}
+
+//Spades is now removed so no card will beat current trick thus play D6
+void testai::setInitial6()
+{
+    QMap<PlayerPosition,QString> testMap;
+    Score testScore=Score();
+    bool testVulnerable[2];
+    const Bid* testcontractBid;
+    CardSet testSet;
+    CardSet testAiHand;
+    CardSet testDummyHand;
+    testDummyHand.addCard(Card(SPADES,ACE));
+    testAiHand.addCard(Card(HEARTS,THREE));
+    testAiHand.addCard(Card(HEARTS,FOUR));
+    testAiHand.addCard(Card(DIAMONDS,SIX));
+    //CardSuit suit, CardRank rank
+    testSet.addCard(Card(DIAMONDS,TWO));
+    testSet.addCard(Card(HEARTS,TWO));
+    testSet.addCard(Card(SPADES,FIVE));
+    QVector<CardSet> testTricks;
+    testTricks.append(testSet);
+    testcontractBid = new Bid(NORTH,NONE,1);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
+                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+}
+
+void testai::testMoveGanerate5()
+{
+    setInitial6();
+    playerAI.updateGameState(player1);
+    playerAI.initialMainSet();
+    Card testmove;
+    testmove = playerAI.guessMove();
+    qDebug() <<"Did AI play correct card?";
+    //test if selection of available condidates works
+    QCOMPARE(playerAI.canPlay.getCard(0).getRank(),SIX);
+    QCOMPARE(playerAI.canPlay.getCardCount(),3);
+    qDebug()<<"Test fith move";
+    QCOMPARE(testmove.getRank(),SIX);
+    QCOMPARE(testmove.getSuit(),DIAMONDS);
 
 }

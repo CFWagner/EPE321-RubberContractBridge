@@ -1,4 +1,4 @@
-#include "testlogger.h"
+#include "unit-tests/logger/testlogger.h"
 
 int main(int argc, char *argv[])
 {

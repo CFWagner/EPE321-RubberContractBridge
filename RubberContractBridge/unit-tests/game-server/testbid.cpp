@@ -1,5 +1,6 @@
 #include "testbid.h"
 
+// Default constructor
 TestBid::TestBid(QObject *parent) : QObject(parent) {}
 
 // Test for correct construction and operation of Bid class instance

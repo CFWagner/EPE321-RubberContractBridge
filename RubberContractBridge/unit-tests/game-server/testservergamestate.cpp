@@ -2,9 +2,10 @@
 #include "game-server/servergamestate.h"
 #include <QSet>
 
-// Test for correct construction and operation of ServerGameState class instance
+// Default constructor
 TestServerGameState::TestServerGameState(QObject *parent) : QObject(parent) {}
 
+// Test for correct construction and operation of ServerGameState class instance
 void TestServerGameState::testServerGameState()
 {
     // Instantiate ServerGameState

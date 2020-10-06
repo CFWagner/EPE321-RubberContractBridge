@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QtTest/QtTest>
 
+// Unit test class for ServerGameState class
 class TestServerGameState : public QObject
 {
     Q_OBJECT

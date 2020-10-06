@@ -6,6 +6,7 @@
 #include <QSignalSpy>
 #include "game-server/bid.h"
 
+// Unit test class for Bid class
 class TestBid : public QObject
 {
     Q_OBJECT

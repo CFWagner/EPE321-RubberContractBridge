@@ -1,5 +1,6 @@
 #include "testcardset.h"
 
+// Default constructor
 TestCardSet::TestCardSet(QObject *parent) : QObject(parent) {}
 
 // Test for correct construction and operation of CardSet class instance

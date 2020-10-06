@@ -15,7 +15,6 @@ class AI : public Player
     Q_OBJECT
 public:
     explicit AI(QObject *parent = nullptr);
-    ~AI();
     void notifyBidTurn();
     void notifyMoveTurn();
     void updateGameState(PlayerGameState gameState);
@@ -26,28 +25,32 @@ public:
     void message(QString source, QString message);
     //getters for testing
     CardSet getHand();
+    Bid getBidContract();
+    Bid getBidCurrent();
     //setters for testing
     void setCurrentBid(Bid bidding);
     void setContractBid(Bid contracter);
-private:
     void initialMainSet();
-    void generateAvailableCards();
+    Card guessMove();
+    Bid guessBid();
     void initialBidSet();
+    //move variables here now just for testing
+    CardSet myhand;
+    CardSet canPlay; //available legal cards to play if size = 0 then try to play trump or higher suit as top card
+private:
+
+    void generateAvailableCards();
     void removecards(CardSet handy);
     void removebids();
     void generatedeck();
     void generatebidlist();
-    Card guessMove();
-    Bid guessBid();
     PlayerGameState currentState;
     CardSuit trump;
     CardSet dummyhand;
-    CardSet myhand;
     CardSet currentTricks;
     Bid contract;
     Bid currentbid;
     PlayerPosition dummypos;
-    CardSet canPlay; //available legal cards to play if size = 0 then try to play trump or higher suit as top card
     CardSet dummyPlay;
     Card cardPlayed;
     CardSet deck;

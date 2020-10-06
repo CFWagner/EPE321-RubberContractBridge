@@ -1,16 +1,14 @@
 #include "ai.h"
 #include <math.h>
+#include <iostream>
+//TLDR add edge statement to check if ai is very first round opening
 //the generate card function will be archaic, might use it in the future to improve selection but for demo only consider dummy hand and my hand
 //Further my AI is greedy so will only look in current position best move np heuristics nor probability (yet????)
 //Why errors on switches still??????
-
+using namespace std;
 
 AI::AI(QObject *parent)
 {
-}
-AI::~AI()
-{
-
 }
 void AI::message(QString source, QString message)
 {
@@ -158,7 +156,7 @@ void AI::generateAvailableCards()
         else
         {
             //a trump is assigned select cards that are trump for player and dummy
-            for (int i = 0; i < handAmount-1; i++)
+            for (int i = 0; i <= handAmount-1; i++)
             {
                 if (trump == myhand.getCard(i).getSuit())
                 {
@@ -191,7 +189,7 @@ void AI::generateAvailableCards()
         if (trump==4)
         {
             //then it is no trump so any card higher than last played is valid for me and dummy
-            for (int i = 0; i < handAmount-1; i++)
+            for (int i = 0; i <= handAmount-1; i++)
             {
                 if (trickCard <myhand.getCard(i))
                 {
@@ -215,7 +213,7 @@ void AI::generateAvailableCards()
         else
         {
             //a trump is assigned select cards that are trump for player and dummy
-            for (int i = 0; i < handAmount-1; i++)
+            for (int i = 0; i <= handAmount-1; i++)
             {
                 if (trickCard.getSuit() == myhand.getCard(i).getSuit())
                 {
@@ -406,8 +404,8 @@ Card AI::guessMove()
 }
 Bid AI::guessBid()
 {
-    Bid idea;
-    Bid suggestion;
+    Bid idea = Bid();
+    Bid suggestion = Bid();
     initialBidSet();
     generatebidlist();
     removebids();
@@ -417,55 +415,71 @@ Bid AI::guessBid()
     int heartsCount=0;
     int spadesCount=0;
     //obtains value for every suit
-    for (int i=0; i<myhand.getCardCount()-1;i++)
+    for (int i=0; i<=myhand.getCardCount()-1;i++)
     {
         //gets total for every suit
-        if (myhand.getCard(i).getSuit()==0)
+        if (myhand.getCard(i).getSuit()==CLUBS)
         {
-            if (myhand.getCard(i).getRank()==1)
+            if (myhand.getCard(i).getRank()==ACE)
             {
                 //if ace add 14 since ace is worth more
                 clubsCount+=14;
             }
             else
             {
-               clubsCount+= myhand.getCard(i).getRank();
+                if (myhand.getCard(i).getRank()>=TEN)
+                {
+                   clubsCount+= myhand.getCard(i).getRank();
+                }
+
             }
         }
-        else if (myhand.getCard(i).getSuit()==1)
+        else if (myhand.getCard(i).getSuit()==DIAMONDS)
         {
-            if (myhand.getCard(i).getRank()==1)
+            if (myhand.getCard(i).getRank()==ACE)
             {
                 //if ace add 14 since ace is worth more
                 diamondsCount+=14;
             }
             else
             {
-               diamondsCount+= myhand.getCard(i).getRank();
+                if (myhand.getCard(i).getRank()>=TEN)
+                {
+                    diamondsCount+= myhand.getCard(i).getRank();
+                }
+
             }
         }
-        else if (myhand.getCard(i).getSuit()==2)
+        else if (myhand.getCard(i).getSuit()==HEARTS)
         {
-            if (myhand.getCard(i).getRank()==1)
+            if (myhand.getCard(i).getRank()==ACE)
             {
                 //if ace add 14 since ace is worth more
                 heartsCount+=14;
             }
             else
             {
-               heartsCount+= myhand.getCard(i).getRank();
+                if (myhand.getCard(i).getRank()>=TEN)
+                {
+                  heartsCount+= myhand.getCard(i).getRank();
+                }
+
             }
         }
-        else if (myhand.getCard(i).getSuit()==3)
+        else if (myhand.getCard(i).getSuit()==SPADES)
         {
-            if (myhand.getCard(i).getRank()==1)
+            if (myhand.getCard(i).getRank()==ACE)
             {
                 //if ace add 14 since ace is worth more
                 spadesCount+=14;
             }
             else
             {
-               spadesCount+= myhand.getCard(i).getRank();
+                if (myhand.getCard(i).getRank()>=TEN)
+                {
+                   spadesCount+= myhand.getCard(i).getRank();
+                }
+
             }
         }
 
@@ -533,6 +547,7 @@ Bid AI::guessBid()
     if (currentState.getContractBid()==nullptr)
     {
         //no bid yet throw highest out
+
         idea=Bid(position,BID);
         suggestion=Bid(position,highsuit,1);
     }
@@ -571,8 +586,9 @@ Bid AI::guessBid()
         //this means nothing works bud maybe try for a super NT play? calculate this but with penalties
         else if (ceil(diamondsCount+heartsCount+spadesCount)>(currentbid.getTricksAbove()*30))
         {
-            idea = Bid(position,BID);
             suggestion = Bid(position,NONE,currentbid.getTricksAbove()+1);
+            idea = Bid(position,BID);
+
         }
         //gg m8 nothing works
         else
@@ -580,7 +596,15 @@ Bid AI::guessBid()
            idea = Bid(position,PASS);
         }
     }
-    return idea;
+    if (suggestion.getTricksAbove()>0)
+    {
+        return suggestion;
+    }
+    else
+    {
+        return idea;
+    }
+
 }
 
 
@@ -597,4 +621,15 @@ void AI::setCurrentBid(Bid bidding)
 void AI::setContractBid(Bid contracter)
 {
     contract=contracter;
+}
+
+
+Bid AI::getBidContract()
+{
+    return contract;
+}
+
+Bid AI::getBidCurrent()
+{
+    return currentbid;
 }

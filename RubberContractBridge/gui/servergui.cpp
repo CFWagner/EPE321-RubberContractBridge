@@ -70,6 +70,7 @@ void ServerGUI::on_serverSetupButton_clicked()
 
 void ServerGUI::attemptLogin()
 {
+    //If the user does not enter the port or IP-Address the default is chosen.
     bool validPassword = checkValidPassword();
     if (validPassword == true)
     {
@@ -92,6 +93,8 @@ void ServerGUI::attemptLogin()
 }
 bool ServerGUI::checkValidPassword()
 {
+    // Checks if the password is valid, it must contain one of the characters below and must
+    // be 8 characters long.
     password = ui->passswordLine->text();
     bool validPassword = false;
     char array [9] = {'!','@','#','$','%','^','&','*','?'};
@@ -105,6 +108,7 @@ bool ServerGUI::checkValidPassword()
             }
         }
     }
+    //If invalid the message will notify the user and the signal will not be sent.
     if(validPassword == false)
     {
         password="INVALID";

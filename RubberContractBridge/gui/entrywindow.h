@@ -17,6 +17,7 @@ class EntryWindow : public QMainWindow
 public:
     explicit EntryWindow(QWidget *parent = nullptr);
     ~EntryWindow();
+    // Window is created such as the background and labels.
     void windowSetup();
 
 private:

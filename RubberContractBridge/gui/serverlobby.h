@@ -24,10 +24,13 @@ public:
     QString playerlist[4] = {"","","",""};
 
 public slots:
+    //Player has disconnected and must be removed.
     void removePlayer (QString user);
+    //Player has connectec and must be added.
     void addPlayer (QString user);
 
 private slots:
+    //clicked adds the AI opponents in the given slot.
     void on_south_clicked();
 
     void on_west_clicked();
@@ -35,7 +38,7 @@ private slots:
     void on_east_clicked();
 
     void on_north_clicked();
-
+    //clicked adds the player to the pool of player user.
     void on_addPlayer1_stateChanged(int arg1);
 
     void on_addPlayer2_stateChanged(int arg1);

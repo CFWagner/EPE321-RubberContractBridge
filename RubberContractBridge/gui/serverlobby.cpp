@@ -302,6 +302,7 @@ void serverLobby::lobbyStart()
 
 void serverLobby::removePlayer(QString user)
 {
+    //A player is removed and the label is cleaned to allow for another person to join.
     int pos = -1;
     if (ui->player1->text() == user)
     {
@@ -333,6 +334,7 @@ void serverLobby::removePlayer(QString user)
 
 void serverLobby::addPlayer(QString user)
 {
+    // the slot adds a player that has succesfully joined the server.
     int pos = -1;
     for (int i =0; i <=4;i++)
     {
@@ -367,7 +369,7 @@ void serverLobby::addPlayer(QString user)
 }
 void serverLobby::changeIcon(QString name)
 {
-
+    //If a user is selected they are placeed in the next available slot.
     if (playerList[0] == name)
     {
         ui->north->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
@@ -388,6 +390,7 @@ void serverLobby::changeIcon(QString name)
 
 void serverLobby::removeSpot(int pos)
 {
+    //The icon is removed from the slots if the person is deselected.
     if(pos == 0)
     {
         ui->north->setIcon(QIcon(":/resources/guiResources/background/playerBackground.png"));

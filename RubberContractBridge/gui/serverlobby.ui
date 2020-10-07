@@ -270,6 +270,102 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;</string>
     </item>
    </layout>
   </widget>
+  <widget class="QLabel" name="player1_2">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>90</y>
+     <width>100</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font-weight: bold;
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>NORTH</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="player1_3">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>220</y>
+     <width>100</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font-weight: bold;
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>SOUTH</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="player1_4">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>90</y>
+     <width>100</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font-weight: bold;
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>EAST</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="player1_5">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>220</y>
+     <width>100</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font-weight: bold;
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>WEST</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

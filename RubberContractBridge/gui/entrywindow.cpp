@@ -16,6 +16,7 @@ EntryWindow::~EntryWindow()
 
 void EntryWindow::windowSetup()
 {
+    //Set up the background pixelmap
     QPixmap bkgnd(":/resources/guiResources/background/background2.png");
     bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
     QPalette palette;
@@ -30,12 +31,14 @@ void EntryWindow::windowSetup()
 
 void EntryWindow::on_clientButton_clicked()
 {
+    //Branch to client side of program.
     this->close();
     loginWindow = new clientLogin();
 }
 
 void EntryWindow::on_serverButton_clicked()
 {
+    //Branch to server side of program.
     this->close();
     serverLogin = new ServerGUI();
 

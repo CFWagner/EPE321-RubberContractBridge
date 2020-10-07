@@ -33,12 +33,23 @@ ServerNetwork::~ServerNetwork()
     }
 }
 
+/*!
+ * \brief Return the socket that corresponds to the playerName.
+ * Throw an error if playerName can not be found and return nullptr.
+ * \param playerName: The name of the player, whose socket is requested. (QString)
+ * \return A pointer to the QTcpSocket of the requested client. Should be used when constructing the PlayerNetwork class.
+ */
+
 QTcpSocket *ServerNetwork::getPlayerSoc(QString playerName) const
 {
-    // Return the socket that corresponds to the playerName.
-    // Throw an error if playerName can not be found and return nullptr.
     return nullptr;
 }
+
+/*!
+ * \brief Set the password of the server. It is the responsibility of the GUI, to validate the strength of the password.
+ * No checking is done in the ServerNetwork class.
+ * \param password: Validated password. (QString)
+ */
 
 void ServerNetwork::setPassword(QString password)
 {
@@ -46,11 +57,17 @@ void ServerNetwork::setPassword(QString password)
     this->password = password;
 }
 
+/*!
+ * Open a port on the given ip address.
+ * Start listening for clients that want to connect.
+ * The IP address can only be set once after the program has started.
+ * \param ip: IP Address of the server. (QHostAddresss)
+ * \param port: port that the server will use. (quint16)
+ */
+
 void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 {
-    // Open a port on the given ip address.
     // Use port 61074.
-    // Start listening for clients that want to connect.
     // The IP address can only be set once after the program has started.
 
     // Prepare bUnitTest
@@ -105,10 +122,12 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 
 }
 
-
+/*!
+ * \brief Stop listening for new client connections.
+ */
 void ServerNetwork::stopListening()
 {
-    // Stop listen for new client connections.
+
 
 }
 
@@ -117,13 +136,17 @@ QVector<bool> ServerNetwork::getUnitTest() const
     return bUnitTest;
 }
 
+/*!
+ * Accept new client connections.
+ * Add client to clientSocTemp.
+ * Make signal slot connections.
+ */
+
 void ServerNetwork::connectClient()
 {
-    // Accept new client connections.
-    // Add client to clientSocTemp.
-    // Make signal slot connections.
-
     QTcpSocket* clientConnection = tcpServer->nextPendingConnection();
+
+    qInfo() << "Client tried to connect: " << clientConnection;
 
 
     if (!clientConnection) {
@@ -241,7 +264,6 @@ void ServerNetwork::validateClient()
         // Notify the client of the successfull login.
         txObj["loginSuccessful"] = true;
         txObj["reason"] = "";
-
     } else {
         // The login was not accpeted.
         // Notify the client with a reason and disconnect the client.
@@ -255,9 +277,10 @@ void ServerNetwork::validateClient()
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_10);
 
+
     // Send the login request to the server
     out << txObj;
-    int tempVal = clientSoc.last()->write(block);
+    int tempVal = tempSocket->write(block);
 
     qInfo() << "Number of bytes expected to be sent to the client: " << block.size();
     qInfo() << "Number of bytes sent to client: " << tempVal;
@@ -276,13 +299,18 @@ void ServerNetwork::validateClient()
     }
 }
 
+/*!
+ * \brief Handel the process when a client disconnects.
+ * When a client disconnects, check if the client logged in.
+ * If logged in, remove username and client socket.
+ * Signal the GUI to also remove the client.
+ */
+
 void ServerNetwork::disconnectClient()
 {
-    // When a client disconnects, check if the client logged in.
-    // If logged in, remove username and client socket.
-    // Signal the GUI to also remove the client.
 
     qInfo() << "Socket disconnected";
+    qInfo() << "Before disconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
 
     // Get the sender's QTcpSocket
     QObject* obj = sender();
@@ -292,6 +320,7 @@ void ServerNetwork::disconnectClient()
         // The client was not logged in
         // Remove from clientSocTemp
         clientSocTemp.removeAll(tempSocket);
+        qInfo() << "Disconnect: Removed from clientSocTemp";
     }
 
     if (clientSoc.contains(tempSocket)){
@@ -304,8 +333,12 @@ void ServerNetwork::disconnectClient()
         playerNames.removeAll(tempPlayerName);
         clientSoc.removeAll(tempSocket);
 
+        qInfo() << "Disconnect: Removed from clientSoc. The player's name is: " + tempPlayerName;
+
         emit playerDisconnected(tempPlayerName);
     }
+
+    qInfo() << "After dissconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
 
 }
 

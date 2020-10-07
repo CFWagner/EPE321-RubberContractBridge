@@ -16,12 +16,17 @@ public:
 
 
 private slots:
-    void Login();
+    void verifyServerWorking();
+    void LoginCorrectly();
+    void wrongServerDetails();
+    void incorrectSocket();
+    void cleanupTestCase();
 
 
 signals:
 
 private:
+    void testFunc();
 
 
     QString passwordServer;
@@ -29,15 +34,12 @@ private:
     QHostAddress ip;
     QString playerName;
     ServerNetwork testServerNet1;
-    ClientNetwork testClient1;
+
+    ServerNetwork *testServer;
 
     QSignalSpy *spyServer;
     QSignalSpy *spyServerPlayerJoined;
     QSignalSpy *spyServerError;
-
-    QSignalSpy *spyClientConnectResult;
-    QSignalSpy *spyClientLoginResult;
-    QSignalSpy *spyClientError;
 
 };
 

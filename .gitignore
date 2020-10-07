@@ -14,3 +14,6 @@ Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user
 Test applications/FortuneClientServer - 2 way/build-fortuneserver-Desktop_x86_windows_msvc2019_pe_64bit-Debug/
 
 Test applications/FortuneClientServer - 2 way/build-fortuneclient-Desktop_x86_windows_msvc2019_pe_64bit-Debug/
+build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Profile/
+
+build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Release/

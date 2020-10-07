@@ -15,8 +15,14 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
                                  CardSet playerHand, CardSet dummyHand)
 {
     this->phase = phase;
-    this->currentBid = new Bid(*currentBid);
-    this->contractBid = new Bid(*contractBid);
+    if(currentBid == nullptr)
+        this->currentBid = nullptr;
+    else
+        this->currentBid = new Bid(*currentBid);
+    if(contractBid == nullptr)
+        this->contractBid = nullptr;
+    else
+        this->contractBid = new Bid(*contractBid);
     this->gameNumber = gameNumber;
     this->dealNumber =dealNumber;
     this->trickNumber = trickNumber;
@@ -40,8 +46,14 @@ PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent
                                  CardSet playerHand, CardSet dummyHand)
 {
     phase = gameState.getPhase();
-    currentBid = new Bid(*gameState.getCurrentBid());
-    currentBid = new Bid(*gameState.getCurrentBid());
+    if(gameState.getCurrentBid() == nullptr)
+        currentBid = nullptr;
+    else
+        currentBid = new Bid(*gameState.getCurrentBid());
+    if(gameState.getContractBid() == nullptr)
+        contractBid = nullptr;
+    else
+        contractBid = new Bid(*gameState.getCurrentBid());
     gameNumber = gameState.getGameNumber();
     dealNumber = gameState.getDealNumber();
     trickNumber = gameState.getTrickNumber();
@@ -97,8 +109,14 @@ void PlayerGameState::read(const QJsonObject &json)
     declarer = PlayerPosition(json["declarer"].toInt());
 
     // Read GameState non-list non-object attributes from JSON object
-    currentBid->read(json["currentBid"].toObject());
-    contractBid->read(json["contractBid"].toObject());
+    if(json["currentBid"].isNull())
+        currentBid = nullptr;
+    else
+        currentBid->read(json["currentBid"].toObject());
+    if(json["contractBid"].isNull())
+        contractBid = nullptr;
+    else
+        contractBid->read(json["contractBid"].toObject());
     score.read(json["score"].toObject());
 
     // Read PlayerGameState non-list non-object attributes from JSON object
@@ -152,12 +170,22 @@ void PlayerGameState::write(QJsonObject &json) const
     json["declarer"] = declarer;
 
     // Add GameState non-list object attributes to JSON object
-    QJsonObject jsonCurrentBid;
-    currentBid->write(jsonCurrentBid);
-    json["currentBid"] = jsonCurrentBid;
-    QJsonObject jsonContractBid;
-    contractBid->write(jsonContractBid);
-    json["contractBid"] = jsonContractBid;
+    if(currentBid == nullptr){
+        json["currentBid"] = QJsonValue(QJsonValue::Type::Null);
+    }
+    else{
+        QJsonObject jsonCurrentBid;
+        currentBid->write(jsonCurrentBid);
+        json["currentBid"] = jsonCurrentBid;
+    }
+    if(contractBid == nullptr){
+        json["contractBid"] = QJsonValue(QJsonValue::Type::Null);
+    }
+    else{
+        QJsonObject jsonContractBid;
+        contractBid->write(jsonContractBid);
+        json["contractBid"] = jsonContractBid;
+    }
     QJsonObject jsonScore;
     score.write(jsonScore);
     json["score"] = jsonScore;
@@ -187,7 +215,7 @@ void PlayerGameState::write(QJsonObject &json) const
     QJsonArray jsonTeamVulnerableArray;
     for (const bool &teamVulnerableElement: teamVulnerable)
         jsonTeamVulnerableArray.append(teamVulnerableElement);
-    json["teamVulnerable"];
+    json["teamVulnerable"] = jsonTeamVulnerableArray;
 
     // Add PlayerGameState player positions map to JSON object
     QMapIterator<PlayerPosition, QString> iter(playerPositions);

@@ -7,8 +7,14 @@ GameState::GameState() {}
 GameState::GameState(const GameState &gameState)
 {
     this->phase = gameState.phase;
-    this->currentBid = new Bid(*gameState.currentBid);
-    this->contractBid = new Bid(*gameState.contractBid);
+    if(gameState.getCurrentBid() == nullptr)
+        currentBid = nullptr;
+    else
+        currentBid = new Bid(*gameState.getCurrentBid());
+    if(gameState.getContractBid() == nullptr)
+        contractBid = nullptr;
+    else
+        contractBid = new Bid(*gameState.getContractBid());
     this->gameNumber = gameState.gameNumber;
     this->dealNumber = gameState.dealNumber;
     this->trickNumber = gameState.trickNumber;

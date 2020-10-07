@@ -53,7 +53,7 @@ PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent
     if(gameState.getContractBid() == nullptr)
         contractBid = nullptr;
     else
-        contractBid = new Bid(*gameState.getCurrentBid());
+        contractBid = new Bid(*gameState.getContractBid());
     gameNumber = gameState.getGameNumber();
     dealNumber = gameState.getDealNumber();
     trickNumber = gameState.getTrickNumber();
@@ -109,14 +109,22 @@ void PlayerGameState::read(const QJsonObject &json)
     declarer = PlayerPosition(json["declarer"].toInt());
 
     // Read GameState non-list non-object attributes from JSON object
-    if(json["currentBid"].isNull())
+    if(json["currentBid"].isNull()){
         currentBid = nullptr;
-    else
+    }
+    else{
+        if(currentBid == nullptr)
+            currentBid = new Bid();
         currentBid->read(json["currentBid"].toObject());
-    if(json["contractBid"].isNull())
+    }
+    if(json["contractBid"].isNull()){
         contractBid = nullptr;
-    else
+    }
+    else{
+        if(contractBid == nullptr)
+            contractBid = new Bid();
         contractBid->read(json["contractBid"].toObject());
+    }
     score.read(json["score"].toObject());
 
     // Read PlayerGameState non-list non-object attributes from JSON object

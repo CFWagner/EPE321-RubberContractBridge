@@ -134,6 +134,9 @@ void TestPlayerGameState::testPlayerGameState()
     playerPositions.insert(SOUTH, "Player 3");
     playerPositions.insert(WEST, "Player 4");
 
+    currentBid = new Bid(NORTH, SPADES, 5);
+    contractBid = new Bid(SOUTH, HEARTS, 2);
+
     // Construct PlayerGameState instance
     PlayerGameState playerState3(phase, currentBid, contractBid, gameNumber, dealNumber,
                                 trickNumber, tricks, playerTurn, handToPlay, dealer, declarer,
@@ -142,8 +145,8 @@ void TestPlayerGameState::testPlayerGameState()
 
     // Test PlayerGameState instance attributes
     QCOMPARE(playerState3.getPhase(), phase);
-    QCOMPARE(playerState3.getCurrentBid(), nullptr);
-    QCOMPARE(playerState3.getContractBid(), nullptr);
+    QCOMPARE(*playerState3.getCurrentBid() == *currentBid, true);
+    QCOMPARE(*playerState3.getContractBid() == *contractBid, true);
     QCOMPARE(playerState3.getGameNumber(), gameNumber);
     QCOMPARE(playerState3.getDealNumber(), dealNumber);
     QCOMPARE(playerState3.getTrickNumber(), trickNumber);
@@ -174,14 +177,14 @@ void TestPlayerGameState::testPlayerGameState()
 
     // Read to and write from JSON object with object attributes that are nullptr or empty lists
     QJsonObject jsonPlayerState3;
-    playerState3.write(jsonPlayerState);
+    playerState3.write(jsonPlayerState3);
     PlayerGameState playerState4;
-    playerState4.read(jsonPlayerState);
+    playerState4.read(jsonPlayerState3);
 
     // Test target PlayerGameState instance attributes
     QCOMPARE(playerState4.getPhase(), phase);
-    QCOMPARE(playerState4.getCurrentBid(), nullptr);
-    QCOMPARE(playerState4.getContractBid(), nullptr);
+    QCOMPARE(*playerState4.getCurrentBid() == *currentBid, true);
+    QCOMPARE(*playerState4.getContractBid() == *contractBid, true);
     QCOMPARE(playerState4.getGameNumber(), gameNumber);
     QCOMPARE(playerState4.getDealNumber(), dealNumber);
     QCOMPARE(playerState4.getTrickNumber(), trickNumber);
@@ -209,4 +212,31 @@ void TestPlayerGameState::testPlayerGameState()
         QCOMPARE(playerState4.getPlayerName(PlayerPosition(position)),
                  playerPositions.value(PlayerPosition(position)));
     }
+
+    // Call game state copy constructor
+    GameState gameState1(playerState3);
+
+    // Test PlayerGameState instance attributes
+    QCOMPARE(gameState1.getPhase(), playerState3.getPhase());
+    QCOMPARE(*gameState1.getCurrentBid() == *playerState3.getCurrentBid(), true);
+    QCOMPARE(*gameState1.getContractBid() == *playerState3.getContractBid(), true);
+    QCOMPARE(gameState1.getGameNumber(), playerState3.getGameNumber());
+    QCOMPARE(gameState1.getDealNumber(), playerState3.getDealNumber());
+    QCOMPARE(gameState1.getTrickNumber(), playerState3.getTrickNumber());
+    QCOMPARE(gameState1.getPlayerTurn(), playerState3.getPlayerTurn());
+    QCOMPARE(gameState1.getHandToPlay(), playerState3.getHandToPlay());
+    QCOMPARE(gameState1.getDealer(), playerState3.getDealer());
+    QCOMPARE(gameState1.getDeclarer(), playerState3.getDeclarer());
+    QCOMPARE(gameState1.getTeamVulnerable(N_S), playerState3.getTeamVulnerable(N_S));
+    QCOMPARE(gameState1.getTeamVulnerable(E_W), playerState3.getTeamVulnerable(E_W));
+
+    // Compare list based attributes
+    for(qint8 i = 0; i < tricks.size(); ++ i){
+        for(qint8 j = 0; j < tricks[i].getCardCount(); ++ j){
+            QCOMPARE(gameState1.getTricks()[i].getCard(j) == playerState3.getTricks()[i].getCard(j), true);
+        }
+    }
+
+    delete currentBid;
+    delete contractBid;
 }

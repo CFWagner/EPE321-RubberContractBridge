@@ -20,7 +20,7 @@ public:
     ~ClientNetwork();
 
     // Unit test data
-    QVector<bool> getUnitTest() const;
+    QVector<bool> getUnitTest();
 
 public slots:
     void txRequestLogin(QHostAddress serverIP, quint16 port, QString playerName, QString password);

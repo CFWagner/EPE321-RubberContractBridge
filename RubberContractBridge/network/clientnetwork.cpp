@@ -42,8 +42,9 @@ ClientNetwork::~ClientNetwork()
     tcpSoc->abort();
 }
 
-QVector<bool> ClientNetwork::getUnitTest() const
+QVector<bool> ClientNetwork::getUnitTest()
 {
+    emit generalError("bUnitTest was requested, but it isn't being used anymore.");
     return bUnitTest;
 }
 

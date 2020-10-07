@@ -21,7 +21,6 @@ testClientNetwork::~testClientNetwork()
     spyServer->deleteLater();
     spyServerPlayerJoined->deleteLater();
     spyServerError->deleteLater();
-    testServer->deleteLater();
 }
 
 void testClientNetwork::verifyServerWorking()
@@ -41,6 +40,12 @@ void testClientNetwork::verifyServerWorking()
 
     // Were any generalError's emited from testServerNet1?
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
+
+    // Test the generalError signal
+    testServerNet1.getUnitTest();
+    QVERIFY2(spyServerError->count() == 1,"General errors occured in the testServerNet1.");
+    QList<QVariant> arguments2 = spyServerError->takeFirst();
+    QCOMPARE(arguments2.at(0), "bUnitTest was requested, but it isn't being used anymore.");
 }
 
 /*!
@@ -273,6 +278,7 @@ void testClientNetwork::wrongServerDetails()
     // The connection should be sucsessfull.
     QCOMPARE(argumentsC.at(0), 0);
 
+    // Proof that QJsonObject data transfer works.
     argumentsC = spyClientLoginResult2.takeFirst();
     QCOMPARE(argumentsC.at(0), false);
     QCOMPARE(argumentsC.at(1), "The palyer may not be given the same name as an AI. AI's name is: AI");
@@ -384,7 +390,7 @@ void testClientNetwork::incorrectSocket()
     // (Log into the server.)
     // Remember to monitor both the client and the server.
     testClient1.txRequestLogin(IP_wrong,portWrong,playerName,passwordServer);
-    QVERIFY(spyClientConnectResult.wait(20000));
+    QVERIFY(spyClientConnectResult.wait(30000));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
@@ -415,7 +421,7 @@ void testClientNetwork::incorrectSocket()
     // (Log into the server.)
     // Remember to monitor both the client and the server.
     testClient1.txRequestLogin(IP_wrong,port,playerName,passwordServer);
-    QVERIFY(spyClientConnectResult.wait(20000));
+    QVERIFY(spyClientConnectResult.wait(30000));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");

@@ -131,8 +131,9 @@ void ServerNetwork::stopListening()
 
 }
 
-QVector<bool> ServerNetwork::getUnitTest() const
+QVector<bool> ServerNetwork::getUnitTest()
 {
+    emit generalError("bUnitTest was requested, but it isn't being used anymore.");
     return bUnitTest;
 }
 

@@ -28,7 +28,7 @@ public:
     void stopListening();
 
     // Unit test data
-    QVector<bool> getUnitTest() const;
+    QVector<bool> getUnitTest();
 
 private slots:
     void connectClient();
@@ -47,7 +47,7 @@ signals:
     // definitively the port that is already in use.)
     // GUI is responsible for creating the messages regarding connection status. (genearl Info and warning signals will not be used for this.)
 
-    void generalInfo(QString infoMsg);
+//    void generalInfo(QString infoMsg);
     // All information, such as the port it connected to. (Should be displayed to the administrator.)
 
     void generalError(QString errorMsg);

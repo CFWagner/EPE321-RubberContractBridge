@@ -35,8 +35,6 @@ private:
     QString playerName;
     ServerNetwork testServerNet1;
 
-    ServerNetwork *testServer;
-
     QSignalSpy *spyServer;
     QSignalSpy *spyServerPlayerJoined;
     QSignalSpy *spyServerError;

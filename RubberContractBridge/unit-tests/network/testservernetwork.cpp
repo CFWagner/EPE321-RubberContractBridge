@@ -82,6 +82,15 @@ void testServerNetwork::initServer2()
     QSignalSpy spy1(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,quint16,QString)));
     QVERIFY(spy1.isValid());
 
+    // Test the generalError signal
+    QSignalSpy spy2(&testServerNet1, SIGNAL(generalError(QString)));
+    QVERIFY(spy2.isValid());
+
+    testServerNet1.getUnitTest();
+
+    QList<QVariant> arguments2 = spy2.takeFirst();
+    QCOMPARE(arguments2.at(0), "bUnitTest was requested, but it isn't being used anymore.");
+
     // Server should be able to connect to port.
     testServerNet1.initServer(ip,port);
 

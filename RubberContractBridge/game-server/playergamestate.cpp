@@ -5,6 +5,7 @@
 // Default constructor
 PlayerGameState::PlayerGameState() {}
 
+// Constructor with all attributes
 PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const Bid* contractBid,
                                  qint8 gameNumber, qint8 dealNumber, qint8 trickNumber,
                                  QVector<CardSet> tricks, PlayerPosition playerTurn,
@@ -33,6 +34,7 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
     this->dummyHand = dummyHand;
 }
 
+// Constructor with parent class GameState referenceand PlayerGameState class attributes
 PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent,
                                  QMap<PlayerPosition, QString> playerPositions,
                                  CardSet playerHand, CardSet dummyHand)

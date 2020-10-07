@@ -11,8 +11,6 @@ class ServerGameState: public GameState
 public:
     ServerGameState();
     ServerGameState(PlayerPosition dealer);
-    void nextDeal();
-    void nextTrick();
     void updateBidState(const Bid &bid);
     void updatePlayState(const Card &card);
     bool isBidValid(const Bid &bid) const;
@@ -20,12 +18,18 @@ public:
     const CardSet& getDeck();
     PlayerGameState getPlayerGameState(PlayerPosition player, QVector<Player*> players,
                                        GameEvent gameEvent);
+    void startGame();
+    // Functions for unit testing purposes
+    const QMap<PlayerPosition, CardSet>& getPlayerHands() const;
+    void setPlayerHands(const QMap<PlayerPosition, CardSet> &playerHands);
 private:
     QMap<PlayerPosition, CardSet> playerHands; // List of cards in each players hand
     CardSet deck; // Set of 52 unique cards that are dealt at the start of each round
     qint8 passCount; // Number of consecutive passes made during the bidding phase
     PlayerPosition determineTrickWinner() const;
     static Team getPlayerTeam(PlayerPosition position);
+    void nextDeal();
+    void nextTrick();
 };
 
 #endif // SERVERGAMESTATE_H

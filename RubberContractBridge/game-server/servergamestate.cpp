@@ -34,6 +34,11 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     }
 }
 
+void ServerGameState::startGame()
+{
+    nextDeal();
+}
+
 // Prepare game for next deal round
 // Reset game specific attributes, shuffle deck and deal cards
 void ServerGameState::nextDeal()
@@ -139,6 +144,12 @@ void ServerGameState::updatePlayState(const Card &card)
     CardSet* currentTrick = &tricks[trickNumber - 1];
     currentTrick->addCard(card);
 
+    // Remove card from player hand
+    qint8 removeIndex = 0;
+    while(!(playerHands[handToPlay].getCard(removeIndex) == card))
+        removeIndex++;
+    playerHands[handToPlay].removeCard(removeIndex);
+
     // Check if trick is complete
     if(currentTrick->getCardCount() == 4){
         // Determine winner
@@ -153,9 +164,23 @@ void ServerGameState::updatePlayState(const Card &card)
         }
 
         // Winner plays first next
-        playerTurn = winner;
+        handToPlay = winner;
+        if(handToPlay == getDummy())
+            playerTurn = declarer;
+        else
+            playerTurn = handToPlay;
         nextTrick();
     }
+    // Get next hand to play and player positoin
+    else{
+        handToPlay = PlayerPosition((handToPlay + 1) % 4);
+        if(handToPlay == getDummy())
+            playerTurn = declarer;
+        else
+            playerTurn = handToPlay;
+    }
+
+
 }
 
 // Getter for the cards currently in the deck
@@ -174,6 +199,18 @@ PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player, QVect
     if(phase == CARDPLAY)
         dummyHand = playerHands[getDummy()];
     return PlayerGameState(*this, gameEvent, playerPositions, playerHands[player], dummyHand);
+}
+
+// Getter for player hands
+const QMap<PlayerPosition, CardSet>& ServerGameState::getPlayerHands() const
+{
+    return playerHands;
+}
+
+// Setter for player hands
+void ServerGameState::setPlayerHands(const QMap<PlayerPosition, CardSet> &playerHands)
+{
+    this->playerHands = playerHands;
 }
 
 // Check if the new bid is valid given the current bid. Passing nullptr as the current bid
@@ -220,12 +257,12 @@ bool ServerGameState::isCardValid(const Card &card) const
     if(trick.getCardCount() == 0)
         return true;
 
-    // Check if the card is of the trump suit or matches the suit of the first card played
-    // in the trick
-    if(card.getSuit() == contractBid->getTrumpSuit()
-            || card.getSuit() == trick.getCard(0).getSuit()){
+    // Check if the card matches the suit of the first card played in the trick
+    if(card.getSuit() == trick.getCard(0).getSuit())
         return true;
-    }
+    // Check if player had first suit played in their hand
+    else if(!playerHands[handToPlay].containsSuit(trick.getCard(0).getSuit()))
+        return true;
     return false;
 }
 
@@ -264,5 +301,5 @@ PlayerPosition ServerGameState::determineTrickWinner() const{
     // Identify winning player
     // playerTurn refers to player that played last card in trick
     // Add 1 to get player that played first card then add bestIndex to get winning player
-    return PlayerPosition((playerTurn + bestIndex + 1) % 4);
+    return PlayerPosition((handToPlay + bestIndex + 1) % 4);
 }

@@ -36,7 +36,7 @@ void TestServerGameState::testServerGameState()
     }
 
     // Test deal initiation
-    serverState.nextDeal();
+    serverState.startGame();
     QCOMPARE(serverState.getPhase(), BIDDING);
     QCOMPARE(serverState.getCurrentBid(), nullptr);
     QCOMPARE(serverState.getContractBid(), nullptr);
@@ -167,7 +167,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
 
-    // Teat attributes after 4 passes with a valid current bid
+    // Test attributes after 4 passes with a valid current bid
     serverState.updateBidState(Bid(NORTH, PASS));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getCurrentBid(), nullptr);
@@ -179,7 +179,125 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricks().size(), 1);
     QCOMPARE(serverState.getTricks().value(1).getCardCount(), 0);
     QCOMPARE(serverState.getDeclarer(), bid1.getBidder());
+    QCOMPARE(serverState.getDummy(), SOUTH);
     QCOMPARE(serverState.getHandToPlay(), EAST);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
 
+    // Manually assign player hands
+    CardSet northHand;
+    CardSet eastHand;
+    CardSet southHand;
+    CardSet westHand;
+
+    northHand.addCard(Card(CLUBS, ACE));
+    northHand.addCard(Card(CLUBS, TWO));
+    northHand.addCard(Card(CLUBS, THREE));
+    northHand.addCard(Card(CLUBS, FOUR));
+    northHand.addCard(Card(CLUBS, FIVE));
+    northHand.addCard(Card(CLUBS, SIX));
+    northHand.addCard(Card(CLUBS, SEVEN));
+    northHand.addCard(Card(CLUBS, EIGHT));
+    northHand.addCard(Card(CLUBS, NINE));
+    northHand.addCard(Card(CLUBS, TEN));
+    northHand.addCard(Card(CLUBS, JACK));
+    northHand.addCard(Card(CLUBS, QUEEN));
+    northHand.addCard(Card(CLUBS, KING));
+
+    eastHand.addCard(Card(DIAMONDS, ACE));
+    eastHand.addCard(Card(HEARTS, TWO));
+    eastHand.addCard(Card(DIAMONDS, THREE));
+    eastHand.addCard(Card(DIAMONDS, FOUR));
+    eastHand.addCard(Card(DIAMONDS, FIVE));
+    eastHand.addCard(Card(DIAMONDS, SIX));
+    eastHand.addCard(Card(DIAMONDS, SEVEN));
+    eastHand.addCard(Card(DIAMONDS, EIGHT));
+    eastHand.addCard(Card(DIAMONDS, NINE));
+    eastHand.addCard(Card(DIAMONDS, TEN));
+    eastHand.addCard(Card(DIAMONDS, JACK));
+    eastHand.addCard(Card(DIAMONDS, QUEEN));
+    eastHand.addCard(Card(DIAMONDS, KING));
+
+    southHand.addCard(Card(DIAMONDS, TWO));
+    southHand.addCard(Card(HEARTS, ACE));
+    southHand.addCard(Card(HEARTS, THREE));
+    southHand.addCard(Card(HEARTS, FOUR));
+    southHand.addCard(Card(HEARTS, FIVE));
+    southHand.addCard(Card(HEARTS, SIX));
+    southHand.addCard(Card(HEARTS, SEVEN));
+    southHand.addCard(Card(HEARTS, EIGHT));
+    southHand.addCard(Card(HEARTS, NINE));
+    southHand.addCard(Card(HEARTS, TEN));
+    southHand.addCard(Card(HEARTS, JACK));
+    southHand.addCard(Card(HEARTS, QUEEN));
+    southHand.addCard(Card(HEARTS, KING));
+
+    westHand.addCard(Card(SPADES, ACE));
+    westHand.addCard(Card(SPADES, TWO));
+    westHand.addCard(Card(SPADES, THREE));
+    westHand.addCard(Card(SPADES, FOUR));
+    westHand.addCard(Card(SPADES, FIVE));
+    westHand.addCard(Card(SPADES, SIX));
+    westHand.addCard(Card(SPADES, SEVEN));
+    westHand.addCard(Card(SPADES, EIGHT));
+    westHand.addCard(Card(SPADES, NINE));
+    westHand.addCard(Card(SPADES, TEN));
+    westHand.addCard(Card(SPADES, JACK));
+    westHand.addCard(Card(SPADES, QUEEN));
+    westHand.addCard(Card(SPADES, KING));
+
+    QMap<PlayerPosition, CardSet> playerHands;
+    playerHands.insert(NORTH, northHand);
+    playerHands.insert(EAST, eastHand);
+    playerHands.insert(SOUTH, southHand);
+    playerHands.insert(WEST, westHand);
+    serverState.setPlayerHands(playerHands);
+
+    // Test card validation when no cards have been played
+    QCOMPARE(serverState.isCardValid(Card(CLUBS, ACE)), false);  // Card not in EAST hand
+    QCOMPARE(serverState.isCardValid(Card(DIAMONDS, ACE)), true);  // Card in EAST hand
+
+    // Test attributes after playing card
+    serverState.updatePlayState(Card(DIAMONDS, ACE));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getTricks().value(0).getCard(0) == Card(DIAMONDS, ACE), true);
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getPlayerHands().value(EAST).containsCard(Card(DIAMONDS, ACE)), false);
+
+    // Test card validation when cards have been played
+    QCOMPARE(serverState.isCardValid(Card(HEARTS, THREE)), false);  // Wrong suit, SOUTH has correct suit
+    QCOMPARE(serverState.isCardValid(Card(DIAMONDS, TWO)), true);  // Correct suit
+
+    // Test attributes after playing card
+    serverState.updatePlayState(Card(DIAMONDS, TWO));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getTricks().value(0).getCard(1) == Card(DIAMONDS, TWO), true);
+    QCOMPARE(serverState.getHandToPlay(), WEST);
+    QCOMPARE(serverState.getPlayerTurn(), WEST);
+    QCOMPARE(serverState.getPlayerHands().value(SOUTH).containsCard(Card(DIAMONDS, TWO)), false);
+
+    // Test card validation when cards have been played
+    QCOMPARE(serverState.isCardValid(Card(SPADES, ACE)), true);  // Wrong suit, WEST doesn't have correct suit
+
+    // Test attributes after playing card
+    serverState.updatePlayState(Card(SPADES, ACE));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getTricks().value(0).getCard(2) == Card(SPADES, ACE), true);
+    QCOMPARE(serverState.getHandToPlay(), NORTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getPlayerHands().value(WEST).containsCard(Card(SPADES, ACE)), false);
+
+    // Test attributes after playing 4th card to end trick
+    serverState.updatePlayState(Card(CLUBS, ACE));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getTricks().value(0).getCard(3) == Card(CLUBS, ACE), true);
+    QCOMPARE(serverState.getHandToPlay(), NORTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getPlayerHands().value(NORTH).containsCard(Card(CLUBS, ACE)), false);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 2);
+    QCOMPARE(serverState.getTricks().size(), 2);
+    QCOMPARE(serverState.getDealer(), EAST);
+    QCOMPARE(serverState.getDeclarer(), NORTH);
 }

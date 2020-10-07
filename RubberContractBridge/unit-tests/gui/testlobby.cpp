@@ -19,6 +19,17 @@ void testLobby::Lobby()
     QVERIFY(spyaddPlayer->isValid());
     QVERIFY(spyremovePlayer->isValid());
     emit addPlayer("Stitch");
+    QTest::qWait(3000);
     emit addPlayer("Lydia");
-    emit removePlayer("Lydia");
+    emit removePlayer("Stitch");
+    QCheckBox *player2b = testserlobby.findChild<QCheckBox *>("addPlayer2");
+    QTest::mouseClick(player2b, Qt::LeftButton);
+    QLabel *player1l = testserlobby.findChild<QLabel *>("player1");
+    QLabel *player2l = testserlobby.findChild<QLabel *>("player2");
+    qDebug()<<player1l->text();
+    QVERIFY(player2l->text() == "Lydia");
+    QVERIFY(player1l->text() == "");
+    QTest::qWait(3000);
+    emit addPlayer("Kai");
+
 }

@@ -2,6 +2,7 @@
 #include "ui_serverlobby.h"
 
 QString playerList[4] = { "", "", "", ""};
+int filled[5] = {0,0,0,0,0};
 int counter = 0;
 int playeramount = 0;
 serverLobby::serverLobby(QWidget *parent) :
@@ -83,7 +84,7 @@ void serverLobby::on_east_clicked()
     }
     else if (playerList[1] == "")
     {
-        playerList[1] = "";
+        playerList[1] = "BOT";
         ui->east->setIcon(QIcon(":/resources/guiResources/background/robot.png"));
         playeramount++;
     }
@@ -107,33 +108,53 @@ void serverLobby::on_north_clicked()
 
 void serverLobby::on_addPlayer1_stateChanged(int arg1)
 {
-    if (ui->player1->text() != "")
-    {
-        if (playeramount <= 4)
+    int pos = -1;
+    if (arg1 == 2){
+        if (ui->player1->text() != "")
         {
-            for (int i =0; i <4;i++)
+            if (playeramount <= 4)
             {
-                if(playerList[i] != "BOT")
+                for (int i =0; i <4;i++)
                 {
-                    playerList[i] = ui->player1->text();
-                    playeramount++;
-                    break;
+                    if(playerList[i] == "")
+                    {
+                        playerList[i] = ui->player1->text();
+                        playeramount++;
+                        break;
+                    }
                 }
             }
+            changeIcon(ui->player1->text());
         }
-        changeIcon();
+    }
+    else
+    {
+        for (int i =0; i <4;i++)
+        {
+            if(playerList[i] == ui->player1->text())
+            {
+                pos = i;
+                playerList[i] = "";
+                playeramount--;
+                break;
+            }
+        }
+        removeSpot(pos);
+
     }
 }
 
 void serverLobby::on_addPlayer2_stateChanged(int arg1)
 {
+    int pos = -1;
+    if (arg1 == 2){
     if (ui->player2->text() != "")
     {
         if (playeramount <= 4)
         {
             for (int i =0; i <4;i++)
             {
-                if(playerList[i] != "BOT")
+                if(playerList[i]== "")
                 {
                     playerList[i] = ui->player2->text();
                     playeramount++;
@@ -141,19 +162,37 @@ void serverLobby::on_addPlayer2_stateChanged(int arg1)
                 }
             }
         }
-        changeIcon();
+        changeIcon(ui->player2->text());
+    }
+    }
+    else
+    {
+        for (int i =0; i <4;i++)
+        {
+            if(playerList[i] == ui->player2->text())
+            {
+                pos = i;
+                playerList[i] = "";
+                playeramount--;
+                break;
+            }
+        }
+        removeSpot(pos);
+
     }
 }
 
 void serverLobby::on_addPlayer3_stateChanged(int arg1)
 {
+    int pos = -1;
+    if (arg1 == 2){
     if (ui->player3->text() != "")
     {
         if (playeramount <= 4)
         {
             for (int i =0; i <4;i++)
             {
-                if(playerList[i] != "BOT")
+                if(playerList[i] == "")
                 {
                     playerList[i] = ui->player3->text();
                     playeramount++;
@@ -161,19 +200,37 @@ void serverLobby::on_addPlayer3_stateChanged(int arg1)
                 }
             }
         }
-        changeIcon();
+        changeIcon(ui->player3->text());
+    }
+    }
+    else
+    {
+        for (int i =0; i <4;i++)
+        {
+            if(playerList[i] == ui->player3->text())
+            {
+                pos = i;
+                playerList[i] = "";
+                playeramount--;
+                break;
+            }
+        }
+        removeSpot(pos);
+
     }
 }
 
 void serverLobby::on_addPlayer4_stateChanged(int arg1)
 {
+    int pos = -1;
+    if (arg1 == 2){
     if (ui->player4->text() != "")
     {
         if (playeramount <= 4)
         {
             for (int i =0; i <4;i++)
             {
-                if(playerList[i] != "BOT")
+                if(playerList[i] == "")
                 {
                     playerList[i] = ui->player4->text();
                     playeramount++;
@@ -181,19 +238,37 @@ void serverLobby::on_addPlayer4_stateChanged(int arg1)
                 }
             }
         }
-        changeIcon();
+    }
+        changeIcon(ui->player4->text());
+    }
+    else
+    {
+        for (int i =0; i <4;i++)
+        {
+            if(playerList[i] == ui->player4->text())
+            {
+                pos = i;
+                playerList[i] = "";
+                playeramount--;
+                break;
+            }
+        }
+        removeSpot(pos);
+
     }
 }
 
 void serverLobby::on_addPlayer5_stateChanged(int arg1)
 {
+    int pos = -1;
+    if (arg1 == 2){
     if (ui->player5->text() != "")
     {
         if (playeramount <= 4)
         {
             for (int i =0; i <4;i++)
             {
-                if(playerList[i] != "BOT")
+                if(playerList[i] == "")
                 {
                     playerList[i] = ui->player4->text();
                     playeramount++;
@@ -201,8 +276,24 @@ void serverLobby::on_addPlayer5_stateChanged(int arg1)
                 }
             }
         }
+        changeIcon(ui->player5->text());
     }
-    changeIcon();
+    }
+    else
+    {
+        for (int i =0; i <4;i++)
+        {
+            if(playerList[i] == ui->player5->text())
+            {
+                pos = i;
+                playerList[i] = "";
+                playeramount--;
+                break;
+            }
+        }
+        removeSpot(pos);
+
+    }
 }
 void serverLobby::lobbyStart()
 {
@@ -211,75 +302,106 @@ void serverLobby::lobbyStart()
 
 void serverLobby::removePlayer(QString user)
 {
-    counter--;
-    switch (counter)
+    int pos = -1;
+    if (ui->player1->text() == user)
     {
-        case 1:
-            ui->player1->setText("");
-        break;
-
-        case 2:
-            ui->player2->setText("");
-        break;
-
-        case 3:
-            ui->player3->setText("");
-        break;
-
-        case 4:
-            ui->player4->setText("");
-        break;
-
-        case 5:
-            ui->player5->setText("");
-        break;
+        ui->player1->setText("");
+        filled[0] = 0;
+    }
+    else if (ui->player2->text() == user)
+    {
+        ui->player2->setText("");
+        filled[1] = 0;
+    }
+    else if (ui->player3->text() == user)
+    {
+        ui->player3->setText("");
+        filled[2] = 0;
+    }
+    else if (ui->player4->text() == user)
+    {
+        ui->player4->setText("");
+        filled[3] = 0;
+    }
+    else if (ui->player5->text() == user)
+    {
+        ui->player5->setText("");
+        filled[4] = 0;
     }
 
 }
 
 void serverLobby::addPlayer(QString user)
 {
-    counter++;
-    switch (counter)
+    int pos = -1;
+    for (int i =0; i <=4;i++)
     {
-        case 1:
-            ui->player1->setText(user);
-        break;
-
-        case 2:
-            ui->player2->setText(user);
-        break;
-
-        case 3:
-            ui->player3->setText(user);
-        break;
-
-        case 4:
-            ui->player4->setText(user);
-        break;
-
-        case 5:
-            ui->player5->setText(user);
-        break;
+        if (filled[i] == 0)
+        {
+            filled[i]=1;
+            pos = i;
+            break;
+        }
+    }
+    if (pos == 0)
+    {
+        ui->player1->setText(user);
+    }
+    else if (pos == 1)
+    {
+        ui->player2->setText(user);
+    }
+    else if (pos == 2)
+    {
+        ui->player2->setText(user);
+    }
+    else if (pos == 3)
+    {
+        ui->player3->setText(user);
+    }
+    else if (pos == 4)
+    {
+        ui->player4->setText(user);
     }
 
 }
-void serverLobby::changeIcon()
+void serverLobby::changeIcon(QString name)
 {
-    if (playerList[0] != "" || playerList[0] != "BOT")
+
+    if (playerList[0] == name)
     {
         ui->north->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
     }
-    else if (playerList[1] != "" || playerList[1] != "BOT")
+    else if (playerList[1] == name)
     {
         ui->east->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
     }
-    else if (playerList[2] != "" || playerList[2] != "BOT")
+    else if (playerList[2] == name)
     {
         ui->south->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
     }
-    else if (playerList[3] != "" || playerList[3] != "BOT")
+    else if (playerList[3] == name)
     {
         ui->west->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
+    }
+}
+
+void serverLobby::removeSpot(int pos)
+{
+    if(pos == 0)
+    {
+        ui->north->setIcon(QIcon(":/resources/guiResources/background/playerBackground.png"));
+    }
+    else if (pos == 1)
+    {
+        ui->east->setIcon(QIcon(":/resources/guiResources/background/playerBackground.png"));
+    }
+    else if (pos == 2)
+    {
+        ui->south->setIcon(QIcon(":/resources/guiResources/background/playerBackground.png"));
+    }
+    else if (pos == 3)
+    {
+        ui->west->setIcon(QIcon(":/resources/guiResources/background/playerBackground.png"));
     }
 }

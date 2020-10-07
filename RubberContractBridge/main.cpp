@@ -8,13 +8,13 @@
 int main(int argc, char *argv[])
 {
     QApplication rcbApplication(argc, argv);
-//    EntryWindow entryWindow;
-//    entryWindow.show();
-//    TestServerLogin testLogin;
-//    QTest::qExec(&testLogin);
+    EntryWindow entryWindow;
+    entryWindow.show();
 //    testclientlogin testcLogin;
 //    QTest::qExec(&testcLogin);
-    testLobby testlob;
-    QTest::qExec(&testlob);
+//    TestServerLogin testLogin;
+//    QTest::qExec(&testLogin);
+//    testLobby testlob;
+//    QTest::qExec(&testlob);
     return rcbApplication.exec();
 }

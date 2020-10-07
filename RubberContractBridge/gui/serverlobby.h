@@ -19,7 +19,9 @@ public:
     ~serverLobby();
     void windowSetup();
     void lobbyStart();
-    void changeIcon();
+    void changeIcon(QString user);
+    void removeSpot(int pos);
+    QString playerlist[4] = {"","","",""};
 
 public slots:
     void removePlayer (QString user);

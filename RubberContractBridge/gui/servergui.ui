@@ -1,21 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
- <class>serverGUI</class>
- <widget class="QWidget" name="serverGUI">
+ <class>ServerGUI</class>
+ <widget class="QWidget" name="ServerGUI">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>415</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>107</x>
+     <y>100</y>
+     <width>200</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;SERVER CREATOR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+font-weight: bold;</string>
+   </property>
+   <property name="title">
+    <string>SERVER CREATOR</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;SERVER PASSWORD:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:rgb(255, 255, 255);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+font-weight: bold</string>
+        </property>
+        <property name="text">
+         <string>SERVER PASSWORD:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="passswordLine">
+        <property name="styleSheet">
+         <string notr="true">color:rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="whatsThis">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;IP-ADDRESS:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:rgb(255, 255, 255);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>IP-ADDRESS:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="ipLine">
+          <property name="styleSheet">
+           <string notr="true">color:rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="whatsThis">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;PORT:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color:rgb(255, 255, 255);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>PORT:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="portLine">
+          <property name="styleSheet">
+           <string notr="true">color:rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_3"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="Hover" name="serverSetupButton">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>320</y>
+     <width>120</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>400</width>
+     <height>28</height>
+    </size>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>220</width>
+     <height>80</height>
+    </size>
+   </property>
+  </widget>
  </widget>
- <pixmapfunction/>
+ <customwidgets>
+  <customwidget>
+   <class>Hover</class>
+   <extends>QPushButton</extends>
+   <header location="global">hover.h</header>
+   <slots>
+    <slot>serverSetupButton()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
  <connections/>
 </ui>

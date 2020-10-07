@@ -8,5 +8,8 @@
         <file>guiResources/background/unselectedButton.png</file>
         <file>guiResources/background/selectedButton.png</file>
         <file>guiResources/background/login.png</file>
+        <file>guiResources/background/robot.png</file>
+        <file>guiResources/background/playerBackground.png</file>
+        <file>guiResources/background/userIcon.png</file>
     </qresource>
 </RCC>

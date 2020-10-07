@@ -9,15 +9,11 @@ class Hover : public QPushButton
 public:
     explicit Hover(QWidget *parent = 0);
 
-protected:
+public:
     void hoverEnter(QHoverEvent *event);
     void hoverLeave(QHoverEvent *event);
     void hoverMove(QHoverEvent *event);
     bool event(QEvent *event);
-
-signals:
-
-public slots:
 };
 
 #endif // HOVER_H

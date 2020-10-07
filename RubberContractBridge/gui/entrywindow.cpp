@@ -1,38 +1,42 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "entrywindow.h"
+#include "ui_entrywindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
+EntryWindow::EntryWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::EntryWindow)
 {
     ui->setupUi(this);
+    windowSetup();
+}
+
+EntryWindow::~EntryWindow()
+{
+    delete ui;
+}
+
+void EntryWindow::windowSetup()
+{
     QPixmap bkgnd(":/resources/guiResources/background/background2.png");
     bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
     QPalette palette;
     palette.setBrush(QPalette::Background, bkgnd);
     this->setPalette(palette);
     this->setFixedSize(415,520);
-    QWidget::setWindowTitle ("Rubber Contract Bridge");
+    QWidget::setWindowTitle ("Login Screen");
     ui->clientButton->setIcon(QIcon(":/resources/guiResources/background/unselectedButton.png"));
     ui->serverButton->setIcon(QIcon(":/resources/guiResources/background/unselectedButton.png"));
+
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
-void MainWindow::on_clientButton_clicked()
+void EntryWindow::on_clientButton_clicked()
 {
     this->close();
-    clientLoginWindow = new clientLoginGUI();
-    clientLoginWindow->show();
-
+    loginWindow = new clientLogin();
 }
 
-void MainWindow::on_serverButton_clicked()
+void EntryWindow::on_serverButton_clicked()
 {
     this->close();
-    serverWindow = new serverGUI();
-    serverWindow->show();
+    serverLogin = new ServerGUI();
+
 }

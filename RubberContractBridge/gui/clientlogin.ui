@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>clientLoginGUI</class>
- <widget class="QWidget" name="clientLoginGUI">
+ <class>clientLogin</class>
+ <widget class="QWidget" name="clientLogin">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,26 +13,19 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="loginBox">
    <property name="geometry">
     <rect>
      <x>107</x>
      <y>100</y>
      <width>200</width>
-     <height>180</height>
+     <height>261</height>
     </rect>
    </property>
    <property name="title">
-    <string/>
+    <string>LOGIN</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
-    <item>
-     <widget class="QLabel" name="usernameLabel_2">
-      <property name="text">
-       <string>LOGIN</string>
-      </property>
-     </widget>
-    </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -43,7 +36,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="loginUsername"/>
+       <widget class="QLineEdit" name="userNameLine">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0)</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -52,14 +49,46 @@
       <item>
        <widget class="QLabel" name="passwordLabel">
         <property name="text">
-         <string>us</string>
+         <string>SERVER PASSWORD:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="loginPassword"/>
+       <widget class="QLineEdit" name="passwordLines">
+        <property name="styleSheet">
+         <string notr="true">color:rgb(0, 0, 0)</string>
+        </property>
+       </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="passwordLabel_2">
+      <property name="text">
+       <string>IP-ADDRESS:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="ipAddressLine">
+      <property name="styleSheet">
+       <string notr="true">color:rgb(0, 0, 0)</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="passwordLabel_3">
+      <property name="text">
+       <string>PORT:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="portLine">
+      <property name="styleSheet">
+       <string notr="true">color:rgb(0, 0, 0)</string>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="Hover" name="loginButton">
@@ -81,6 +110,19 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="infoButton">
+   <property name="geometry">
+    <rect>
+     <x>167</x>
+     <y>430</y>
+     <width>80</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>HELP</string>
+   </property>
   </widget>
  </widget>
  <customwidgets>

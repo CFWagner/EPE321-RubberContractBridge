@@ -47,6 +47,14 @@ QVector<bool> ClientNetwork::getUnitTest() const
     return bUnitTest;
 }
 
+/*!
+ * \brief Send a request to the client to connect and to log in. This function only tries to connect to the host.
+ * \param serverIP: Server IP (QHostAddress)
+ * \param port: Server port (quint16)
+ * \param playerName: QString - Username, should not be empty, longer than 15, same as AI's name or same as prviously logged in user.
+ * \param password: QString - Password on the server.
+ */
+
 void ClientNetwork::txRequestLogin(QHostAddress serverIP, quint16 port, QString playerName, QString password)
 {
     // Connect to the server.
@@ -182,8 +190,7 @@ void ClientNetwork::internalServerDisconnected()
 }
 
 /*!
- * \brief ClientNetwork::socketConnected Executed when sucesfully connected to the host (server).
- *
+ * Executed when sucesfully connected to the host (server).
  * Request to see if playerName and password is correct.
  * Create QJsonObject containting the playerName and password.
  * Send the QJsonObject to the server.
@@ -211,7 +218,7 @@ void ClientNetwork::socketConnected()
 }
 
 /*!
- * \brief ClientNetwork::socketError Signal the client GUI if an connection error with the server occurs. Abort connection.
+ * \brief Signal the client GUI if an connection error with the server occurs. Abort connection.
  * \param socError QAbstractSocket::SocketError
  */
 
@@ -224,7 +231,7 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
      * In that case, attempts to reconnect should be done from the event loop.
      * For example, use a QTimer::singleShot() with 0 as the timeout.
      */
-
+    qInfo() << "A socket error occured: " << socError;
     // Determine the error
     switch (socError) {
     case QAbstractSocket::HostNotFoundError:
@@ -247,7 +254,7 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
 }
 
 /*!
- * \brief ClientNetwork::txAll Handel all data that is sent to the server.
+ * \brief Handel all data that is sent to the server.
  * \param data QJsonObject containing at least the "Type" and "ID" fields.
  */
 
@@ -332,7 +339,7 @@ void ClientNetwork::rxNotifyMoveRejected(QJsonObject reasonObj)
 
 }
 
-// TODO: handel connection login result
+
 /*!
  * \brief ClientNetwork::rxLoginResult Handel the login result (accepted or rejected).
  * \param resObj QJsonObject with "Type" = "LOGIN_RESULT".
@@ -352,6 +359,7 @@ void ClientNetwork::rxLoginResult(QJsonObject resObj)
         return;
     }
 
+    // Set the login flag accordingly.
     bLoggedIn = resObj["loginSuccessful"].toBool();
 
     // Notify client GUI of login result.
@@ -360,6 +368,7 @@ void ClientNetwork::rxLoginResult(QJsonObject resObj)
     // If login was unsuccessful, disconnect from the host.
     if (!bLoggedIn){
         tcpSoc->abort();
+        qInfo() << "Login was unseccessfull and client is aborting connection with host.";
     }
 }
 

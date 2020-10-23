@@ -156,19 +156,18 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
 
-    // Test attributes after 3 passes with a valid current bid
+    // Test attributes after 2 passes with a valid current bid
     serverState.updateBidState(Bid(EAST, PASS));
     serverState.updateBidState(Bid(SOUTH, PASS));
-    serverState.updateBidState(Bid(WEST, PASS));
     QCOMPARE(serverState.getPhase(), BIDDING);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(*serverState.getCurrentBid() == bid1, true);
     QCOMPARE(serverState.getCurrentBid()->getBidder(), bid1.getBidder());
     QCOMPARE(serverState.getContractBid(), nullptr);
-    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getPlayerTurn(), WEST);
 
-    // Test attributes after 4 passes with a valid current bid
-    serverState.updateBidState(Bid(NORTH, PASS));
+    // Test attributes after 3 passes with a valid current bid
+    serverState.updateBidState(Bid(WEST, PASS));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getCurrentBid(), nullptr);
     QCOMPARE(*serverState.getContractBid() == bid1, true);

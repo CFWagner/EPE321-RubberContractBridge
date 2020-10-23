@@ -93,6 +93,9 @@ void ServerGameState::updateBidState(const Bid &bid)
     }
     // Check if bid is valid
     else if(isBidValid(bid)){
+        // Reset pass counter
+        passCount = 0;
+
         // Update bid
         if(bid.getCall() == DOUBLE || bid.getCall() == REDOUBLE){
             currentBid->setCall(bid.getCall());
@@ -109,14 +112,15 @@ void ServerGameState::updateBidState(const Bid &bid)
     // Select player to left of most recent player to play for next turn
     playerTurn = PlayerPosition((playerTurn + 1) % 4);
 
-    // Check if 4 passes have been made
-    if(passCount == 4){
-        // Check if bid has been made
-        if(currentBid == nullptr){
-            // Redeal cards
+    // Check if bid has been made
+    if(currentBid == nullptr){
+        // Redeal cards if 4 passes have been made given no bid has been made
+        if(passCount == 4)
             nextDeal();
-        }
-        else{
+    }
+    else{
+        // Check if 3 passes have been made given a bid has been made
+        if(passCount == 3){
             // Transition to play phase
             phase = CARDPLAY;
             contractBid = currentBid;
@@ -217,10 +221,10 @@ void ServerGameState::setPlayerHands(const QMap<PlayerPosition, CardSet> &player
 // argument implies there is no current bid
 bool ServerGameState::isBidValid(const Bid &bid) const
 {
-    // Check if new bid is valid given no bid has been made yet
     if(bid.getCall() == PASS){
         return true;
     }
+    // Check if new bid is valid given no bid has been made yet
     else if(currentBid == nullptr){
         return bid.getCall() == BID;
     }

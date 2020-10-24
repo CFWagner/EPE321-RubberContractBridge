@@ -26,7 +26,7 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     // Populate card set with all of the 52 different cards
     for(qint8 suitVal = CLUBS; suitVal <= SPADES; suitVal++){
         CardSuit suit = CardSuit(suitVal);
-        for(qint8 rankVal = ACE; rankVal <= KING; rankVal++){
+        for(qint8 rankVal = TWO; rankVal <= ACE; rankVal++){
             CardRank rank = CardRank(rankVal);
             Card card(suit, rank);
             deck.addCard(card);

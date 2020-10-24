@@ -198,7 +198,7 @@ void TestServerGameState::testServerGameState()
     northHand.addCard(Card(HEARTS, FIVE));
     northHand.addCard(Card(CLUBS, SIX));
     northHand.addCard(Card(CLUBS, FIVE));
-    northHand.addCard(Card(DIAMONDS, FOUR));
+    northHand.addCard(Card(DIAMONDS, NINE));
     northHand.addCard(Card(DIAMONDS, QUEEN));
     northHand.addCard(Card(SPADES, NINE));
 
@@ -219,7 +219,7 @@ void TestServerGameState::testServerGameState()
     southHand.addCard(Card(DIAMONDS, TWO));
     southHand.addCard(Card(HEARTS, ACE));
     southHand.addCard(Card(HEARTS, THREE));
-    southHand.addCard(Card(DIAMONDS, NINE));
+    southHand.addCard(Card(DIAMONDS, FOUR));
     southHand.addCard(Card(DIAMONDS, KING));
     southHand.addCard(Card(DIAMONDS, JACK));
     southHand.addCard(Card(SPADES, JACK));
@@ -253,15 +253,15 @@ void TestServerGameState::testServerGameState()
 
     // Test card validation when no cards have been played
     QCOMPARE(serverState.isCardValid(Card(CLUBS, ACE)), false);  // Card not in EAST hand
-    QCOMPARE(serverState.isCardValid(Card(DIAMONDS, ACE)), true);  // Card in EAST hand
+    QCOMPARE(serverState.isCardValid(Card(DIAMONDS, EIGHT)), true);  // Card in EAST hand
 
     // Test attributes after playing card
-    serverState.updatePlayState(Card(DIAMONDS, ACE));
+    serverState.updatePlayState(Card(DIAMONDS, EIGHT));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
-    QCOMPARE(serverState.getTricks().value(0).getCard(0) == Card(DIAMONDS, ACE), true);
+    QCOMPARE(serverState.getTricks().value(0).getCard(0) == Card(DIAMONDS, EIGHT), true);
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
-    QCOMPARE(serverState.getPlayerHands().value(EAST).containsCard(Card(DIAMONDS, ACE)), false);
+    QCOMPARE(serverState.getPlayerHands().value(EAST).containsCard(Card(DIAMONDS, EIGHT)), false);
 
     // Test card validation when cards have been played
     QCOMPARE(serverState.isCardValid(Card(HEARTS, THREE)), false);  // Wrong suit, SOUTH has correct suit
@@ -276,23 +276,23 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getPlayerHands().value(SOUTH).containsCard(Card(DIAMONDS, TWO)), false);
 
     // Test card validation when cards have been played
-    QCOMPARE(serverState.isCardValid(Card(SPADES, ACE)), true);  // Wrong suit, WEST doesn't have correct suit
+    QCOMPARE(serverState.isCardValid(Card(SPADES, TWO)), true);  // Wrong suit, WEST doesn't have correct suit
 
     // Test attributes after playing card
-    serverState.updatePlayState(Card(SPADES, ACE));
+    serverState.updatePlayState(Card(SPADES, TWO));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
-    QCOMPARE(serverState.getTricks().value(0).getCard(2), Card(SPADES, ACE));
+    QCOMPARE(serverState.getTricks().value(0).getCard(2), Card(SPADES, TWO));
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
-    QCOMPARE(serverState.getPlayerHands().value(WEST).containsCard(Card(SPADES, ACE)), false);
+    QCOMPARE(serverState.getPlayerHands().value(WEST).containsCard(Card(SPADES, TWO)), false);
 
     // Test attributes after playing 4th card to end trick
-    serverState.updatePlayState(Card(DIAMONDS, FIVE));
+    serverState.updatePlayState(Card(DIAMONDS, NINE));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
-    QCOMPARE(serverState.getTricks().value(0).getCard(3), Card(DIAMONDS, FIVE));
+    QCOMPARE(serverState.getTricks().value(0).getCard(3), Card(DIAMONDS, NINE));
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
-    QCOMPARE(serverState.getPlayerHands().value(NORTH).containsCard(Card(DIAMONDS, FIVE)), false);
+    QCOMPARE(serverState.getPlayerHands().value(NORTH).containsCard(Card(DIAMONDS, NINE)), false);
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 2);
@@ -300,7 +300,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getDealer(), EAST);
     QCOMPARE(serverState.getDeclarer(), NORTH);
 
-    // Test attributes after playing second trick where WEST wins with trump card
+    // Test attributes after playing 2nd trick where WEST wins with trump card
     serverState.updatePlayState(Card(DIAMONDS, QUEEN));
     serverState.updatePlayState(Card(DIAMONDS, THREE));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
@@ -319,7 +319,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTrickNumber(), 3);
     QCOMPARE(serverState.getTricks().size(), 3);
 
-    // Test attributes after playing third trick
+    // Test attributes after playing 3rd trick
     serverState.updatePlayState(Card(SPADES, QUEEN));
     serverState.updatePlayState(Card(SPADES, KING));
     serverState.updatePlayState(Card(CLUBS, NINE));
@@ -333,11 +333,11 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 4);
 
-    // Test attributes after playing fourth trick
+    // Test attributes after playing 4th trick
     serverState.updatePlayState(Card(HEARTS, KING));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
-    serverState.updatePlayState(Card(HEARTS, ACE));
+    serverState.updatePlayState(Card(HEARTS, THREE));
     serverState.updatePlayState(Card(HEARTS, FOUR));
     serverState.updatePlayState(Card(HEARTS, FIVE));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
@@ -347,46 +347,127 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 5);
 
+    // Test attributes after playing 5th trick
+    serverState.updatePlayState(Card(CLUBS, QUEEN));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(CLUBS, SEVEN));
+    serverState.updatePlayState(Card(CLUBS, EIGHT));
+    serverState.updatePlayState(Card(CLUBS, ACE));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), NORTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 6);
 
-// Card(CLUBS, ACE)
-//    northHand.addCard(Card(DIAMONDS, FOUR));
-//    northHand.addCard(Card(SPADES, SEVEN));
-//    northHand.addCard(Card(SPADES, NINE));
-//    northHand.addCard(Card(HEARTS, NINE));
-//    northHand.addCard(Card(CLUBS, TWO));
-//    northHand.addCard(Card(CLUBS, THREE));
-//    northHand.addCard(Card(CLUBS, FIVE));
-//    northHand.addCard(Card(CLUBS, SIX));
+    // Test attributes after playing 6th trick
+    serverState.updatePlayState(Card(HEARTS, NINE));
+    serverState.updatePlayState(Card(HEARTS, TWO));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(HEARTS, QUEEN));
+    serverState.updatePlayState(Card(HEARTS, SIX));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 7);
 
-    //Card(CLUBS, FOUR)
-//    eastHand.addCard(Card(DIAMONDS, TEN));
-//    eastHand.addCard(Card(DIAMONDS, EIGHT));
-//    eastHand.addCard(Card(DIAMONDS, SEVEN));
-//    eastHand.addCard(Card(HEARTS, TWO));
-//    eastHand.addCard(Card(HEARTS, SEVEN));
-//    eastHand.addCard(Card(HEARTS, JACK));
-//    eastHand.addCard(Card(CLUBS, QUEEN));
-//    eastHand.addCard(Card(CLUBS, TEN));
+    // Test attributes after playing 7th trick
+    serverState.updatePlayState(Card(HEARTS, ACE));
+    serverState.updatePlayState(Card(HEARTS, TEN));
+    serverState.updatePlayState(Card(DIAMONDS, FIVE));
+    serverState.updatePlayState(Card(HEARTS, SEVEN));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 8);
 
-    //Card(CLUBS, SEVEN)
-//    southHand.addCard(Card(HEARTS, THREE));
-//    southHand.addCard(Card(HEARTS, EIGHT));
-//    southHand.addCard(Card(HEARTS, QUEEN));
-//    southHand.addCard(Card(DIAMONDS, NINE));
-//    southHand.addCard(Card(DIAMONDS, JACK));
-//    southHand.addCard(Card(DIAMONDS, KING));
-//    southHand.addCard(Card(SPADES, JACK));
-//    southHand.addCard(Card(SPADES, FIVE));
+    // Test attributes after playing 8th trick
+    serverState.updatePlayState(Card(DIAMONDS, KING));
+    serverState.updatePlayState(Card(CLUBS, KING));
+    serverState.updatePlayState(Card(SPADES, SEVEN));
+    serverState.updatePlayState(Card(DIAMONDS, SEVEN));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), WEST);
+    QCOMPARE(serverState.getPlayerTurn(), WEST);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 9);
 
-    //Card(CLUBS, EIGHT)
-//    westHand.addCard(Card(SPADES, TWO));
-//    westHand.addCard(Card(SPADES, THREE));
-//    westHand.addCard(Card(SPADES, SIX));
-//    westHand.addCard(Card(SPADES, EIGHT));
-//    westHand.addCard(Card(SPADES, QUEEN));
-//    westHand.addCard(Card(HEARTS, SIX));
-//    westHand.addCard(Card(HEARTS, TEN));
-//    westHand.addCard(Card(CLUBS, KING));
+    // Test attributes after playing 9th trick
+    serverState.updatePlayState(Card(SPADES, ACE));
+    serverState.updatePlayState(Card(SPADES, NINE));
+    serverState.updatePlayState(Card(HEARTS, JACK));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(SPADES, FIVE));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), WEST);
+    QCOMPARE(serverState.getPlayerTurn(), WEST);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 10);
+
+    // Test attributes after playing 10th trick
+    serverState.updatePlayState(Card(SPADES, TEN));
+    serverState.updatePlayState(Card(CLUBS, SIX));
+    serverState.updatePlayState(Card(CLUBS, TEN));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(SPADES, JACK));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), EAST);
+    QCOMPARE(serverState.getPlayerTurn(), EAST);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 11);
+
+    // Test attributes after playing 11th trick
+    serverState.updatePlayState(Card(DIAMONDS, ACE));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(DIAMONDS, FOUR));
+    serverState.updatePlayState(Card(SPADES, THREE));
+    serverState.updatePlayState(Card(CLUBS, TWO));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), NORTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 12);
+
+    // Test attributes after playing 12th trick
+    serverState.updatePlayState(Card(CLUBS, FIVE));
+    serverState.updatePlayState(Card(CLUBS, FOUR));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(HEARTS, EIGHT));
+    serverState.updatePlayState(Card(SPADES, SIX));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), NORTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 13);
+
+    // Test attributes after playing 13th trick
+    serverState.updatePlayState(Card(CLUBS, THREE));
+    serverState.updatePlayState(Card(DIAMONDS, TEN));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(DIAMONDS, JACK));
+    serverState.updatePlayState(Card(SPADES, EIGHT));
+    QCOMPARE(serverState.getPhase(), BIDDING);
+//    QCOMPARE(serverState.getHandToPlay(),);
+//    QCOMPARE(serverState.getPlayerTurn(),);
+//    QCOMPARE(serverState.getGameNumber(), 1);
+//    QCOMPARE(serverState.getDealNumber(), 2);
+//    QCOMPARE(serverState.getTrickNumber(),);
 
 
 

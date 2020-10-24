@@ -140,7 +140,9 @@ PlayerPosition GameState::getDummy() const
         case EAST:
             return WEST;
         case WEST:
+        default:
             return EAST;
+
     }
 }
 

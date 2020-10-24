@@ -6,3 +6,7 @@ build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Debug/
 RubberContractBridge/RubberContractBridge.pro.user.8816847
 
 RubberContractBridge/RubberContractBridge.pro.user
+
+build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Profile/
+
+build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Release/

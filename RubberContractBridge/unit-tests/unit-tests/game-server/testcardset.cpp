@@ -72,7 +72,5 @@ void TestCardSet::testCardSet()
     cardSet2.read(jsonCardSet);
 
     // Test for correct CardSet state
-    QCOMPARE(cardSet1.getCardCount(), cardSet2.getCardCount());
-    for(qint8 pos = 0; pos < cardSet1.getCardCount() - 1; pos++)
-        QCOMPARE(cardSet1.getCard(pos) == cardSet2.getCard(pos), true);
+    QCOMPARE(cardSet1, cardSet2);
 }

@@ -14,3 +14,8 @@ void Score::write(QJsonObject &json) const
 {
 
 }
+
+bool Score::operator ==(const Score& score) const
+{
+    return true;
+}

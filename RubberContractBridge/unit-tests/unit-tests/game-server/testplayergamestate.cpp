@@ -71,19 +71,7 @@ void TestPlayerGameState::testPlayerGameState()
     playerState2.read(jsonPlayerState);
 
     // Test target PlayerGameState instance attributes
-    QCOMPARE(playerState2.getPhase(), phase);
-    QCOMPARE(playerState2.getCurrentBid(), nullptr);
-    QCOMPARE(playerState2.getContractBid(), nullptr);
-    QCOMPARE(playerState2.getGameNumber(), gameNumber);
-    QCOMPARE(playerState2.getDealNumber(), dealNumber);
-    QCOMPARE(playerState2.getTrickNumber(), trickNumber);
-    QCOMPARE(playerState2.getPlayerTurn(), playerTurn);
-    QCOMPARE(playerState2.getHandToPlay(), handToPlay);
-    QCOMPARE(playerState2.getDealer(), dealer);
-    QCOMPARE(playerState2.getDeclarer(), declarer);
-    QCOMPARE(playerState2.getTeamVulnerable(N_S), teamVulnerable[N_S]);
-    QCOMPARE(playerState2.getTeamVulnerable(E_W), teamVulnerable[E_W]);
-    QCOMPARE(playerState2.getEvent(), gameEvent);
+    QCOMPARE(playerState, playerState2);
 
     // Compare list based attributes
     for(qint8 i = 0; i < tricks.size(); ++ i){
@@ -182,36 +170,7 @@ void TestPlayerGameState::testPlayerGameState()
     playerState4.read(jsonPlayerState3);
 
     // Test target PlayerGameState instance attributes
-    QCOMPARE(playerState4.getPhase(), phase);
-    QCOMPARE(*playerState4.getCurrentBid() == *currentBid, true);
-    QCOMPARE(*playerState4.getContractBid() == *contractBid, true);
-    QCOMPARE(playerState4.getGameNumber(), gameNumber);
-    QCOMPARE(playerState4.getDealNumber(), dealNumber);
-    QCOMPARE(playerState4.getTrickNumber(), trickNumber);
-    QCOMPARE(playerState4.getPlayerTurn(), playerTurn);
-    QCOMPARE(playerState4.getHandToPlay(), handToPlay);
-    QCOMPARE(playerState4.getDealer(), dealer);
-    QCOMPARE(playerState4.getDeclarer(), declarer);
-    QCOMPARE(playerState4.getTeamVulnerable(N_S), teamVulnerable[N_S]);
-    QCOMPARE(playerState4.getTeamVulnerable(E_W), teamVulnerable[E_W]);
-    QCOMPARE(playerState4.getEvent(), gameEvent);
-
-    // Compare list based attributes
-    for(qint8 i = 0; i < tricks.size(); ++ i){
-        for(qint8 j = 0; j < tricks[i].getCardCount(); ++ j){
-            QCOMPARE(playerState4.getTricks()[i].getCard(j) == tricks[i].getCard(j), true);
-        }
-    }
-    for(qint8 j = 0; j < playerHand.getCardCount(); ++ j)
-        QCOMPARE(playerState4.getPlayerHand().getCard(j) == playerHand.getCard(j), true);
-
-    for(qint8 j = 0; j < dummyHand.getCardCount(); ++ j)
-        QCOMPARE(playerState4.getDummyHand().getCard(j) == dummyHand.getCard(j), true);
-
-    for(qint8 position = NORTH; position <= WEST; ++ position){
-        QCOMPARE(playerState4.getPlayerName(PlayerPosition(position)),
-                 playerPositions.value(PlayerPosition(position)));
-    }
+    QCOMPARE(playerState3, playerState4);
 
     // Call game state copy constructor
     GameState gameState1(playerState3);

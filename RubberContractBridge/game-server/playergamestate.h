@@ -27,6 +27,7 @@ public:
     QString getPlayerName(PlayerPosition position);
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
+    bool operator ==(const PlayerGameState& playerGameState) const;
 private:
     GameEvent gameEvent; // Most recent event in the game that can be used to identify which attributes likely changed
     QMap<PlayerPosition, QString> playerPositions; // Map of the postions of the players to the name of the players ine each position

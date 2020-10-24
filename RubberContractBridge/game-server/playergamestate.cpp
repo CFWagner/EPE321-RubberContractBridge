@@ -237,3 +237,35 @@ void PlayerGameState::write(QJsonObject &json) const
     json["playerPositionKeys"] = playerPositionKeys;
     json["playerPositionValues"] = playerPositionValues;
 }
+
+bool PlayerGameState::operator ==(const PlayerGameState& playerGameState) const
+{
+    // Compare current bids for equality
+    if(currentBid != nullptr && playerGameState.currentBid != nullptr){
+        if(!(*currentBid == *playerGameState.currentBid))
+            return false;
+    } else if(currentBid != playerGameState.currentBid)
+        return false;
+
+    // Compare contract bids for equality
+    if(contractBid != nullptr && playerGameState.contractBid != nullptr){
+        if(!(*contractBid == *playerGameState.contractBid))
+            return false;
+    } else if(contractBid != playerGameState.contractBid)
+        return false;
+
+    return phase == playerGameState.phase &&
+            gameNumber == playerGameState.gameNumber &&
+            dealNumber == playerGameState.dealNumber &&
+            tricks == playerGameState.tricks &&
+            playerTurn == playerGameState.playerTurn &&
+            handToPlay == playerGameState.handToPlay &&
+            dealer == playerGameState.dealer &&
+            declarer == playerGameState.declarer &&
+            teamVulnerable[N_S] == playerGameState.teamVulnerable[N_S] &&
+            teamVulnerable[E_W] == playerGameState.teamVulnerable[E_W] &&
+            score == playerGameState.score &&
+            gameEvent == playerGameState.gameEvent &&
+            playerPositions == playerGameState.playerPositions &&
+            dummyHand == playerGameState.dummyHand;
+}

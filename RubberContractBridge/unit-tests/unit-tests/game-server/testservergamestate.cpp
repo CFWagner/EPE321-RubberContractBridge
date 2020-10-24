@@ -463,16 +463,10 @@ void TestServerGameState::testServerGameState()
     serverState.updatePlayState(Card(DIAMONDS, JACK));
     serverState.updatePlayState(Card(SPADES, EIGHT));
     QCOMPARE(serverState.getPhase(), BIDDING);
-//    QCOMPARE(serverState.getHandToPlay(),);
-//    QCOMPARE(serverState.getPlayerTurn(),);
-//    QCOMPARE(serverState.getGameNumber(), 1);
-//    QCOMPARE(serverState.getDealNumber(), 2);
-//    QCOMPARE(serverState.getTrickNumber(),);
+    QCOMPARE(serverState.getPlayerTurn(), SOUTH);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 3);
+    QCOMPARE(serverState.getTrickNumber(), 0);
+    QCOMPARE(serverState.getDealer(), SOUTH);
 
-
-
-
-
-
-//    westHand.addCard(Card(SPADES, TEN));
 }

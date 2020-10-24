@@ -3,36 +3,22 @@ build-RubberContractBridge-Desktop_Qt_5_15_0_MinGW_64_bit-Debug/
 
 build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Debug/
 
+build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Release/
+
+build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Profile/
+
 RubberContractBridge/RubberContractBridge.pro.user.8816847
 
 RubberContractBridge/RubberContractBridge.pro.user
 
-
-Test applications/FortuneClientServer - 2 way/Client/fortuneclient.pro.user
-
-build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Profile/
-
-build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Release/
-
-Server/fortuneserver.pro.user
-
-Test applications/FortuneClientServer - 2 way/Client/fortuneclient.pro.user
-
-Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user
-
-Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user
-
 Server/fortuneserver.pro.user
 
 Client/fortuneclient.pro.user
-Test applications/FortuneClientServer - 2 way/Client/fortuneclient.pro.user
-
-Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user
 
 Test applications/FortuneClientServer - 2 way/build-fortuneserver-Desktop_x86_windows_msvc2019_pe_64bit-Debug/
 
 Test applications/FortuneClientServer - 2 way/build-fortuneclient-Desktop_x86_windows_msvc2019_pe_64bit-Debug/
 
-build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Release/
+Test applications/FortuneClientServer - 2 way/Client/fortuneclient.pro.user
 
-build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Profile/
+Test applications/FortuneClientServer - 2 way/Server/fortuneserver.pro.user

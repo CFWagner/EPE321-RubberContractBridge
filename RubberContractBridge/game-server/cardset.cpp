@@ -96,3 +96,10 @@ void CardSet::write(QJsonObject &json) const
     }
     json["cards"] = jsonCards;
 }
+
+// Overloaded == relational operator
+// CardSet instances are equal if they contain equal cards in the same order
+bool CardSet::operator ==(const CardSet& cardSet) const
+{
+    return this->cards == cardSet.cards;
+}

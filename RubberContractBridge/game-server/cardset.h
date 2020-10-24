@@ -21,6 +21,7 @@ public:
     void shuffle();
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
+    bool operator ==(const CardSet& cardSet) const;
 private:
     QVector<Card> cards;
 };

@@ -336,7 +336,7 @@ void ServerNetwork::validateClient()
 void ServerNetwork::disconnectClient()
 {
 
-    qInfo() << "Socket disconnected";
+    qInfo() << "Socket disconnected (Server side)";
     qInfo() << "Before disconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
 
     // Get the sender's QTcpSocket

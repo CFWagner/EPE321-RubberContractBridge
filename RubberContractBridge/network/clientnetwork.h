@@ -59,6 +59,10 @@ signals:
     // When received it means that the connection to the server has been lost or the server terminated the game.
     // The Client (and probably the server) must be RESTARTED, before attempting to connect again.
     // The GUI is responsible for ensuring that the client is RESTARTED. (Do not go back to login page.)
+    // Note that the client will not be informed if an unexpected disconnection between the client and server occurs, before a game has started.
+    // The Server's GUI will be informed if an unexpected disconnection occurs, before a game has started.
+    // (playerDisconnected signal from the ServerNetwork.)
+    // This is acceptable, since only players selected on the server side will be joined.
 
 private:
     void txAll(QJsonObject data);

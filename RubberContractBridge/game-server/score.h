@@ -10,6 +10,7 @@ public:
     Score();
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
+    bool operator ==(const Score& score) const;
 };
 
 #endif // SCORE_H

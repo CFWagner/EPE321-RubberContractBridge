@@ -191,58 +191,58 @@ void TestServerGameState::testServerGameState()
     northHand.addCard(Card(CLUBS, ACE));
     northHand.addCard(Card(CLUBS, TWO));
     northHand.addCard(Card(CLUBS, THREE));
-    northHand.addCard(Card(CLUBS, FOUR));
-    northHand.addCard(Card(CLUBS, FIVE));
+    northHand.addCard(Card(DIAMONDS, FIVE));
+    northHand.addCard(Card(HEARTS, NINE));
+    northHand.addCard(Card(SPADES, SEVEN));
+    northHand.addCard(Card(SPADES, KING));
+    northHand.addCard(Card(HEARTS, FIVE));
     northHand.addCard(Card(CLUBS, SIX));
-    northHand.addCard(Card(CLUBS, SEVEN));
-    northHand.addCard(Card(CLUBS, EIGHT));
-    northHand.addCard(Card(CLUBS, NINE));
-    northHand.addCard(Card(CLUBS, TEN));
-    northHand.addCard(Card(CLUBS, JACK));
-    northHand.addCard(Card(CLUBS, QUEEN));
-    northHand.addCard(Card(CLUBS, KING));
+    northHand.addCard(Card(CLUBS, FIVE));
+    northHand.addCard(Card(DIAMONDS, FOUR));
+    northHand.addCard(Card(DIAMONDS, QUEEN));
+    northHand.addCard(Card(SPADES, NINE));
 
     eastHand.addCard(Card(DIAMONDS, ACE));
     eastHand.addCard(Card(HEARTS, TWO));
     eastHand.addCard(Card(DIAMONDS, THREE));
-    eastHand.addCard(Card(DIAMONDS, FOUR));
-    eastHand.addCard(Card(DIAMONDS, FIVE));
-    eastHand.addCard(Card(DIAMONDS, SIX));
-    eastHand.addCard(Card(DIAMONDS, SEVEN));
-    eastHand.addCard(Card(DIAMONDS, EIGHT));
-    eastHand.addCard(Card(DIAMONDS, NINE));
+    eastHand.addCard(Card(CLUBS, QUEEN));
+    eastHand.addCard(Card(CLUBS, TEN));
+    eastHand.addCard(Card(CLUBS, NINE));
+    eastHand.addCard(Card(CLUBS, FOUR));
     eastHand.addCard(Card(DIAMONDS, TEN));
-    eastHand.addCard(Card(DIAMONDS, JACK));
-    eastHand.addCard(Card(DIAMONDS, QUEEN));
-    eastHand.addCard(Card(DIAMONDS, KING));
+    eastHand.addCard(Card(DIAMONDS, EIGHT));
+    eastHand.addCard(Card(DIAMONDS, SEVEN));
+    eastHand.addCard(Card(HEARTS, KING));
+    eastHand.addCard(Card(HEARTS, JACK));
+    eastHand.addCard(Card(HEARTS, SEVEN));
 
     southHand.addCard(Card(DIAMONDS, TWO));
     southHand.addCard(Card(HEARTS, ACE));
     southHand.addCard(Card(HEARTS, THREE));
-    southHand.addCard(Card(HEARTS, FOUR));
-    southHand.addCard(Card(HEARTS, FIVE));
-    southHand.addCard(Card(HEARTS, SIX));
-    southHand.addCard(Card(HEARTS, SEVEN));
-    southHand.addCard(Card(HEARTS, EIGHT));
-    southHand.addCard(Card(HEARTS, NINE));
-    southHand.addCard(Card(HEARTS, TEN));
-    southHand.addCard(Card(HEARTS, JACK));
+    southHand.addCard(Card(DIAMONDS, NINE));
+    southHand.addCard(Card(DIAMONDS, KING));
+    southHand.addCard(Card(DIAMONDS, JACK));
+    southHand.addCard(Card(SPADES, JACK));
+    southHand.addCard(Card(SPADES, FIVE));
+    southHand.addCard(Card(DIAMONDS, SIX));
     southHand.addCard(Card(HEARTS, QUEEN));
-    southHand.addCard(Card(HEARTS, KING));
+    southHand.addCard(Card(HEARTS, EIGHT));
+    southHand.addCard(Card(CLUBS, SEVEN));
+    southHand.addCard(Card(SPADES, FOUR));
 
     westHand.addCard(Card(SPADES, ACE));
     westHand.addCard(Card(SPADES, TWO));
     westHand.addCard(Card(SPADES, THREE));
-    westHand.addCard(Card(SPADES, FOUR));
-    westHand.addCard(Card(SPADES, FIVE));
-    westHand.addCard(Card(SPADES, SIX));
-    westHand.addCard(Card(SPADES, SEVEN));
-    westHand.addCard(Card(SPADES, EIGHT));
-    westHand.addCard(Card(SPADES, NINE));
-    westHand.addCard(Card(SPADES, TEN));
-    westHand.addCard(Card(SPADES, JACK));
+    westHand.addCard(Card(CLUBS, EIGHT));
+    westHand.addCard(Card(HEARTS, FOUR));
     westHand.addCard(Card(SPADES, QUEEN));
-    westHand.addCard(Card(SPADES, KING));
+    westHand.addCard(Card(SPADES, SIX));
+    westHand.addCard(Card(CLUBS, KING));
+    westHand.addCard(Card(HEARTS, TEN));
+    westHand.addCard(Card(HEARTS, SIX));
+    westHand.addCard(Card(SPADES, EIGHT));
+    westHand.addCard(Card(CLUBS, JACK));
+    westHand.addCard(Card(SPADES, TEN));
 
     QMap<PlayerPosition, CardSet> playerHands;
     playerHands.insert(NORTH, northHand);
@@ -270,7 +270,7 @@ void TestServerGameState::testServerGameState()
     // Test attributes after playing card
     serverState.updatePlayState(Card(DIAMONDS, TWO));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
-    QCOMPARE(serverState.getTricks().value(0).getCard(1) == Card(DIAMONDS, TWO), true);
+    QCOMPARE(serverState.getTricks().value(0).getCard(1), Card(DIAMONDS, TWO));
     QCOMPARE(serverState.getHandToPlay(), WEST);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
     QCOMPARE(serverState.getPlayerHands().value(SOUTH).containsCard(Card(DIAMONDS, TWO)), false);
@@ -281,22 +281,117 @@ void TestServerGameState::testServerGameState()
     // Test attributes after playing card
     serverState.updatePlayState(Card(SPADES, ACE));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
-    QCOMPARE(serverState.getTricks().value(0).getCard(2) == Card(SPADES, ACE), true);
+    QCOMPARE(serverState.getTricks().value(0).getCard(2), Card(SPADES, ACE));
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     QCOMPARE(serverState.getPlayerHands().value(WEST).containsCard(Card(SPADES, ACE)), false);
 
     // Test attributes after playing 4th card to end trick
-    serverState.updatePlayState(Card(CLUBS, ACE));
+    serverState.updatePlayState(Card(DIAMONDS, FIVE));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
-    QCOMPARE(serverState.getTricks().value(0).getCard(3) == Card(CLUBS, ACE), true);
+    QCOMPARE(serverState.getTricks().value(0).getCard(3), Card(DIAMONDS, FIVE));
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
-    QCOMPARE(serverState.getPlayerHands().value(NORTH).containsCard(Card(CLUBS, ACE)), false);
+    QCOMPARE(serverState.getPlayerHands().value(NORTH).containsCard(Card(DIAMONDS, FIVE)), false);
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 2);
     QCOMPARE(serverState.getTricks().size(), 2);
     QCOMPARE(serverState.getDealer(), EAST);
     QCOMPARE(serverState.getDeclarer(), NORTH);
+
+    // Test attributes after playing second trick where WEST wins with trump card
+    serverState.updatePlayState(Card(DIAMONDS, QUEEN));
+    serverState.updatePlayState(Card(DIAMONDS, THREE));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(DIAMONDS, SIX));
+    serverState.updatePlayState(Card(CLUBS, JACK));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getTricks().value(1).getCard(0), Card(DIAMONDS, QUEEN));
+    QCOMPARE(serverState.getTricks().value(1).getCard(1), Card(DIAMONDS, THREE));
+    QCOMPARE(serverState.getTricks().value(1).getCard(2), Card(DIAMONDS, SIX));
+    QCOMPARE(serverState.getTricks().value(1).getCard(3), Card(CLUBS, JACK));
+    QCOMPARE(serverState.getHandToPlay(), WEST);
+    QCOMPARE(serverState.getPlayerTurn(), WEST);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 3);
+    QCOMPARE(serverState.getTricks().size(), 3);
+
+    // Test attributes after playing third trick
+    serverState.updatePlayState(Card(SPADES, QUEEN));
+    serverState.updatePlayState(Card(SPADES, KING));
+    serverState.updatePlayState(Card(CLUBS, NINE));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(SPADES, FOUR));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), EAST);
+    QCOMPARE(serverState.getPlayerTurn(), EAST);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 4);
+
+    // Test attributes after playing fourth trick
+    serverState.updatePlayState(Card(HEARTS, KING));
+    QCOMPARE(serverState.getHandToPlay(), SOUTH);
+    QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    serverState.updatePlayState(Card(HEARTS, ACE));
+    serverState.updatePlayState(Card(HEARTS, FOUR));
+    serverState.updatePlayState(Card(HEARTS, FIVE));
+    QCOMPARE(serverState.getPhase(), CARDPLAY);
+    QCOMPARE(serverState.getHandToPlay(), EAST);
+    QCOMPARE(serverState.getPlayerTurn(), EAST);
+    QCOMPARE(serverState.getGameNumber(), 1);
+    QCOMPARE(serverState.getDealNumber(), 2);
+    QCOMPARE(serverState.getTrickNumber(), 5);
+
+
+// Card(CLUBS, ACE)
+//    northHand.addCard(Card(DIAMONDS, FOUR));
+//    northHand.addCard(Card(SPADES, SEVEN));
+//    northHand.addCard(Card(SPADES, NINE));
+//    northHand.addCard(Card(HEARTS, NINE));
+//    northHand.addCard(Card(CLUBS, TWO));
+//    northHand.addCard(Card(CLUBS, THREE));
+//    northHand.addCard(Card(CLUBS, FIVE));
+//    northHand.addCard(Card(CLUBS, SIX));
+
+    //Card(CLUBS, FOUR)
+//    eastHand.addCard(Card(DIAMONDS, TEN));
+//    eastHand.addCard(Card(DIAMONDS, EIGHT));
+//    eastHand.addCard(Card(DIAMONDS, SEVEN));
+//    eastHand.addCard(Card(HEARTS, TWO));
+//    eastHand.addCard(Card(HEARTS, SEVEN));
+//    eastHand.addCard(Card(HEARTS, JACK));
+//    eastHand.addCard(Card(CLUBS, QUEEN));
+//    eastHand.addCard(Card(CLUBS, TEN));
+
+    //Card(CLUBS, SEVEN)
+//    southHand.addCard(Card(HEARTS, THREE));
+//    southHand.addCard(Card(HEARTS, EIGHT));
+//    southHand.addCard(Card(HEARTS, QUEEN));
+//    southHand.addCard(Card(DIAMONDS, NINE));
+//    southHand.addCard(Card(DIAMONDS, JACK));
+//    southHand.addCard(Card(DIAMONDS, KING));
+//    southHand.addCard(Card(SPADES, JACK));
+//    southHand.addCard(Card(SPADES, FIVE));
+
+    //Card(CLUBS, EIGHT)
+//    westHand.addCard(Card(SPADES, TWO));
+//    westHand.addCard(Card(SPADES, THREE));
+//    westHand.addCard(Card(SPADES, SIX));
+//    westHand.addCard(Card(SPADES, EIGHT));
+//    westHand.addCard(Card(SPADES, QUEEN));
+//    westHand.addCard(Card(HEARTS, SIX));
+//    westHand.addCard(Card(HEARTS, TEN));
+//    westHand.addCard(Card(CLUBS, KING));
+
+
+
+
+
+
+//    westHand.addCard(Card(SPADES, TEN));
 }

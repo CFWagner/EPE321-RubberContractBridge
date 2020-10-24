@@ -69,7 +69,7 @@ void testClientNetwork::LoginCorrectly()
     // (Log into the server.)
     // Remember to monitor both the client and the server.
     testClient1.txRequestLogin(ip,port,playerName,passwordServer);
-    QVERIFY(spyClientLoginResult.wait(1000));
+    QVERIFY(spyClientLoginResult.wait(100));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
@@ -120,7 +120,7 @@ void testClientNetwork::wrongServerDetails()
     // Remember to monitor both the client and the server.
     testClient.txRequestLogin(ip,port,playerName,password_wrong);
 
-    QVERIFY(spyClientLoginResult.wait(1000));
+    QVERIFY(spyClientLoginResult.wait(100));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
@@ -154,7 +154,7 @@ void testClientNetwork::wrongServerDetails()
     // Remember to monitor both the client and the server.
     testClient.txRequestLogin(ip,port,playerName,passwordServer);
 
-    QVERIFY(spyClientLoginResult.wait(1000));
+    QVERIFY(spyClientLoginResult.wait(100));
 
     // No warnings should be issused by either the server or the client
     // Proof that data sent in QJsonObject format is working.
@@ -192,7 +192,7 @@ void testClientNetwork::wrongServerDetails()
 
     testClient.txRequestLogin(ip,port,playerName,passwordServer);
 
-//    QVERIFY(spyClientConnectResult.wait(1000));
+//    QVERIFY(spyClientConnectResult.wait(100));
 
     // No warnings should be issused by either the server or the client
     // Proof that data sent in QJsonObject format is working.
@@ -232,7 +232,7 @@ void testClientNetwork::wrongServerDetails()
     // (Log into the server.)
     testClient2.txRequestLogin(ip,port,playerName,passwordServer);
 
-    QVERIFY(spyClientLoginResult2.wait(1000));
+    QVERIFY(spyClientLoginResult2.wait(100));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
@@ -266,7 +266,7 @@ void testClientNetwork::wrongServerDetails()
     // (Log into the server.)
     testClient2.txRequestLogin(ip,port,"AI",passwordServer);
 
-    QVERIFY(spyClientLoginResult2.wait(1000));
+    QVERIFY(spyClientLoginResult2.wait(100));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
@@ -302,7 +302,7 @@ void testClientNetwork::wrongServerDetails()
     // (Log into the server.)
     testClient2.txRequestLogin(ip,port,"1234567890123456",passwordServer);
 
-    QVERIFY(spyClientLoginResult2.wait(1000));
+    QVERIFY(spyClientLoginResult2.wait(100));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
@@ -338,7 +338,7 @@ void testClientNetwork::wrongServerDetails()
     // Remember to monitor both the client and the server.
     testClient2.txRequestLogin(ip,port,playerName2,passwordServer);
 
-    QVERIFY(spyClientLoginResult2.wait(1000));
+    QVERIFY(spyClientLoginResult2.wait(100));
 
     // No warnings should be issused by either the server or the client
     // Proof that data sent in QJsonObject format is working.
@@ -491,31 +491,29 @@ void testClientNetwork::getPlayers()
     QSignalSpy spyClientError(&testClient1,SIGNAL(generalError(QString)));
     QSignalSpy spyClientLoginResult(&testClient1,SIGNAL(loginResult(bool, QString)));
 
-    // Try to connect with wrong IP
-    QHostAddress IP_wrong = QHostAddress("192.168.56.1");
-    quint16 portWrong = 61070;
-
-
     // Do something that can result in problems.
     // (Log into the server.)
     // Remember to monitor both the client and the server.
-    testClient1.txRequestLogin(IP_wrong,portWrong,playerName,passwordServer);
-    QVERIFY(spyClientConnectResult.wait(30000));
+    testClient1.txRequestLogin(ip,port,playerName,passwordServer);
+    QVERIFY(spyClientLoginResult.wait(100));
 
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
     QVERIFY2(spyClientError.count() == 0,"General errors occured in the testClient1.");
 
-    QCOMPARE(spyClientLoginResult.count(), 0);
-    QCOMPARE(spyClientConnectResult.count(), 1);
+    QCOMPARE(spyClientLoginResult.count(), 1);
 
     QList<QVariant> argumentsC = spyClientConnectResult.takeFirst();
     // The connection should be sucsessfull.
-    QCOMPARE(argumentsC.at(0), 1);
-    QCOMPARE(argumentsC.at(1),"The connection was refused by the server. Make sure the server is running, "
-                              "and check that the host IP address and port settings are correct.");
+    QCOMPARE(argumentsC.at(0), 0);
 
-    QVERIFY(spyServerPlayerJoined->count() == 0);
+    argumentsC = spyClientLoginResult.takeFirst();
+    QCOMPARE(argumentsC.at(0), true);
+    QCOMPARE(argumentsC.at(1), "");
+
+    QVERIFY(spyServerPlayerJoined->count() == 1);
+    QList<QVariant> arguments = spyServerPlayerJoined->takeFirst();
+    QCOMPARE(arguments.at(0), playerName);
 
     // ------ Let a second player join with same name -------
     // The connection should work, but the server should send and error and disconnect the client.
@@ -544,7 +542,7 @@ void testClientNetwork::getPlayers()
     // Remember to monitor both the client and the server.
     testClient2.txRequestLogin(ip,port,playerName2,passwordServer);
 
-    QVERIFY(spyClientLoginResult2.wait(1000));
+    QVERIFY(spyClientLoginResult2.wait(100));
 
     // No warnings should be issused by either the server or the client
     // Proof that data sent in QJsonObject format is working.
@@ -594,7 +592,7 @@ void testClientNetwork::getPlayers()
     // Remember to monitor both the client and the server.
     testClient3.txRequestLogin(ip,port,playerName3,passwordServer);
 
-    QVERIFY(spyClientLoginResult3.wait(1000));
+    QVERIFY(spyClientLoginResult3.wait(100));
 
     // No warnings should be issused by either the server or the client
     // Proof that data sent in QJsonObject format is working.
@@ -621,9 +619,26 @@ void testClientNetwork::getPlayers()
     QVERIFY2(getPlayerSocket1 == nullptr,"Wrong player name requested, thus nullptr should have been returned.");
 
     // Use the correct player name.
-    // The first client's soceket should be returned.
+    // The second client's soceket should be returned.
     QTcpSocket* getPlayerSocket2 = testServerNet1.getPlayerSoc(playerName2);
     QVERIFY2(getPlayerSocket2 != nullptr,"Correct player name requested, thus nullptr should not have been returned.");
+
+    // Try to get an player that has already been removed.
+    // nullptr should be returned
+    QVERIFY2(testServerNet1.getPlayerSoc(playerName2) == nullptr,"Wrong player name requested, thus nullptr should have been returned.");
+
+    // Use the other correct player name.
+    // The first client's soceket should be returned.
+    getPlayerSocket1 = testServerNet1.getPlayerSoc(playerName);
+    QVERIFY2(getPlayerSocket1 != nullptr,"Correct player name requested, thus nullptr should not have been returned.");
+
+    // Test to see if it is the correct player.
+    // Disconnect the one player 2.
+    // TODO: start a game and then disconnect the client (from the server side).
+    // Then test if the correct client emits gameTerminated.
+    // Repeat for the other client.
+
+
 }
 
 void testClientNetwork::cleanupTestCase()

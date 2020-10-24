@@ -1,6 +1,9 @@
 #ifndef TESTCLIENTNETWORK_H
 #define TESTCLIENTNETWORK_H
 
+// TODO: Unit test serverDisconnected signal. (Once game has started.)
+// TODO: Set gameStarted = true once game has started.
+
 #include <QObject>
 #include <QtTest/QtTest>
 #include <QSignalSpy>

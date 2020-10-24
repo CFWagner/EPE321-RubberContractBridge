@@ -41,7 +41,9 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
 
 ClientNetwork::~ClientNetwork()
 {
-    tcpSoc->abort();
+    if (tcpSoc != nullptr){
+        tcpSoc->abort();
+    }
 }
 
 QVector<bool> ClientNetwork::getUnitTest()
@@ -184,20 +186,33 @@ void ClientNetwork::rxAll()
     emit generalError("An incorrect 'Type' has been received. The data will be ignored.");
     return;
 
-
 }
+
+/**
+ * Once the game is underway and an unexpected disconnection happens, this will emit the serverDisconnected() signal.
+ * Game wil be restarted after transmitting serverDisconnected. (GUI's responsibility.)
+ */
 
 void ClientNetwork::internalServerDisconnected()
 {
-    // TODO: Return player name. Look at disconnection and when game as been started. (Setting the bool for that. - Not in this function.)
-    // Game wil be restarted after transmitting serverDisconnected.
-    // make sure tha tserver disconnected is not emmited before unless nescessary. (When should this be?)
-    qWarning() << "Client: " + playerName + " lost connection from the server.";
-    emit serverDisconnected();
-//    gameStarted = false;
-//    tcpSoc->abort();
-//    playerName = "";
+    // TODO: Return player name. Look at disconnection and when game has been started. (Setting the bool for that. - Not in this function.)
 
+    qWarning() << "Client: " + playerName + " disconnected from the server.";
+
+    if (gameStarted){
+        qWarning() << "Client: " + playerName + " emitted gameTerminated.";
+
+        // Let the GUI know that connection to the server has been lost.
+        emit gameTerminated("Client lost connection to the server.");
+
+        // Update relevant variables (Not complete list, since Client should be restarted.)
+        gameStarted = false;
+        bLoggedIn = false;
+        playerName = "";
+
+        // Ensure that the client has been disconnected from the server.
+        tcpSoc->abort();
+    }
 }
 
 /*!

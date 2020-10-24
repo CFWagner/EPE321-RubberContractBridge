@@ -16,12 +16,13 @@ public:
 
 
 private slots:
+    // All private slots should be run in the following order, since they depend on each other.
     void verifyServerWorking();
     void LoginCorrectly();
     void wrongServerDetails();
     void incorrectSocket();
+    void getPlayers();
     void cleanupTestCase();
-
 
 signals:
 

@@ -209,7 +209,7 @@ void testClientNetwork::wrongServerDetails()
     QVERIFY(spyServerPlayerJoined->count() == 0);
 
     // ------ Let a second player join with same name -------
-    // The connection should work, but the
+    // The connection should work, but the server should send and error and disconnect the client.
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
@@ -469,6 +469,163 @@ void testClientNetwork::incorrectSocket()
     QVERIFY(spyServerPlayerJoined->count() == 0);
 }
 
+
+/**
+ * Test the getPlayerSoc function as well as the stopListening function.
+ */
+
+void testClientNetwork::getPlayers()
+{
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+
+
+    // Start a clientNetwork (this should work)
+    playerName = "Player 10"; // Do not change this name, since it is used in following tests.
+    // When transaction is done, this will execute.
+    ClientNetwork testClient1;
+
+    // Connect QSpySignal to all relevant signals from the class.
+    QSignalSpy spyClientConnectResult(&testClient1,SIGNAL(connectionResult(int, QString)));
+    QSignalSpy spyClientError(&testClient1,SIGNAL(generalError(QString)));
+    QSignalSpy spyClientLoginResult(&testClient1,SIGNAL(loginResult(bool, QString)));
+
+    // Try to connect with wrong IP
+    QHostAddress IP_wrong = QHostAddress("192.168.56.1");
+    quint16 portWrong = 61070;
+
+
+    // Do something that can result in problems.
+    // (Log into the server.)
+    // Remember to monitor both the client and the server.
+    testClient1.txRequestLogin(IP_wrong,portWrong,playerName,passwordServer);
+    QVERIFY(spyClientConnectResult.wait(30000));
+
+    // No warnings should be issused by either the server or the client
+    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
+    QVERIFY2(spyClientError.count() == 0,"General errors occured in the testClient1.");
+
+    QCOMPARE(spyClientLoginResult.count(), 0);
+    QCOMPARE(spyClientConnectResult.count(), 1);
+
+    QList<QVariant> argumentsC = spyClientConnectResult.takeFirst();
+    // The connection should be sucsessfull.
+    QCOMPARE(argumentsC.at(0), 1);
+    QCOMPARE(argumentsC.at(1),"The connection was refused by the server. Make sure the server is running, "
+                              "and check that the host IP address and port settings are correct.");
+
+    QVERIFY(spyServerPlayerJoined->count() == 0);
+
+    // ------ Let a second player join with same name -------
+    // The connection should work, but the server should send and error and disconnect the client.
+
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+    spyClientError.clear();
+    spyClientLoginResult.clear();
+    spyClientConnectResult.clear();
+
+    // Start a clientNetwork
+    QString playerName2 = "Player 20"; // Do not change this name, since it is used in following tests.
+
+    ClientNetwork testClient2;
+
+    // Connect QSpySignal to all relevant signals from the class.
+    QSignalSpy spyClientConnectResult2(&testClient2,SIGNAL(connectionResult(int, QString)));
+    QSignalSpy spyClientError2(&testClient2,SIGNAL(generalError(QString)));
+    QSignalSpy spyClientLoginResult2(&testClient2,SIGNAL(loginResult(bool, QString)));
+
+    // ------ Sucessfully connect a second player ---------
+
+    // Do something that can result in problems.
+    // (Log into the server.)
+    // Remember to monitor both the client and the server.
+    testClient2.txRequestLogin(ip,port,playerName2,passwordServer);
+
+    QVERIFY(spyClientLoginResult2.wait(1000));
+
+    // No warnings should be issused by either the server or the client
+    // Proof that data sent in QJsonObject format is working.
+    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
+    QVERIFY2(spyClientError2.count() == 0,"General errors occured in the testClient.");
+
+    QCOMPARE(spyClientLoginResult2.count(), 1);
+
+    argumentsC = spyClientConnectResult2.takeFirst();
+    // The connection should be sucsessfull.
+    QCOMPARE(argumentsC.at(0), 0);
+
+    argumentsC = spyClientLoginResult2.takeFirst();
+    QCOMPARE(argumentsC.at(0), true);
+    QCOMPARE(argumentsC.at(1), "");
+
+    QVERIFY(spyServerPlayerJoined->count() == 1);
+
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+    spyClientError.clear();
+    spyClientLoginResult.clear();
+    spyClientConnectResult.clear();
+    spyClientError2.clear();
+    spyClientLoginResult2.clear();
+    spyClientConnectResult2.clear();
+
+    // Stop listening
+    testServerNet1.stopListening();
+
+    // Try to connect another client
+    // Start a clientNetwork
+    QString playerName3 = "Player 30"; // Do not change this name, since it is used in following tests.
+
+    ClientNetwork testClient3;
+
+    // Connect QSpySignal to all relevant signals from the class.
+    QSignalSpy spyClientConnectResult3(&testClient3,SIGNAL(connectionResult(int, QString)));
+    QSignalSpy spyClientError3(&testClient3,SIGNAL(generalError(QString)));
+    QSignalSpy spyClientLoginResult3(&testClient3,SIGNAL(loginResult(bool, QString)));
+
+    // ------ Third player should no be able to connect ---------
+
+    // Do something that can result in problems.
+    // (Log into the server.)
+    // Remember to monitor both the client and the server.
+    testClient3.txRequestLogin(ip,port,playerName3,passwordServer);
+
+    QVERIFY(spyClientLoginResult3.wait(1000));
+
+    // No warnings should be issused by either the server or the client
+    // Proof that data sent in QJsonObject format is working.
+    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
+    QVERIFY2(spyClientError3.count() == 0,"General errors occured in the testClient.");
+
+    QCOMPARE(spyClientLoginResult3.count(), 1);
+
+    argumentsC = spyClientConnectResult3.takeFirst();
+    // The connection should be sucsessfull.
+    QCOMPARE(argumentsC.at(0), 0);
+
+    argumentsC = spyClientLoginResult3.takeFirst();
+    QCOMPARE(argumentsC.at(0), false);
+    QCOMPARE(argumentsC.at(1), "The game is in progress and no more players are allowed on this server.");
+
+    QVERIFY(spyServerPlayerJoined->count() == 0);
+
+    // Tests getPlayerSockets
+
+    // Try to get an invalid player name.
+    // nullptr should be returned
+    QTcpSocket* getPlayerSocket1 = testServerNet1.getPlayerSoc(playerName3);
+    QVERIFY2(getPlayerSocket1 == nullptr,"Wrong player name requested, thus nullptr should have been returned.");
+
+    // Use the correct player name.
+    // The first client's soceket should be returned.
+    QTcpSocket* getPlayerSocket2 = testServerNet1.getPlayerSoc(playerName2);
+    QVERIFY2(getPlayerSocket2 != nullptr,"Correct player name requested, thus nullptr should not have been returned.");
+}
+
 void testClientNetwork::cleanupTestCase()
 {
     // Ensure that all QSignalSpy objects are deleted.
@@ -477,6 +634,8 @@ void testClientNetwork::cleanupTestCase()
     spyServerError->deleteLater();
     qInfo() << "Deleted the spyServerError";
 }
+
+
 
 void testClientNetwork::testFunc()
 {

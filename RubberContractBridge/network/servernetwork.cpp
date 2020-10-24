@@ -12,6 +12,7 @@ ServerNetwork::ServerNetwork(QObject *parent, QString nameOfAI) : QObject(parent
     clientSoc.clear();
     clientSocTemp.clear();
     tcpServer = nullptr;
+    bAllowNewClientConnection = true;
 
     // Init unit test
     bUnitTest.clear();
@@ -35,14 +36,39 @@ ServerNetwork::~ServerNetwork()
 
 /*!
  * \brief Return the socket that corresponds to the playerName.
- * Throw an error if playerName can not be found and return nullptr.
+ * Return a nullptr if playerName cannot be found.
+ * Player is removed from the ServerNetwork class, signals connecting the clientSocekt with functions in ServerNetwork is disconnected.
+ * ClientSocket destructor signal stay connected, so no need to handel that seperatley.
  * \param playerName: The name of the player, whose socket is requested. (QString)
  * \return A pointer to the QTcpSocket of the requested client. Should be used when constructing the PlayerNetwork class.
  */
 
-QTcpSocket *ServerNetwork::getPlayerSoc(QString playerName) const
+QTcpSocket *ServerNetwork::getPlayerSoc(QString playerName)
 {
-    return nullptr;
+    // Find the player
+    // disconnect signals
+    // but keep object destructor signal
+    // remove from list (it is now in the hands of the player class)
+    // Return the pointer.
+
+    QTcpSocket* tempSocket = nullptr;
+
+    // Check if the playerName exsists.
+    if (playerNames.contains(playerName)){
+
+        // Get the socket
+        tempSocket = clientSoc.at(playerNames.indexOf(playerName));
+
+        // Remove from clientSoc and playerNames
+        playerNames.removeAll(playerName);
+        clientSoc.removeAll(tempSocket);
+
+        // Disconnect signals
+       disconnect(tempSocket, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
+       disconnect(tempSocket, &QAbstractSocket::disconnected,this, &ServerNetwork::disconnectClient);
+    }
+
+    return tempSocket;
 }
 
 /*!
@@ -124,11 +150,11 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 
 /*!
  * \brief Stop listening for new client connections.
+ * status = 4 will be returned to for any new client requesting login after stopListening has been called.
  */
 void ServerNetwork::stopListening()
 {
-
-
+    bAllowNewClientConnection = false;
 }
 
 QVector<bool> ServerNetwork::getUnitTest()
@@ -147,7 +173,7 @@ void ServerNetwork::connectClient()
 {
     QTcpSocket* clientConnection = tcpServer->nextPendingConnection();
 
-    qInfo() << "Client tried to connect: " << clientConnection;
+    qInfo() << "Client trying to connect: " << clientConnection;
 
 
     if (!clientConnection) {
@@ -348,6 +374,7 @@ void ServerNetwork::disconnectClient()
  * If both are valid, return an empty string.
  * Else return the reason for faliure.
  * This message will be displayed to the user.
+ * Check if new client connections is allowed (bAllowNewClientConnection == true).
  * Check if password match.
  * Check if username is empty.
  * Check if username is longer than 15 chars.
@@ -360,6 +387,9 @@ void ServerNetwork::disconnectClient()
 
 QString ServerNetwork::validateLogin(QString playerName, QString password)
 {
+    if (!bAllowNewClientConnection){
+        return "The game is in progress and no more players are allowed on this server.";
+    }
 
     if (this->password != password){
         return "The password is incorrect.";

@@ -100,5 +100,5 @@ void testServerNetwork::initServer2()
     QVERIFY(arguments.at(2) == port);
     QVERIFY(arguments.at(3) == "");
 
-   testServerNet1.deleteLater();
+    testServerNet1.deleteLater();
 }

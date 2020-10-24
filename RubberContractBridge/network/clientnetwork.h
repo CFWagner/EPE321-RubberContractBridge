@@ -52,7 +52,11 @@ signals:
     void loginResult(bool loginSuccessful, QString reason);
     void updateGameState(PlayerGameState gameState);
     void messageReceived(QString source, QString msg);
-    void serverDisconnected();
+    void serverDisconnected(); // This can be emmited anytime after calling rxRequestLogin.
+    // When received it means that the connection to the server has been lost.
+    // The Client must be RESTARTED, before attempting to connect agina.
+    // If in the middle of a game, the game should be terminated, an the client should be RESTARTED before trying to connect again.
+    // The GUI is responsible for ensuring that the client is RESTARTED.
     void gameTerminated(QString reason);
 
 private:

@@ -35,6 +35,8 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
     connect(tcpSoc, &QAbstractSocket::errorOccurred, this, &ClientNetwork::socketError);
     // Sucsessfully connected
     connect(tcpSoc, &QAbstractSocket::connected, this, &ClientNetwork::socketConnected);
+    // If the server disconnects the client
+    connect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
 }
 
 ClientNetwork::~ClientNetwork()
@@ -187,13 +189,21 @@ void ClientNetwork::rxAll()
 
 void ClientNetwork::internalServerDisconnected()
 {
+    // TODO: Return player name. Look at disconnection and when game as been started. (Setting the bool for that. - Not in this function.)
+    // Game wil be restarted after transmitting serverDisconnected.
+    // make sure tha tserver disconnected is not emmited before unless nescessary. (When should this be?)
+    qWarning() << "Client: " + playerName + " lost connection from the server.";
+    emit serverDisconnected();
+//    gameStarted = false;
+//    tcpSoc->abort();
+//    playerName = "";
 
 }
 
 /*!
  * Executed when sucesfully connected to the host (server).
- * Request to see if playerName and password is correct.
- * Create QJsonObject containting the playerName and password.
+ * Request to see if tempPlayerName and tempPassword is correct.
+ * Create QJsonObject containting the tempPlayerName and tempPassword.
  * Send the QJsonObject to the server.
  * Make signal and slot conections.
  */
@@ -364,12 +374,15 @@ void ClientNetwork::rxLoginResult(QJsonObject resObj)
     bLoggedIn = resObj["loginSuccessful"].toBool();
 
     // Notify client GUI of login result.
-    emit loginResult(resObj["loginSuccessful"].toBool(), resObj["reason"].toString());
+    emit loginResult(bLoggedIn, resObj["reason"].toString());
 
     // If login was unsuccessful, disconnect from the host.
     if (!bLoggedIn){
         tcpSoc->abort();
         qInfo() << "Login was unseccessfull and client is aborting connection with host.";
+    }else{
+        // If login was successful, set the playerName chosen.
+        this->playerName = tempPlayerName;
     }
 }
 

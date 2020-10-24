@@ -22,7 +22,7 @@ public:
     explicit ServerNetwork(QObject *parent = nullptr, QString nameOfAI = QString("AI"));
     ~ServerNetwork();
 
-    QTcpSocket* getPlayerSoc(QString playerName) const;
+    QTcpSocket* getPlayerSoc(QString playerName);
     void setPassword(QString password);
     void initServer(QHostAddress ip, quint16 port);
     void stopListening();
@@ -45,7 +45,7 @@ signals:
     // errorMsg is empty except when status = 2, then the actual error will be displayed. (It might not be a port error,
     // but that is the most likely error to have occured. If status = 2 and errorMsg = "The bound address is already in use", then it is
     // definitively the port that is already in use.)
-    // GUI is responsible for creating the messages regarding connection status. (genearl Info and warning signals will not be used for this.)
+    // GUI is responsible for creating the messages regarding connection status. (General Info and Warning signals will not be used for this.)
 
 //    void generalInfo(QString infoMsg);
     // All information, such as the port it connected to. (Should be displayed to the administrator.)
@@ -67,6 +67,7 @@ private:
     QVector<QTcpSocket*> clientSocTemp;
     QTcpServer* tcpServer;
     QDataStream in;
+    bool bAllowNewClientConnection;
 
     // Unit testing datastructures
     QVector<bool> bUnitTest;

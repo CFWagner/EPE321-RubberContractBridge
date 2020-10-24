@@ -3,15 +3,8 @@
 
 int main(int argc, char *argv[])
 {
-    //Unit tests
-//    TestBid testBid;
-//    QTest::qExec(&testBid);
-//    TestCard testCard;
-//    QTest::qExec(&testCard);
-//    TestCardSet testCardSet;
-//    QTest::qExec(&testCardSet);
-//    TestServerGameState testServerGameState;
-//    QTest::qExec(&testServerGameState);
-    TestPlayerGameState testPlayerGameState;
-    QTest::qExec(&testPlayerGameState);
+    QApplication rcbApplication(argc, argv);
+    MainWindow entryWindow;
+    entryWindow.show();
+    return rcbApplication.exec();
 }

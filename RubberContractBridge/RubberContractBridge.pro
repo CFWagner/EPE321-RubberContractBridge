@@ -19,9 +19,11 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
-    gui/clientgui.cpp \
-    gui/mainwindow.cpp \
-    gui/servergui.cpp \
+    gui/clientlogin.cpp \
+    gui/entrywindow.cpp \
+    gui/hover.cpp \
+    gui/serverlobby.cpp \
+    gui/serverlogin.cpp \
     main.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
@@ -31,9 +33,9 @@ SOURCES += \
     unit-tests/game-server/testcardset.cpp \
     unit-tests/game-server/testplayergamestate.cpp \
     unit-tests/game-server/testservergamestate.cpp \
-    unit-tests/testservernetwork.cpp \
-    unit-tests/testplayernetwork.cpp \
-    unit-tests/testclientnetwork.cpp
+    unit-tests/network/testclientnetwork.cpp \
+    unit-tests/network/testplayernetwork.cpp \
+    unit-tests/network/testservernetwork.cpp
 
 #All header files of the project is addded below.
 HEADERS += \
@@ -54,9 +56,11 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
-    gui/clientgui.h \
-    gui/mainwindow.h \
-    gui/servergui.h \
+    gui/clientlogin.h \
+    gui/entrywindow.h \
+    gui/hover.h \
+    gui/serverlobby.h \
+    gui/serverlogin.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
@@ -65,15 +69,9 @@ HEADERS += \
     unit-tests/game-server/testcardset.h \
     unit-tests/game-server/testplayergamestate.h \
     unit-tests/game-server/testservergamestate.h \
-    unit-tests/testservernetwork.h \
-    unit-tests/testplayernetwork.h \
-    unit-tests/testclientnetwork.h
-
-#All UI windows are shown below.
-FORMS += \
-    gui/clientgui.ui \
-    gui/mainwindow.ui \
-    gui/servergui.ui
+    unit-tests/network/testclientnetwork.h \
+    unit-tests/network/testplayernetwork.h \
+    unit-tests/network/testservernetwork.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -82,3 +80,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resource.qrc
+
+FORMS += \
+    gui/clientlogin.ui \
+    gui/entrywindow.ui \
+    gui/serverlobby.ui \
+    gui/serverlogin.ui

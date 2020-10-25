@@ -30,11 +30,16 @@ public:
     void message(QString source, QString msg);
     void gameTerminated(QString reason);
 
+    // Unit test data
+    QVector<bool> getUnitTest() const;
+
 private slots:
     void rxAll();
     void pingClient();
 
 signals:
+    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)
+    void generalError(QString errorMsg); // All errors. (Should be displayed to the administrator.)
     void bidSelected(Bid bid);
     void moveSelected(Card card);
     void messageGenerated(QString msg);
@@ -53,6 +58,11 @@ private:
     bool aliveFlag;
     QDataStream in;
     QDataStream out;
+    qint64 idCounter;
+    qint64 prevID;
+
+    // Unit testing datastructures
+    QVector<bool> bUnitTest;
 };
 
 #endif // PLAYERNETWORK_H

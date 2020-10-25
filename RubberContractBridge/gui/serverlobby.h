@@ -14,6 +14,8 @@ class ServerLobby : public QWidget
 public:
     explicit ServerLobby(QWidget *parent = nullptr);
     ~ServerLobby();
+    void setupWindow();
+    void staticGUIElements();
 
 private:
     Ui::ServerLobby *ui;

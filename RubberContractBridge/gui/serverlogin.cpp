@@ -39,23 +39,25 @@ void ServerLogin::staticGUIElements()
 
 void ServerLogin::tryConnect()
 {
+    // First check if the password is strong enough.
     bool validPassword = checkValidPassword();
     if (validPassword == true)
-       {
-           if(ui->ipLine->text() == "" || ui->portLine->text() == "")
-           {
-                ipAddress = QHostAddress::LocalHost;
-                portID = defaultPort;
-           }
-           else
-           {
-               ipAddress = QHostAddress(ui->ipLine->text());
-               portID = ui->portLine->text().toUShort();
-           }
-           this->close();
-           delete this;
-           ServerLobby *serverLobby = new ServerLobby();
-       }
+    {
+        // If the IP address or port isn't given then set it as default.
+        if(ui->ipLine->text() == "" || ui->portLine->text() == "")
+        {
+            ipAddress = QHostAddress::LocalHost;
+            portID = defaultPort;
+        }
+        else
+        {
+            ipAddress = QHostAddress(ui->ipLine->text());
+            portID = ui->portLine->text().toUShort();
+        }
+        this->close();
+        delete this;
+        ServerLobby *serverLobby = new ServerLobby();
+    }
 
 }
 
@@ -80,7 +82,7 @@ bool ServerLogin::checkValidPassword()
     if(validPassword == false)
     {
         password="INVALID";
-        QMessageBox::warning(this,"Password invalid","Server password is too weak try another one that has atleast 8 characters and contains atleast 1 special character.");
+        QMessageBox::warning(this,"Password invalid","Server password is too weak try another one that has atleast 8 characters long and contains atleast 1 special character.");
     }
     return validPassword;
 }

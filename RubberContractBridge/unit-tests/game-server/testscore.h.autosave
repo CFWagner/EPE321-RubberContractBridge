@@ -14,7 +14,7 @@ public:
 private:
     QMap<PlayerPosition, CardSet> getNSNoTrumpHonorsHand();
     QMap<PlayerPosition, CardSet> getNSClubs4HonorsHand();
-    QMap<PlayerPosition, CardSet> getNSClubs5HonorsHand();
+    QMap<PlayerPosition, CardSet> getEWSpades5HonorsHand();
 private slots:
     void testScore();
 };

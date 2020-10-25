@@ -4,9 +4,8 @@ TestScore::TestScore(QObject *parent) : QObject(parent) {}
 
 void TestScore::testScore()
 {
-    Score score1;
-
     // Test initialisation of score instance attributes and calculation methods
+    Score score1;
     QCOMPARE(score1.getContractPoints(N_S).size(), 1);
     QCOMPARE(score1.getContractPoints(N_S).value(0), 0);
     QCOMPARE(score1.getGamesWon(N_S), 0);
@@ -32,8 +31,236 @@ void TestScore::testScore()
     QCOMPARE(score1.isGameWinner(), false);
     QCOMPARE(score1.isRubberWinner(), false);
 
-    Score score2;
     // Test equality operator
+    Score score2;
     QCOMPARE(score1, score2);
 
+    // Generate QJsonObject instance from Score object
+    QJsonObject jsonScore;
+    score1.write(jsonScore);
+
+    // Initialize Score object using QJsonObject instance and test for before and after equality
+    score2.read(jsonScore);
+    QCOMPARE(score1, score2);
+
+
+}
+
+// Get set of hands where a team member of N_S has no trump honors
+QMap<PlayerPosition, CardSet> TestScore::getNSNoTrumpHonorsHand()
+{
+    QMap<PlayerPosition, CardSet> playerHands;
+    CardSet northCardSet;
+    CardSet eastCardSet;
+    CardSet southCardSet;
+    CardSet westCardSet;
+
+    northCardSet.addCard(Card(SPADES, ACE));
+    northCardSet.addCard(Card(HEARTS, ACE));
+    northCardSet.addCard(Card(CLUBS, ACE));
+    northCardSet.addCard(Card(DIAMONDS, ACE));
+    northCardSet.addCard(Card(SPADES, FIVE));
+    northCardSet.addCard(Card(SPADES, SIX));
+    northCardSet.addCard(Card(SPADES, SEVEN));
+    northCardSet.addCard(Card(SPADES, EIGHT));
+    northCardSet.addCard(Card(SPADES, NINE));
+    northCardSet.addCard(Card(SPADES, TEN));
+    northCardSet.addCard(Card(SPADES, JACK));
+    northCardSet.addCard(Card(SPADES, QUEEN));
+    northCardSet.addCard(Card(SPADES, KING));
+
+    eastCardSet.addCard(Card(SPADES, TWO));
+    eastCardSet.addCard(Card(HEARTS, TWO));
+    eastCardSet.addCard(Card(HEARTS, THREE));
+    eastCardSet.addCard(Card(HEARTS, FOUR));
+    eastCardSet.addCard(Card(HEARTS, FIVE));
+    eastCardSet.addCard(Card(HEARTS, SIX));
+    eastCardSet.addCard(Card(HEARTS, SEVEN));
+    eastCardSet.addCard(Card(HEARTS, EIGHT));
+    eastCardSet.addCard(Card(HEARTS, NINE));
+    eastCardSet.addCard(Card(HEARTS, TEN));
+    eastCardSet.addCard(Card(HEARTS, JACK));
+    eastCardSet.addCard(Card(HEARTS, QUEEN));
+    eastCardSet.addCard(Card(HEARTS, KING));
+
+    southCardSet.addCard(Card(SPADES, THREE));
+    southCardSet.addCard(Card(CLUBS, TWO));
+    southCardSet.addCard(Card(CLUBS, THREE));
+    southCardSet.addCard(Card(CLUBS, FOUR));
+    southCardSet.addCard(Card(CLUBS, FIVE));
+    southCardSet.addCard(Card(CLUBS, SIX));
+    southCardSet.addCard(Card(CLUBS, SEVEN));
+    southCardSet.addCard(Card(CLUBS, EIGHT));
+    southCardSet.addCard(Card(CLUBS, NINE));
+    southCardSet.addCard(Card(CLUBS, TEN));
+    southCardSet.addCard(Card(CLUBS, JACK));
+    southCardSet.addCard(Card(CLUBS, QUEEN));
+    southCardSet.addCard(Card(CLUBS, KING));
+
+    westCardSet.addCard(Card(SPADES, FOUR));
+    westCardSet.addCard(Card(DIAMONDS, TWO));
+    westCardSet.addCard(Card(DIAMONDS, THREE));
+    westCardSet.addCard(Card(DIAMONDS, FOUR));
+    westCardSet.addCard(Card(DIAMONDS, FIVE));
+    westCardSet.addCard(Card(DIAMONDS, SIX));
+    westCardSet.addCard(Card(DIAMONDS, SEVEN));
+    westCardSet.addCard(Card(DIAMONDS, EIGHT));
+    westCardSet.addCard(Card(DIAMONDS, NINE));
+    westCardSet.addCard(Card(DIAMONDS, TEN));
+    westCardSet.addCard(Card(DIAMONDS, JACK));
+    westCardSet.addCard(Card(DIAMONDS, QUEEN));
+    westCardSet.addCard(Card(DIAMONDS, KING));
+
+    playerHands.insert(NORTH, northCardSet);
+    playerHands.insert(EAST, eastCardSet);
+    playerHands.insert(SOUTH, southCardSet);
+    playerHands.insert(WEST, westCardSet);
+
+    return playerHands;
+}
+
+// Get set of hands where a team member of N_S has 4 clubs honors
+QMap<PlayerPosition, CardSet> TestScore::getNSClubs4HonorsHand()
+{
+    QMap<PlayerPosition, CardSet> playerHands;
+    CardSet northCardSet;
+    CardSet eastCardSet;
+    CardSet southCardSet;
+    CardSet westCardSet;
+
+    northCardSet.addCard(Card(SPADES, ACE));
+    northCardSet.addCard(Card(SPADES, TWO));
+    northCardSet.addCard(Card(SPADES, THREE));
+    northCardSet.addCard(Card(SPADES, FOUR));
+    northCardSet.addCard(Card(SPADES, FIVE));
+    northCardSet.addCard(Card(SPADES, SIX));
+    northCardSet.addCard(Card(SPADES, SEVEN));
+    northCardSet.addCard(Card(SPADES, EIGHT));
+    northCardSet.addCard(Card(SPADES, NINE));
+    northCardSet.addCard(Card(SPADES, TEN));
+    northCardSet.addCard(Card(SPADES, JACK));
+    northCardSet.addCard(Card(SPADES, QUEEN));
+    northCardSet.addCard(Card(SPADES, KING));
+
+    eastCardSet.addCard(Card(HEARTS, ACE));
+    eastCardSet.addCard(Card(HEARTS, TWO));
+    eastCardSet.addCard(Card(HEARTS, THREE));
+    eastCardSet.addCard(Card(HEARTS, FOUR));
+    eastCardSet.addCard(Card(HEARTS, FIVE));
+    eastCardSet.addCard(Card(HEARTS, SIX));
+    eastCardSet.addCard(Card(HEARTS, SEVEN));
+    eastCardSet.addCard(Card(HEARTS, EIGHT));
+    eastCardSet.addCard(Card(HEARTS, NINE));
+    eastCardSet.addCard(Card(HEARTS, TEN));
+    eastCardSet.addCard(Card(HEARTS, JACK));
+    eastCardSet.addCard(Card(HEARTS, QUEEN));
+    eastCardSet.addCard(Card(HEARTS, KING));
+
+    southCardSet.addCard(Card(CLUBS, ACE));
+    southCardSet.addCard(Card(CLUBS, TWO));
+    southCardSet.addCard(Card(CLUBS, THREE));
+    southCardSet.addCard(Card(CLUBS, FOUR));
+    southCardSet.addCard(Card(CLUBS, FIVE));
+    southCardSet.addCard(Card(CLUBS, SIX));
+    southCardSet.addCard(Card(CLUBS, SEVEN));
+    southCardSet.addCard(Card(CLUBS, EIGHT));
+    southCardSet.addCard(Card(CLUBS, NINE));
+    southCardSet.addCard(Card(DIAMONDS, TEN));
+    southCardSet.addCard(Card(CLUBS, JACK));
+    southCardSet.addCard(Card(CLUBS, QUEEN));
+    southCardSet.addCard(Card(CLUBS, KING));
+
+    westCardSet.addCard(Card(DIAMONDS, ACE));
+    westCardSet.addCard(Card(DIAMONDS, TWO));
+    westCardSet.addCard(Card(DIAMONDS, THREE));
+    westCardSet.addCard(Card(DIAMONDS, FOUR));
+    westCardSet.addCard(Card(DIAMONDS, FIVE));
+    westCardSet.addCard(Card(DIAMONDS, SIX));
+    westCardSet.addCard(Card(DIAMONDS, SEVEN));
+    westCardSet.addCard(Card(DIAMONDS, EIGHT));
+    westCardSet.addCard(Card(DIAMONDS, NINE));
+    westCardSet.addCard(Card(CLUBS, TEN));
+    westCardSet.addCard(Card(DIAMONDS, JACK));
+    westCardSet.addCard(Card(DIAMONDS, QUEEN));
+    westCardSet.addCard(Card(DIAMONDS, KING));
+
+    playerHands.insert(NORTH, northCardSet);
+    playerHands.insert(EAST, eastCardSet);
+    playerHands.insert(SOUTH, southCardSet);
+    playerHands.insert(WEST, westCardSet);
+
+    return playerHands;
+}
+
+// Get set of hands where a team member of E_W has 5 diamonds honors
+QMap<PlayerPosition, CardSet> TestScore::getEWSpades5HonorsHand()
+{
+    QMap<PlayerPosition, CardSet> playerHands;
+    CardSet northCardSet;
+    CardSet eastCardSet;
+    CardSet southCardSet;
+    CardSet westCardSet;
+
+    northCardSet.addCard(Card(SPADES, ACE));
+    northCardSet.addCard(Card(SPADES, TWO));
+    northCardSet.addCard(Card(SPADES, THREE));
+    northCardSet.addCard(Card(SPADES, FOUR));
+    northCardSet.addCard(Card(SPADES, FIVE));
+    northCardSet.addCard(Card(SPADES, SIX));
+    northCardSet.addCard(Card(SPADES, SEVEN));
+    northCardSet.addCard(Card(SPADES, EIGHT));
+    northCardSet.addCard(Card(SPADES, NINE));
+    northCardSet.addCard(Card(SPADES, TEN));
+    northCardSet.addCard(Card(SPADES, JACK));
+    northCardSet.addCard(Card(HEARTS, QUEEN));
+    northCardSet.addCard(Card(SPADES, KING));
+
+    eastCardSet.addCard(Card(HEARTS, ACE));
+    eastCardSet.addCard(Card(HEARTS, TWO));
+    eastCardSet.addCard(Card(HEARTS, THREE));
+    eastCardSet.addCard(Card(HEARTS, FOUR));
+    eastCardSet.addCard(Card(HEARTS, FIVE));
+    eastCardSet.addCard(Card(HEARTS, SIX));
+    eastCardSet.addCard(Card(HEARTS, SEVEN));
+    eastCardSet.addCard(Card(HEARTS, EIGHT));
+    eastCardSet.addCard(Card(HEARTS, NINE));
+    eastCardSet.addCard(Card(HEARTS, TEN));
+    eastCardSet.addCard(Card(HEARTS, JACK));
+    eastCardSet.addCard(Card(SPADES, QUEEN));
+    eastCardSet.addCard(Card(CLUBS, KING));
+
+    southCardSet.addCard(Card(CLUBS, ACE));
+    southCardSet.addCard(Card(CLUBS, TWO));
+    southCardSet.addCard(Card(CLUBS, THREE));
+    southCardSet.addCard(Card(CLUBS, FOUR));
+    southCardSet.addCard(Card(CLUBS, FIVE));
+    southCardSet.addCard(Card(CLUBS, SIX));
+    southCardSet.addCard(Card(CLUBS, SEVEN));
+    southCardSet.addCard(Card(CLUBS, EIGHT));
+    southCardSet.addCard(Card(CLUBS, NINE));
+    southCardSet.addCard(Card(CLUBS, TEN));
+    southCardSet.addCard(Card(CLUBS, JACK));
+    southCardSet.addCard(Card(CLUBS, QUEEN));
+    southCardSet.addCard(Card(HEARTS, KING));
+
+    westCardSet.addCard(Card(DIAMONDS, ACE));
+    westCardSet.addCard(Card(DIAMONDS, TWO));
+    westCardSet.addCard(Card(DIAMONDS, THREE));
+    westCardSet.addCard(Card(DIAMONDS, FOUR));
+    westCardSet.addCard(Card(DIAMONDS, FIVE));
+    westCardSet.addCard(Card(DIAMONDS, SIX));
+    westCardSet.addCard(Card(DIAMONDS, SEVEN));
+    westCardSet.addCard(Card(DIAMONDS, EIGHT));
+    westCardSet.addCard(Card(DIAMONDS, NINE));
+    westCardSet.addCard(Card(DIAMONDS, TEN));
+    westCardSet.addCard(Card(DIAMONDS, JACK));
+    westCardSet.addCard(Card(DIAMONDS, QUEEN));
+    westCardSet.addCard(Card(DIAMONDS, KING));
+
+    playerHands.insert(NORTH, northCardSet);
+    playerHands.insert(EAST, eastCardSet);
+    playerHands.insert(SOUTH, southCardSet);
+    playerHands.insert(WEST, westCardSet);
+
+    return playerHands;
 }

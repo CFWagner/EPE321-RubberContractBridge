@@ -24,12 +24,12 @@ public:
     bool getTeamVulnerable(Team team) const;
     bool isGameWinner() const;
     bool isRubberWinner() const;
+    bool isMatchDraw() const;
     void finaliseRubber();
     void nextGame();
     Team getGameWinner() const;
     Team getRubberWinner() const;
     Team getMatchWinner() const;
-    bool isMatchDraw() const;
     quint32 getTotalScore(Team team) const;
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;

@@ -32,6 +32,7 @@ SOURCES += \
     unit-tests/game-server/testcard.cpp \
     unit-tests/game-server/testcardset.cpp \
     unit-tests/game-server/testplayergamestate.cpp \
+    unit-tests/game-server/testscore.cpp \
     unit-tests/game-server/testservergamestate.cpp \
     unit-tests/network/testclientnetwork.cpp \
     unit-tests/network/testplayernetwork.cpp \
@@ -68,6 +69,7 @@ HEADERS += \
     unit-tests/game-server/testcard.h \
     unit-tests/game-server/testcardset.h \
     unit-tests/game-server/testplayergamestate.h \
+    unit-tests/game-server/testscore.h \
     unit-tests/game-server/testservergamestate.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \

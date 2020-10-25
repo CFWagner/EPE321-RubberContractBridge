@@ -17,7 +17,7 @@ public slots:
     void playersSelected(QVector<QString> playerNames);
     void playerDisconnected();
     void serverPassword(QString passwordSent);
-    void serverIPAddress(QHostAddress addressSent);
+    void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
 private:
     GameServer gameServer;
 };

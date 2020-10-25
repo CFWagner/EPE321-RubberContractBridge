@@ -13,7 +13,7 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
     // Once ingerited, init the playerName.
     PlayerNetwork::playerName = playerName;
     PlayerNetwork::clientSoc = clientSoc;
-    idCounter = 0;
+    idCounter = 1; // One message has been sent by the
     prevID = 0; // The first message has been received and the ID was 0, thus prevID is 0.
 
     in.setDevice(PlayerNetwork::clientSoc);
@@ -116,40 +116,17 @@ void PlayerNetwork::rxAll()
     // The data received is valid.
     // Choose the function that will handel the data.
     QString tempStr = rxObj["Type"].toString();
-    if (tempStr == "NOTIFY_BID_TURN") {
-        rxNotifyBidTurn();
+
+    if (tempStr == "BID_SEND") {
+        rxBidSelected(rxObj);
         return;
     }
-    if (tempStr == "NOTIFY_MOVE_TRUN") {
-        rxNotifyMoveTurn();
-        return;
-    }
-    if (tempStr == "NOTIFY_BID_REJECTED") {
-        rxNotifyBidRejected(rxObj);
-        return;
-    }
-    if (tempStr == "NOTIFY_MOVE_REJECTED") {
-        rxNotifyMoveRejected(rxObj);
-        return;
-    }
-    if (tempStr == "LOGIN_RESULT") {
-        rxLoginResult(rxObj);
-        return;
-    }
-    if (tempStr == "UPDATE_GAME_STATE") {
-        rxUpdateGameState(rxObj);
+    if (tempStr == "MOVE_SEND") {
+        rxMoveSelected(rxObj);
         return;
     }
     if (tempStr == "MESSAGE") {
         rxMessage(rxObj);
-        return;
-    }
-    if (tempStr == "GAME_TERMINATED") {
-        rxGameTerminated(rxObj);
-        return;
-    }
-    if (tempStr == "PING_RECEIVED") {
-        rxPingReceived();
         return;
     }
 
@@ -166,15 +143,57 @@ void PlayerNetwork::socketError(QAbstractSocket::SocketError socError)
 {
     qInfo() << "A socket error occured in PlayerNetwork: " << socError;
 
-    emit generalError("The following error occurred: " + clientSoc->errorString());
+    emit generalError("The following error occurred: " + clientSoc->errorString() + " Restart the game server.");
 
-    clientSoc->abort();
+//    clientSoc->abort();
 }
 
+/*!
+ * \brief Handel all data that is sent to the client.
+ * \param data QJsonObject containing at least the "Type" and no "ID" fields.
+ */
 
 void PlayerNetwork::txAll(QJsonObject data)
 {
+    // Cannot send data if not connected to the server.
+    if (!clientSoc->isValid()){
+        emit generalError("Not connected to the server. Cannot send data to the server.");
+        return;
+    }
 
+    // Test to see if data that must be sent is valid
+    if (!data.contains("Type")){
+        emit generalError("Data to be sent does not contain 'Type' field. Data was not sent.");
+        return;
+    }
+
+    if (data.contains("ID")) {
+        emit generalError("Data to be sent should not contain an 'ID' field. 'ID' field was removed.");
+        data.remove("ID");
+    }
+
+    // Add the ID field to the QJsonObject
+    data["ID"] = idCounter++;
+
+    // Create transmitting communication data stream
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_10);
+
+    // Send the login request to the server
+    out << data;
+    int tempVal = clientSoc->write(block);
+
+    qInfo() << "Number of bytes expected to be sent to the client: " << block.size();
+    qInfo() << "Number of bytes sent to client: " << tempVal;
+
+    if (tempVal == -1) {
+        // An error occured when writing the data block
+        emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
+    } else if (tempVal < block.size()) {
+        // The block written was too small (did not contain enough bytes).
+        emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
+    }
 }
 
 void PlayerNetwork::rxBidSelected(QJsonObject bidObj)
@@ -188,11 +207,6 @@ void PlayerNetwork::rxMoveSelected(QJsonObject moveObj)
 }
 
 void PlayerNetwork::rxMessage(QJsonObject msgObj)
-{
-
-}
-
-void PlayerNetwork::rxPingReturn()
 {
 
 }

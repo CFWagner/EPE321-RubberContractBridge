@@ -58,7 +58,7 @@ private:
     QTimer* keepAlive;
     bool aliveFlag;
     QDataStream in;
-    QDataStream out;
+//    QDataStream out;
     qint64 idCounter;
     qint64 prevID;
 

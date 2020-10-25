@@ -35,10 +35,11 @@ public:
 
 private slots:
     void rxAll();
-    void pingClient();
+    void socketError(QAbstractSocket::SocketError socError);
+//    void pingClient();
 
 signals:
-    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)
+//    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)
     void generalError(QString errorMsg); // All errors. (Should be displayed to the administrator.)
     void bidSelected(Bid bid);
     void moveSelected(Card card);
@@ -50,7 +51,7 @@ private:
     void rxBidSelected(QJsonObject bidObj);
     void rxMoveSelected(QJsonObject moveObj);
     void rxMessage(QJsonObject msgObj);
-    void rxPingReturn();
+//    void rxPingReturn();
     void internalClientDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
 
     QTcpSocket* clientSoc;

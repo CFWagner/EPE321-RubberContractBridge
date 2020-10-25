@@ -2,40 +2,39 @@
 #define CLIENTLOGIN_H
 
 #include "hover.h"
+#include <QHostAddress>
 #include <QWidget>
 #include <QObject>
-#include <QtWidgets>
-#include <QHostAddress>
 
 namespace Ui {
-class clientLogin;
+class ClientLogin;
 }
 
-class clientLogin : public QWidget
+class ClientLogin : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit clientLogin(QWidget *parent = nullptr);
-    ~clientLogin();
-    // Window is created such as the background and labels.
-    void windowSetup();
-    //initiate the handover to the network for connection.
+    explicit ClientLogin(QWidget *parent = nullptr);
+    ~ClientLogin();
+    void setupWindow();
+    void staticGUIElements();
+
+public slots:
+    // The clientLogin attempts to login after providing all the details needed
+    // as well as pressing the login button.
     void attemptLogin();
 
 private slots:
-    //Button actions
-    void on_loginButton_clicked();
     void on_infoButton_clicked();
-signals:
-    //A signal that sends all the details of the clients login attempt.
-    void connectToServer(QHostAddress ipAddress,quint16 portID, QString username, QString password);
+
 private:
-    Ui::clientLogin *ui;
+    Ui::ClientLogin *ui;
     quint16 portID;
     QString password;
     QHostAddress ipAddress;
     QString username;
+    int pageID = 3;
 };
 
 #endif // CLIENTLOGIN_H

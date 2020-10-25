@@ -1,7 +1,4 @@
 #include "gui/entrywindow.h"
-#include "unit-tests/gui/testserverlogin.h"
-#include "unit-tests/gui/testclientlogin.h"
-#include "unit-tests/gui/testlobby.h"
 #include <QApplication>
 //Unit tests
 

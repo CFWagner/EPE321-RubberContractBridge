@@ -21,9 +21,9 @@ SOURCES += \
     game-server/servergamestate.cpp \
     gui/clientlogin.cpp \
     gui/entrywindow.cpp \
-    gui/servergui.cpp \
+    gui/hover.cpp \
     gui/serverlobby.cpp \
-    hover.cpp \
+    gui/serverlogin.cpp \
     main.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
@@ -33,9 +33,6 @@ SOURCES += \
     unit-tests/game-server/testcardset.cpp \
     unit-tests/game-server/testplayergamestate.cpp \
     unit-tests/game-server/testservergamestate.cpp \
-    unit-tests/gui/testclientlogin.cpp \
-    unit-tests/gui/testlobby.cpp \
-    unit-tests/gui/testserverlogin.cpp \
     unit-tests/network/testclientnetwork.cpp \
     unit-tests/network/testplayernetwork.cpp \
     unit-tests/network/testservernetwork.cpp
@@ -61,9 +58,9 @@ HEADERS += \
     game-server/servergamestate.h \
     gui/clientlogin.h \
     gui/entrywindow.h \
-    gui/servergui.h \
+    gui/hover.h \
     gui/serverlobby.h \
-    hover.h \
+    gui/serverlogin.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
@@ -72,19 +69,9 @@ HEADERS += \
     unit-tests/game-server/testcardset.h \
     unit-tests/game-server/testplayergamestate.h \
     unit-tests/game-server/testservergamestate.h \
-    unit-tests/gui/testclientlogin.h \
-    unit-tests/gui/testlobby.h \
-    unit-tests/gui/testserverlogin.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \
     unit-tests/network/testservernetwork.h
-
-#All UI windows are shown below.
-FORMS += \
-    gui/clientlogin.ui \
-    gui/entrywindow.ui \
-    gui/servergui.ui \
-    gui/serverlobby.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -93,3 +80,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resource.qrc
+
+FORMS += \
+    gui/clientlogin.ui \
+    gui/entrywindow.ui \
+    gui/serverlobby.ui \
+    gui/serverlogin.ui

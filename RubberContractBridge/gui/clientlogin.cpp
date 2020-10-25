@@ -1,62 +1,64 @@
 #include "clientlogin.h"
 #include "ui_clientlogin.h"
 
-clientLogin::clientLogin(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::clientLogin)
+ClientLogin::ClientLogin(QWidget *parent) : QWidget(parent), ui(new Ui::ClientLogin)
 {
     ui->setupUi(this);
-    windowSetup();
+    setupWindow();
+    staticGUIElements();
     this->show();
+
 }
 
-clientLogin::~clientLogin()
+ClientLogin::~ClientLogin()
 {
     delete ui;
 }
 
-void clientLogin::windowSetup()
+void ClientLogin::setupWindow()
 {
+    // QPixmap maps the pixels of the background fot the palatte to brush it onto the
+    // current ui.
     QPixmap bkgnd(":/resources/guiResources/background/login.png");
     bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
     QPalette palette;
-    //Draw the background into the desired size.
     palette.setBrush(QPalette::Background, bkgnd);
     this->setPalette(palette);
+    //Fix the size of the window to a specified 415 by 520 ratio (16:12)
     this->setFixedSize(415,520);
-    QWidget::setWindowTitle ("Login Screen");
-    ui->loginButton->setIcon(QIcon(":/resources/guiResources/background/unselectedButton.png"));
-    ui->usernameLabel->setStyleSheet("color: white;font: bold");
-    ui->passwordLabel->setStyleSheet("color: white;font: bold");
-    ui->loginBox->setStyleSheet("color: white;font: bold");
+    this->setWindowTitle ("Rubber Contract Bridge");
 }
 
-void clientLogin::on_loginButton_clicked()
+void ClientLogin::staticGUIElements()
 {
-    // Used to bypass button for unit test since mouseClick is not working.
-    attemptLogin();
+    QPixmap createPixel(":/resources/guiResources/buttons/login_grey.png");
+    Hover *loginButton = new Hover(this->pageID,4,this);
+    loginButton->setPixmap(createPixel);
+    loginButton->setGeometry(130,320,150,64);
+    connect(loginButton,&Hover::attemptUserLogin,this,&ClientLogin::attemptLogin);
 }
 
-void clientLogin::on_infoButton_clicked()
+void ClientLogin::on_infoButton_clicked()
 {
     //Gives information on the requirements of login.
    QMessageBox::information(this,"Login requirments","Username may not start with BOT and username must be unique.");
 
 }
-void clientLogin::attemptLogin()
+void ClientLogin::attemptLogin()
 {
     //Checks if the person has chosen an appropriate name for their avatar.
     //Names with BOT in it are not allowed.
     username = ui->userNameLine->text();
-    if (username.contains("BOT") == true)
+    if (username.contains("BOT") == true || username == "")
     {
-        QMessageBox::warning(this,"Login requirments","Username may not start with BOT and username must be unique.");
+        QMessageBox::warning(this,"Login requirments","Your username may not start with BOT or be empty.");
     }
     else
     {
+        // The details are read in form the QLineEdits for sending.
         password = ui->passwordLines->text();
         ipAddress = QHostAddress(ui->ipAddressLine->text());
         portID = ui->portLine->text().toUShort();
-        emit connectToServer(ipAddress,portID,password,username);
     }
 }
+

@@ -26,11 +26,11 @@ void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> pl
     qint8 multiplier = 1;
     bool doubled = false;
     bool redoubled = false;
-    if(contractBid.getCall() == DOUBLE){
+    if(contractBid.getCall() == DOUBLE_BID){
         doubled = true;
         multiplier = 2;
     }
-    else if(contractBid.getCall() == REDOUBLE){
+    else if(contractBid.getCall() == REDOUBLE_BID){
         redoubled = true;
         multiplier = 4;
     }

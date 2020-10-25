@@ -20,7 +20,7 @@ public:
     BidCall getCall() const;
     CardSuit getTrumpSuit() const;
     qint8 getTricksAbove() const;
-    Team getTeam() const;
+    Team getBiddingTeam() const;
     void setCall(BidCall call);
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;

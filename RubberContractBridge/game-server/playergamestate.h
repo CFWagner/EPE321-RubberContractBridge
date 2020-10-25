@@ -17,20 +17,24 @@ public:
                     PlayerPosition handToPlay, PlayerPosition dealer,
                     PlayerPosition declarer, bool teamVulnerable[2],
                     Score score, GameEvent gameEvent, QMap<PlayerPosition, QString> playerPositions,
+                    QMap<PlayerPosition, qint8> playerCardCount,
                     CardSet playerHand, CardSet dummyHand);
     PlayerGameState(const GameState &gameState, GameEvent gameEvent,
                     QMap<PlayerPosition, QString> playerPositions,
+                    QMap<PlayerPosition, qint8> playerCardCount,
                     CardSet playerHand, CardSet dummyHand);
     GameEvent getEvent();
     CardSet getPlayerHand();
     CardSet getDummyHand();
     QString getPlayerName(PlayerPosition position);
+    qint8 getPlayerCardCount(PlayerPosition position);
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
     bool operator ==(const PlayerGameState& playerGameState) const;
 private:
     GameEvent gameEvent; // Most recent event in the game that can be used to identify which attributes likely changed
     QMap<PlayerPosition, QString> playerPositions; // Map of the postions of the players to the name of the players ine each position
+    QMap<PlayerPosition, qint8> playerCardCount; // Map of the postions of the players to number of cards each player holds
     CardSet playerHand; // Cards in the hand of the player for which the game state was created
     CardSet dummyHand; // Cards in the dummy's hand. Nullptr if the gamestate is BIDDING
 };

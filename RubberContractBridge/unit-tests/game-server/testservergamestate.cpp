@@ -50,8 +50,8 @@ void TestServerGameState::testServerGameState()
     // Test bid validation when no valid bids have been made
     QCOMPARE(serverState.isBidValid(Bid(NORTH, PASS)), true);
     QCOMPARE(serverState.isBidValid(Bid(NORTH, SPADES, 2)), true);
-    QCOMPARE(serverState.isBidValid(Bid(NORTH, DOUBLE)), false);
-    QCOMPARE(serverState.isBidValid(Bid(NORTH, REDOUBLE)), false);
+    QCOMPARE(serverState.isBidValid(Bid(NORTH, DOUBLE_BID)), false);
+    QCOMPARE(serverState.isBidValid(Bid(NORTH, REDOUBLE_BID)), false);
 
     // Make four passes during the bidding phase when no bid has been made and test attributes
     serverState.updateBidState(Bid(NORTH, PASS));
@@ -101,14 +101,14 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.isBidValid(Bid(SOUTH, CLUBS, 2)), false);
     QCOMPARE(serverState.isBidValid(Bid(SOUTH, SPADES, 2)), true);
     QCOMPARE(serverState.isBidValid(Bid(SOUTH, NONE, 2)), true);
-    QCOMPARE(serverState.isBidValid(Bid(SOUTH, DOUBLE)), true);
-    QCOMPARE(serverState.isBidValid(Bid(SOUTH, REDOUBLE)), false);
+    QCOMPARE(serverState.isBidValid(Bid(SOUTH, DOUBLE_BID)), true);
+    QCOMPARE(serverState.isBidValid(Bid(SOUTH, REDOUBLE_BID)), false);
 
     // Test attributes after making a valid double bid
-    serverState.updateBidState(Bid(SOUTH, DOUBLE));
+    serverState.updateBidState(Bid(SOUTH, DOUBLE_BID));
     QCOMPARE(serverState.getPhase(), BIDDING);
     QCOMPARE(serverState.getDealNumber(), 2);
-    QCOMPARE(serverState.getCurrentBid()->getCall(), DOUBLE);
+    QCOMPARE(serverState.getCurrentBid()->getCall(), DOUBLE_BID);
     QCOMPARE(serverState.getCurrentBid()->getTrumpSuit(), DIAMONDS);
     QCOMPARE(serverState.getCurrentBid()->getBidder(), EAST);
     QCOMPARE(serverState.getContractBid(), nullptr);
@@ -122,14 +122,14 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.isBidValid(Bid(WEST, CLUBS, 2)), false);
     QCOMPARE(serverState.isBidValid(Bid(WEST, SPADES, 2)), true);
     QCOMPARE(serverState.isBidValid(Bid(WEST, NONE, 2)), true);
-    QCOMPARE(serverState.isBidValid(Bid(WEST, DOUBLE)), false);
-    QCOMPARE(serverState.isBidValid(Bid(WEST, REDOUBLE)), true);
+    QCOMPARE(serverState.isBidValid(Bid(WEST, DOUBLE_BID)), false);
+    QCOMPARE(serverState.isBidValid(Bid(WEST, REDOUBLE_BID)), true);
 
     // Test attributes after making a valid redouble bid
-    serverState.updateBidState(Bid(WEST, REDOUBLE));
+    serverState.updateBidState(Bid(WEST, REDOUBLE_BID));
     QCOMPARE(serverState.getPhase(), BIDDING);
     QCOMPARE(serverState.getDealNumber(), 2);
-    QCOMPARE(serverState.getCurrentBid()->getCall(), REDOUBLE);
+    QCOMPARE(serverState.getCurrentBid()->getCall(), REDOUBLE_BID);
     QCOMPARE(serverState.getCurrentBid()->getTrumpSuit(), DIAMONDS);
     QCOMPARE(serverState.getCurrentBid()->getBidder(), EAST);
     QCOMPARE(serverState.getContractBid(), nullptr);
@@ -143,8 +143,8 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.isBidValid(Bid(NORTH, CLUBS, 2)), false);
     QCOMPARE(serverState.isBidValid(Bid(NORTH, SPADES, 2)), true);
     QCOMPARE(serverState.isBidValid(Bid(NORTH, NONE, 2)), true);
-    QCOMPARE(serverState.isBidValid(Bid(NORTH, DOUBLE)), false);
-    QCOMPARE(serverState.isBidValid(Bid(NORTH, REDOUBLE)), false);
+    QCOMPARE(serverState.isBidValid(Bid(NORTH, DOUBLE_BID)), false);
+    QCOMPARE(serverState.isBidValid(Bid(NORTH, REDOUBLE_BID)), false);
 
     // Test attributes after making a valid bid update
     bid1 = Bid(NORTH, CLUBS, 3);

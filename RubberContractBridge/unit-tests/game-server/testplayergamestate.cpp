@@ -23,14 +23,15 @@ void TestPlayerGameState::testPlayerGameState()
     Score score;
     GameEvent gameEvent = PLAY_START;
     QMap<PlayerPosition, QString> playerPositions;
+    QMap<PlayerPosition, qint8> playerCardCount;
     CardSet playerHand;
     CardSet dummyHand;
 
     // Construct PlayerGameState instance
     PlayerGameState playerState(phase, currentBid, contractBid, gameNumber, dealNumber,
                                 trickNumber, tricks, playerTurn, handToPlay, dealer, declarer,
-                                teamVulnerable, score, gameEvent, playerPositions, playerHand,
-                                dummyHand);
+                                teamVulnerable, score, gameEvent, playerPositions, playerCardCount,
+                                playerHand, dummyHand);
 
     // Test PlayerGameState instance attributes
     QCOMPARE(playerState.getPhase(), phase);
@@ -122,14 +123,19 @@ void TestPlayerGameState::testPlayerGameState()
     playerPositions.insert(SOUTH, "Player 3");
     playerPositions.insert(WEST, "Player 4");
 
+    playerCardCount.insert(NORTH, 4);
+    playerCardCount.insert(EAST, 4);
+    playerCardCount.insert(SOUTH, 4);
+    playerCardCount.insert(WEST, 4);
+
     currentBid = new Bid(NORTH, SPADES, 5);
     contractBid = new Bid(SOUTH, HEARTS, 2);
 
     // Construct PlayerGameState instance
     PlayerGameState playerState3(phase, currentBid, contractBid, gameNumber, dealNumber,
                                 trickNumber, tricks, playerTurn, handToPlay, dealer, declarer,
-                                teamVulnerable, score, gameEvent, playerPositions, playerHand,
-                                dummyHand);
+                                teamVulnerable, score, gameEvent, playerPositions, playerCardCount,
+                                playerHand, dummyHand);
 
     // Test PlayerGameState instance attributes
     QCOMPARE(playerState3.getPhase(), phase);

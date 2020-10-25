@@ -12,9 +12,70 @@ Score::Score(quint32 backScore[2])
 }
 
 // Update the score state based on the contract, player hands and result of the latest trick
-void Score::updateScore(const Bid &contractBid, quint8 defenderTricksWon)
+void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> playerHands, quint8 declarerTricksWon)
 {
+    // Get double or redouble multiplier
+    qint8 multiplier;
+    switch(contractBid.getCall()){
+        case DOUBLE:
+            multiplier = 2;
+            break;
+        case REDOUBLE:
+            multiplier = 4;
+            break;
+        default:
+            multiplier = 1;
+            break;
+    }
 
+    // Contract was made
+    if(declarerTricksWon >= contractBid.getTricksAbove() + 6){
+        Team biddingTeam = contractBid.getBiddingTeam();
+
+        // Get points won per trick
+        qint8 trickPoints;
+        qint8 overtrickPoints;
+        switch(contractBid.getTrumpSuit()){
+            // No trump and major suits
+            case NONE:
+            case SPADES:
+            case HEARTS:
+                trickPoints = 30;
+                overtrickPoints = 30;
+                break;
+            // Minor suits
+            default:
+                trickPoints = 20;
+                overtrickPoints = 20;
+                break;
+        }
+
+        // Adjust overtrick points if doubled or redoubled
+        if(contractBid.getCall() == DOUBLE || contractBid.getCall() == REDOUBLE){
+            overtrickPoints = 100 * multiplier * 0.5;
+            if(teamVulnerable[biddingTeam])
+                overtrickPoints *= 2;
+        }
+
+        // Apply double or redouble multiplier
+        trickPoints *= multiplier;
+
+        // Apply adjustment for first trick if trump suit is no trump
+        qint8 noTrumpAdjust = 0;
+        if(contractBid.getTrumpSuit() == NONE)
+            noTrumpAdjust = 10 * multiplier;
+
+        // Update contract points
+        contractPoints[biddingTeam].last() += (contractBid.getTricksAbove() * trickPoints) + noTrumpAdjust;
+
+        // Update overtrick points
+        qint8 overTricks = declarerTricksWon - (contractBid.getTricksAbove() + 6);
+        overtricks[biddingTeam] += overTricks * trickPoints;
+    }
+    // Contract was not made
+    else{
+
+    }
 }
 
 // Get the contract points accumulated by the specified team for the current rubber
@@ -53,6 +114,18 @@ quint32 Score::getHonors(Team team) const
 quint32 Score::getSlamBonuses(Team team) const
 {
     return slamBonuses[team];
+}
+
+// Getter for the vulnerability status for the specified team
+bool Score::getTeamVulnerable(Team team) const
+{
+    return teamVulnerable[team];
+}
+
+// Setter for the vulnerability status for the specified team
+void Score::setTeamVulnerable(Team team)
+{
+    teamVulnerable[team] = true;
 }
 
 // Initialize score attributes from JSON object
@@ -105,6 +178,13 @@ void Score::read(const QJsonObject &json)
         bool slamBonusesElement = jsonslamBonusesArray[index].toBool();
         slamBonuses[index] = slamBonusesElement;
     }
+
+    // Read team vunerable array from JSON object
+    QJsonArray jsonTeamVulnerableArray = json["teamVulnerable"].toArray();
+    for (qint8 index = 0; index < jsonTeamVulnerableArray.size(); ++ index) {
+        bool teamVulnerableElement = jsonTeamVulnerableArray[index].toBool();
+        teamVulnerable[index] = teamVulnerableElement;
+    }
 }
 
 // Add Score instance attributes to the JSON object argument
@@ -153,6 +233,11 @@ void Score::write(QJsonObject &json) const
         jsonslamBonusesArray.append(slamBonusesElement);
     json["slamBonuses"] = jsonslamBonusesArray;
 
+    // Add team vunerable array to JSON object
+    QJsonArray jsonTeamVulnerableArray;
+    for (const bool &teamVulnerableElement: teamVulnerable)
+        jsonTeamVulnerableArray.append(teamVulnerableElement);
+    json["teamVulnerable"] = jsonTeamVulnerableArray;
 }
 
 // Overloaded == relational operator to compare score equality
@@ -170,5 +255,7 @@ bool Score::operator ==(const Score& score) const
             honors[N_S] == score.honors[N_S] &&
             honors[E_W] == score.honors[E_W] &&
             slamBonuses[N_S] == score.slamBonuses[N_S] &&
-            slamBonuses[E_W] == score.slamBonuses[E_W];
+            slamBonuses[E_W] == score.slamBonuses[E_W] &&
+            teamVulnerable[N_S] == score.teamVulnerable[N_S] &&
+            teamVulnerable[E_W] == score.teamVulnerable[E_W];
 }

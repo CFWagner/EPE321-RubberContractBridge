@@ -1,7 +1,7 @@
 #include "serverlobby.h"
 #include "ui_serverlobby.h"
 
-ServerLobby::ServerLobby(QWidget *parent) :
+ServerLobby::ServerLobby(Server *serverCreated, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ServerLobby)
 {

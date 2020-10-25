@@ -22,10 +22,11 @@ void Server::playerDisconnected()
 
 void Server::serverPassword(QString passwordSent)
 {
-
+    qDebug () << passwordSent;
 }
 
-void Server::serverIPAddress(QHostAddress addressSent)
+void Server::serverIPAddressPort(QHostAddress addressSent,quint16 portSent)
 {
-
+    qDebug () << addressSent;
+    qDebug () << portSent;
 }

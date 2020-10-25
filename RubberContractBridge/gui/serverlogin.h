@@ -3,6 +3,7 @@
 
 #include "hover.h"
 #include "serverlobby.h"
+#include "game-server/server.h"
 #include <QHostAddress>
 #include <QWidget>
 #include <QObject>
@@ -26,6 +27,10 @@ public:
 public slots:
     // The server attempts to create the server given the details provided.
     void tryConnect();
+signals:
+    void sendServerPassword (QString password);
+    void sendIPAddressPort (QHostAddress ipAddress,quint16 portID);
+
 private:
     Ui::ServerLogin *ui;
     int pageID = 1;
@@ -33,6 +38,8 @@ private:
     QString password;
     QHostAddress ipAddress;
     quint16 defaultPort = 61074;
+
+    Server *serverCreated;
 
 
 };

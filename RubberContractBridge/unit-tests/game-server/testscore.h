@@ -12,9 +12,10 @@ class TestScore : public QObject
 public:
     explicit TestScore(QObject *parent = nullptr);
 private:
-    QMap<PlayerPosition, CardSet> getNSNoTrumpHonorsHand();
-    QMap<PlayerPosition, CardSet> getNSClubs4HonorsHand();
-    QMap<PlayerPosition, CardSet> getNSClubs5HonorsHand();
+    QMap<PlayerPosition, CardSet> getNoHonorsHand() const;
+    QMap<PlayerPosition, CardSet> getNSNoTrumpHonorsHand() const;
+    QMap<PlayerPosition, CardSet> getNSClubs4HonorsHand() const;
+    QMap<PlayerPosition, CardSet> getEWSpades5HonorsHand() const;
 private slots:
     void testScore();
 };

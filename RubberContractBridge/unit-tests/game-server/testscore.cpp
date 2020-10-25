@@ -7,7 +7,7 @@ void TestScore::testScore()
     // Test initialisation of score instance attributes and calculation methods
     Score score1;
     QCOMPARE(score1.getContractPoints(N_S).size(), 1);
-    QCOMPARE(score1.getContractPoints(N_S).value(0), 0);
+    QCOMPARE(score1.getContractPoints(N_S).last(), 0);
     QCOMPARE(score1.getGamesWon(N_S), 0);
     QCOMPARE(score1.getBackScore(N_S), 0);
     QCOMPARE(score1.getOvertricks(N_S), 0);
@@ -18,7 +18,7 @@ void TestScore::testScore()
     QCOMPARE(score1.getTeamVulnerable(N_S), false);
     QCOMPARE(score1.getTotalScore(N_S), 0);
     QCOMPARE(score1.getContractPoints(E_W).size(), 1);
-    QCOMPARE(score1.getContractPoints(E_W).value(0), 0);
+    QCOMPARE(score1.getContractPoints(E_W).last(), 0);
     QCOMPARE(score1.getGamesWon(E_W), 0);
     QCOMPARE(score1.getBackScore(E_W), 0);
     QCOMPARE(score1.getOvertricks(E_W), 0);
@@ -43,11 +43,148 @@ void TestScore::testScore()
     score2.read(jsonScore);
     QCOMPARE(score1, score2);
 
+    // Test attributes after score update with no trump and 0 odd tricks
+    Bid contractBid(NORTH, NONE, 1);
+    score1.updateScore(contractBid, getNoHonorsHand(), 7);
+    QCOMPARE(score1.getContractPoints(N_S).size(), 1);
+    QCOMPARE(score1.getContractPoints(N_S).last(), 40);
+    QCOMPARE(score1.getGamesWon(N_S), 0);
+    QCOMPARE(score1.getBackScore(N_S), 0);
+    QCOMPARE(score1.getOvertricks(N_S), 0);
+    QCOMPARE(score1.getUndertricks(N_S), 0);
+    QCOMPARE(score1.getHonors(N_S), 0);
+    QCOMPARE(score1.getSlamBonuses(N_S), 0);
+    QCOMPARE(score1.getRubberBonuses(N_S), 0);
+    QCOMPARE(score1.getTeamVulnerable(N_S), false);
+    QCOMPARE(score1.getTotalScore(N_S), 40);
+    QCOMPARE(score1.getContractPoints(E_W).size(), 1);
+    QCOMPARE(score1.getContractPoints(E_W).last(), 0);
+    QCOMPARE(score1.getGamesWon(E_W), 0);
+    QCOMPARE(score1.getBackScore(E_W), 0);
+    QCOMPARE(score1.getOvertricks(E_W), 0);
+    QCOMPARE(score1.getUndertricks(E_W), 0);
+    QCOMPARE(score1.getHonors(E_W), 0);
+    QCOMPARE(score1.getSlamBonuses(E_W), 0);
+    QCOMPARE(score1.getRubberBonuses(E_W), 0);
+    QCOMPARE(score1.getTeamVulnerable(E_W), false);
+    QCOMPARE(score1.getTotalScore(E_W), 0);
+    QCOMPARE(score1.isGameWinner(), false);
+    QCOMPARE(score1.isRubberWinner(), false);
 
+    // Test attributes after score update with no trump and 3 odd tricks
+    contractBid = Bid(WEST, NONE, 3);
+    score1.updateScore(contractBid, getNoHonorsHand(), 10);
+    QCOMPARE(score1.getContractPoints(N_S).size(), 1);
+    QCOMPARE(score1.getContractPoints(N_S).last(), 40);
+    QCOMPARE(score1.getGamesWon(N_S), 0);
+    QCOMPARE(score1.getBackScore(N_S), 0);
+    QCOMPARE(score1.getOvertricks(N_S), 0);
+    QCOMPARE(score1.getUndertricks(N_S), 0);
+    QCOMPARE(score1.getHonors(N_S), 0);
+    QCOMPARE(score1.getSlamBonuses(N_S), 0);
+    QCOMPARE(score1.getRubberBonuses(N_S), 0);
+    QCOMPARE(score1.getTeamVulnerable(N_S), false);
+    QCOMPARE(score1.getTotalScore(N_S), 40);
+    QCOMPARE(score1.getContractPoints(E_W).size(), 1);
+    QCOMPARE(score1.getContractPoints(E_W).last(), 100);
+    QCOMPARE(score1.getGamesWon(E_W), 1);
+    QCOMPARE(score1.getBackScore(E_W), 0);
+    QCOMPARE(score1.getOvertricks(E_W), 30);
+    QCOMPARE(score1.getUndertricks(E_W), 0);
+    QCOMPARE(score1.getHonors(E_W), 0);
+    QCOMPARE(score1.getSlamBonuses(E_W), 0);
+    QCOMPARE(score1.getRubberBonuses(E_W), 0);
+    QCOMPARE(score1.getTeamVulnerable(E_W), true);
+    QCOMPARE(score1.getTotalScore(E_W), 130);
+    QCOMPARE(score1.isGameWinner(), true);
+    QCOMPARE(score1.isRubberWinner(), false);
+    QCOMPARE(score1.getGameWinner(), E_W);
+
+    // Test attributes after starting the next game
+    score1.nextGame();
+    QCOMPARE(score1.getContractPoints(N_S).size(), 2);
+    QCOMPARE(score1.getContractPoints(N_S).last(), 0);
+    QCOMPARE(score1.getContractPoints(E_W).size(), 2);
+    QCOMPARE(score1.getContractPoints(E_W).last(), 0);
+    QCOMPARE(score1.isGameWinner(), false);
+    QCOMPARE(score1.isRubberWinner(), false);
+}
+
+// Get hand with no honors
+QMap<PlayerPosition, CardSet> TestScore::getNoHonorsHand() const
+{
+    QMap<PlayerPosition, CardSet> playerHands;
+    CardSet northCardSet;
+    CardSet eastCardSet;
+    CardSet southCardSet;
+    CardSet westCardSet;
+
+    northCardSet.addCard(Card(SPADES, ACE));
+    northCardSet.addCard(Card(HEARTS, ACE));
+    northCardSet.addCard(Card(CLUBS, ACE));
+    northCardSet.addCard(Card(DIAMONDS, QUEEN));
+    northCardSet.addCard(Card(SPADES, FIVE));
+    northCardSet.addCard(Card(SPADES, SIX));
+    northCardSet.addCard(Card(SPADES, SEVEN));
+    northCardSet.addCard(Card(SPADES, EIGHT));
+    northCardSet.addCard(Card(SPADES, NINE));
+    northCardSet.addCard(Card(SPADES, TEN));
+    northCardSet.addCard(Card(SPADES, JACK));
+    northCardSet.addCard(Card(HEARTS, KING));
+    northCardSet.addCard(Card(CLUBS, KING));
+
+    eastCardSet.addCard(Card(SPADES, TWO));
+    eastCardSet.addCard(Card(HEARTS, TWO));
+    eastCardSet.addCard(Card(HEARTS, THREE));
+    eastCardSet.addCard(Card(HEARTS, FOUR));
+    eastCardSet.addCard(Card(HEARTS, FIVE));
+    eastCardSet.addCard(Card(HEARTS, SIX));
+    eastCardSet.addCard(Card(HEARTS, SEVEN));
+    eastCardSet.addCard(Card(HEARTS, EIGHT));
+    eastCardSet.addCard(Card(HEARTS, NINE));
+    eastCardSet.addCard(Card(HEARTS, TEN));
+    eastCardSet.addCard(Card(DIAMONDS, TEN));
+    eastCardSet.addCard(Card(HEARTS, QUEEN));
+    eastCardSet.addCard(Card(DIAMONDS, ACE));
+
+    southCardSet.addCard(Card(SPADES, THREE));
+    southCardSet.addCard(Card(CLUBS, TWO));
+    southCardSet.addCard(Card(CLUBS, THREE));
+    southCardSet.addCard(Card(CLUBS, FOUR));
+    southCardSet.addCard(Card(CLUBS, FIVE));
+    southCardSet.addCard(Card(CLUBS, SIX));
+    southCardSet.addCard(Card(CLUBS, SEVEN));
+    southCardSet.addCard(Card(CLUBS, EIGHT));
+    southCardSet.addCard(Card(CLUBS, NINE));
+    southCardSet.addCard(Card(CLUBS, TEN));
+    southCardSet.addCard(Card(SPADES, QUEEN));
+    southCardSet.addCard(Card(CLUBS, QUEEN));
+    southCardSet.addCard(Card(SPADES, KING));
+
+    westCardSet.addCard(Card(SPADES, FOUR));
+    westCardSet.addCard(Card(DIAMONDS, TWO));
+    westCardSet.addCard(Card(DIAMONDS, THREE));
+    westCardSet.addCard(Card(DIAMONDS, FOUR));
+    westCardSet.addCard(Card(DIAMONDS, FIVE));
+    westCardSet.addCard(Card(DIAMONDS, SIX));
+    westCardSet.addCard(Card(DIAMONDS, SEVEN));
+    westCardSet.addCard(Card(DIAMONDS, EIGHT));
+    westCardSet.addCard(Card(DIAMONDS, NINE));
+    westCardSet.addCard(Card(CLUBS, JACK));
+    westCardSet.addCard(Card(DIAMONDS, JACK));
+    westCardSet.addCard(Card(HEARTS, JACK));
+    westCardSet.addCard(Card(DIAMONDS, KING));
+
+    playerHands.insert(NORTH, northCardSet);
+    playerHands.insert(EAST, eastCardSet);
+    playerHands.insert(SOUTH, southCardSet);
+    playerHands.insert(WEST, westCardSet);
+
+    return playerHands;
 }
 
 // Get set of hands where a team member of N_S has no trump honors
-QMap<PlayerPosition, CardSet> TestScore::getNSNoTrumpHonorsHand()
+QMap<PlayerPosition, CardSet> TestScore::getNSNoTrumpHonorsHand() const
 {
     QMap<PlayerPosition, CardSet> playerHands;
     CardSet northCardSet;
@@ -120,7 +257,7 @@ QMap<PlayerPosition, CardSet> TestScore::getNSNoTrumpHonorsHand()
 }
 
 // Get set of hands where a team member of N_S has 4 clubs honors
-QMap<PlayerPosition, CardSet> TestScore::getNSClubs4HonorsHand()
+QMap<PlayerPosition, CardSet> TestScore::getNSClubs4HonorsHand() const
 {
     QMap<PlayerPosition, CardSet> playerHands;
     CardSet northCardSet;
@@ -193,7 +330,7 @@ QMap<PlayerPosition, CardSet> TestScore::getNSClubs4HonorsHand()
 }
 
 // Get set of hands where a team member of E_W has 5 diamonds honors
-QMap<PlayerPosition, CardSet> TestScore::getEWSpades5HonorsHand()
+QMap<PlayerPosition, CardSet> TestScore::getEWSpades5HonorsHand() const
 {
     QMap<PlayerPosition, CardSet> playerHands;
     CardSet northCardSet;

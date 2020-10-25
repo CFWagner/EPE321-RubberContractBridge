@@ -29,6 +29,11 @@ void Hover::enterEvent(QEvent *event)
         QPixmap pix(":/resources/guiResources/buttons/login_green.png");
         this->setPixmap(pix);
     }
+    else if (this->elementID == 5)
+    {
+        QPixmap pix(":/resources/guiResources/buttons/add_green.png");
+        this->setPixmap(pix);
+    }
 }
 
 void Hover::leaveEvent(QEvent *event)
@@ -53,6 +58,11 @@ void Hover::leaveEvent(QEvent *event)
         QPixmap pix(":/resources/guiResources/buttons/login_grey.png");
         this->setPixmap(pix);
     }
+    else if (this->elementID == 5)
+    {
+        QPixmap pix(":/resources/guiResources/buttons/add_grey.png");
+        this->setPixmap(pix);
+    }
 }
 
 void Hover::mousePressEvent(QMouseEvent *event)
@@ -74,5 +84,9 @@ void Hover::mousePressEvent(QMouseEvent *event)
     else if (this->elementID == 4)
     {
         emit attemptUserLogin();
+    }
+    else if (this->elementID == 5)
+    {
+        emit addPlayersLobby();
     }
 }

@@ -20,11 +20,6 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
-    gui/clientlogin.cpp \
-    gui/entrywindow.cpp \
-    gui/hover.cpp \
-    gui/serverlobby.cpp \
-    gui/serverlogin.cpp \
     main.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
@@ -52,11 +47,6 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
-    gui/clientlogin.h \
-    gui/entrywindow.h \
-    gui/hover.h \
-    gui/serverlobby.h \
-    gui/serverlogin.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
@@ -68,12 +58,3 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-RESOURCES += \
-    resource.qrc
-
-FORMS += \
-    gui/clientlogin.ui \
-    gui/entrywindow.ui \
-    gui/serverlobby.ui \
-    gui/serverlogin.ui

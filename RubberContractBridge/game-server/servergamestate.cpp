@@ -183,8 +183,6 @@ void ServerGameState::updatePlayState(const Card &card)
         else
             playerTurn = handToPlay;
     }
-
-
 }
 
 // Getter for the cards currently in the deck

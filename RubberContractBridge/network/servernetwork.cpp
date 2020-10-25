@@ -335,6 +335,9 @@ void ServerNetwork::validateClient()
 
 void ServerNetwork::disconnectClient()
 {
+    // When a client disconnects, check if the client logged in.
+    // If logged in, remove username and client socket.
+    // Signal the GUI to also remove the client.
 
     qInfo() << "Socket disconnected (Server side)";
     qInfo() << "Before disconnection: Temp:" << clientSocTemp << clientSoc << playerNames;

@@ -20,9 +20,11 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
-    gui/clientgui.cpp \
-    gui/mainwindow.cpp \
-    gui/servergui.cpp \
+    gui/clientlogin.cpp \
+    gui/entrywindow.cpp \
+    gui/hover.cpp \
+    gui/serverlobby.cpp \
+    gui/serverlogin.cpp \
     main.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
@@ -50,21 +52,17 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
-    gui/clientgui.h \
-    gui/mainwindow.h \
-    gui/servergui.h \
+    gui/clientlogin.h \
+    gui/entrywindow.h \
+    gui/hover.h \
+    gui/serverlobby.h \
+    gui/serverlogin.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \
     unit-tests/network/testservernetwork.h
-
-#All UI windows are shown below.
-FORMS += \
-    gui/clientgui.ui \
-    gui/mainwindow.ui \
-    gui/servergui.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -73,3 +71,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resource.qrc
+
+FORMS += \
+    gui/clientlogin.ui \
+    gui/entrywindow.ui \
+    gui/serverlobby.ui \
+    gui/serverlogin.ui

@@ -97,7 +97,7 @@ void ServerGameState::updateBidState(const Bid &bid)
         passCount = 0;
 
         // Update bid
-        if(bid.getCall() == DOUBLE || bid.getCall() == REDOUBLE){
+        if(bid.getCall() == DOUBLE_BID || bid.getCall() == REDOUBLE_BID){
             currentBid->setCall(bid.getCall());
         }
         else{
@@ -183,8 +183,6 @@ void ServerGameState::updatePlayState(const Card &card)
         else
             playerTurn = handToPlay;
     }
-
-
 }
 
 // Getter for the cards currently in the deck
@@ -196,13 +194,19 @@ const CardSet& ServerGameState::getDeck()
 // Generate and return the game state tailored for the player
 PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player, QVector<Player*> players, GameEvent gameEvent)
 {
+    // Create player positions map and card count map
     QMap<PlayerPosition, QString> playerPositions;
-    for(const Player* player: players)
+    QMap<PlayerPosition, qint8> playerCardCount;
+    for(const Player* player: players){
         playerPositions.insert(player->getPosition(), player->getPlayerName());
+        playerCardCount.insert(player->getPosition(), playerHands.value(player->getPosition()).getCardCount());
+    }
+
+    // Initialise dummy hand sent to player
     CardSet dummyHand;
     if(phase == CARDPLAY)
         dummyHand = playerHands[getDummy()];
-    return PlayerGameState(*this, gameEvent, playerPositions, playerHands[player], dummyHand);
+    return PlayerGameState(*this, gameEvent, playerPositions, playerCardCount, playerHands[player], dummyHand);
 }
 
 // Getter for player hands
@@ -231,14 +235,14 @@ bool ServerGameState::isBidValid(const Bid &bid) const
     else{
         Team currentBidderTeam = getPlayerTeam(currentBid->getBidder());
         Team newBidderTeam = getPlayerTeam(bid.getBidder());
-        if(bid.getCall() == DOUBLE){
+        if(bid.getCall() == DOUBLE_BID){
             // Double is invalid if bid was made by a member of the same team
             return newBidderTeam != currentBidderTeam && currentBid->getCall() == BID;
         }
-        else if(bid.getCall() == REDOUBLE){
+        else if(bid.getCall() == REDOUBLE_BID){
             // Redouble is invalid if the bid was made by a member of the opposing team or
             // the bid was not doubled
-            return newBidderTeam == currentBidderTeam && currentBid->getCall() == DOUBLE;
+            return newBidderTeam == currentBidderTeam && currentBid->getCall() == DOUBLE_BID;
         }
         // Check if new bid is a higher bid than the current bid
         else if(bid > *currentBid){

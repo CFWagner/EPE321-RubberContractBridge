@@ -7,8 +7,8 @@
 enum BidCall {
     PASS = 0,
     BID = 1,
-    DOUBLE = 2,
-    REDOUBLE = 3
+    DOUBLE_BID = 2,
+    REDOUBLE_BID = 3
 };
 
 #endif // BIDCALL_H

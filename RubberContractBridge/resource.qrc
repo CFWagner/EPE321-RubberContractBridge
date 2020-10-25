@@ -1,9 +1,78 @@
 <RCC>
     <qresource prefix="/resources">
-        <file>guiResources/background/background1.png</file>
         <file>guiResources/background/background2.png</file>
         <file>guiResources/background/background3.png</file>
         <file>guiResources/background/serverButton2.png</file>
         <file>guiResources/background/clientButton2.png</file>
+        <file>guiResources/background/unselectedButton.png</file>
+        <file>guiResources/background/selectedButton.png</file>
+        <file>guiResources/background/login.png</file>
+        <file>guiResources/background/robot.png</file>
+        <file>guiResources/background/playerBackground.png</file>
+        <file>guiResources/background/userIcon.png</file>
+        <file>guiResources/background/green.png</file>
+        <file>guiResources/background/grey.png</file>
+        <file>guiResources/buttons/c_green.png</file>
+        <file>guiResources/buttons/c_grey.png</file>
+        <file>guiResources/buttons/s_green.png</file>
+        <file>guiResources/buttons/s_grey.png</file>
+        <file>guiResources/buttons/create_green.png</file>
+        <file>guiResources/buttons/create_grey.png</file>
+        <file>guiResources/buttons/login_green.png</file>
+        <file>guiResources/buttons/login_grey.png</file>
+        <file>guiResources/background/background1.png</file>
+        <file>guiResources/cards/ace_clubs.png</file>
+        <file>guiResources/cards/ace_diamonds.png</file>
+        <file>guiResources/cards/ace_hearts.png</file>
+        <file>guiResources/cards/ace_spades.png</file>
+        <file>guiResources/cards/back_card.png</file>
+        <file>guiResources/cards/eight_clubs.png</file>
+        <file>guiResources/cards/eight_diamonds.png</file>
+        <file>guiResources/cards/eight_hearts.png</file>
+        <file>guiResources/cards/eight_spades.png</file>
+        <file>guiResources/cards/five_clubs.png</file>
+        <file>guiResources/cards/five_diamonds.png</file>
+        <file>guiResources/cards/five_hearts.png</file>
+        <file>guiResources/cards/five_spades.png</file>
+        <file>guiResources/cards/four_clubs.png</file>
+        <file>guiResources/cards/four_diamonds.png</file>
+        <file>guiResources/cards/four_hearts.png</file>
+        <file>guiResources/cards/four_spades.png</file>
+        <file>guiResources/cards/jack_clubs.png</file>
+        <file>guiResources/cards/jack_diamonds.png</file>
+        <file>guiResources/cards/jack_hearts.png</file>
+        <file>guiResources/cards/jack_spades.png</file>
+        <file>guiResources/cards/king_clubs.png</file>
+        <file>guiResources/cards/king_diamonds.png</file>
+        <file>guiResources/cards/king_hearts.png</file>
+        <file>guiResources/cards/king_spades.png</file>
+        <file>guiResources/cards/nine_clubs.png</file>
+        <file>guiResources/cards/nine_diamonds.png</file>
+        <file>guiResources/cards/nine_hearts.png</file>
+        <file>guiResources/cards/nine_spades.png</file>
+        <file>guiResources/cards/queen_clubs.png</file>
+        <file>guiResources/cards/queen_diamonds.png</file>
+        <file>guiResources/cards/queen_hearts.png</file>
+        <file>guiResources/cards/queen_spades.png</file>
+        <file>guiResources/cards/seven_clubs.png</file>
+        <file>guiResources/cards/seven_diamonds.png</file>
+        <file>guiResources/cards/seven_hearts.png</file>
+        <file>guiResources/cards/seven_spades.png</file>
+        <file>guiResources/cards/six_clubs.png</file>
+        <file>guiResources/cards/six_diamonds.png</file>
+        <file>guiResources/cards/six_hearts.png</file>
+        <file>guiResources/cards/six_spades.png</file>
+        <file>guiResources/cards/ten_clubs.png</file>
+        <file>guiResources/cards/ten_diamonds.png</file>
+        <file>guiResources/cards/ten_hearts.png</file>
+        <file>guiResources/cards/ten_spades.png</file>
+        <file>guiResources/cards/three_clubs.png</file>
+        <file>guiResources/cards/three_diamonds.png</file>
+        <file>guiResources/cards/three_hearts.png</file>
+        <file>guiResources/cards/three_spades.png</file>
+        <file>guiResources/cards/two_clubs.png</file>
+        <file>guiResources/cards/two_diamonds.png</file>
+        <file>guiResources/cards/two_hearts.png</file>
+        <file>guiResources/cards/two_spades.png</file>
     </qresource>
 </RCC>

@@ -4,6 +4,7 @@
 #include "enumerations/BidCall.h"
 #include "enumerations/CardSuit.h"
 #include "enumerations/PlayerPosition.h"
+#include "enumerations/Team.h"
 #include <QJsonObject>
 #include <QtGlobal>
 #include <optional>
@@ -19,6 +20,7 @@ public:
     BidCall getCall() const;
     CardSuit getTrumpSuit() const;
     qint8 getTricksAbove() const;
+    Team getBiddingTeam() const;
     void setCall(BidCall call);
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;

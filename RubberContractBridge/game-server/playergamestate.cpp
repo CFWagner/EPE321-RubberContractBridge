@@ -12,7 +12,7 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
                                  PlayerPosition handToPlay, PlayerPosition dealer,
                                  PlayerPosition declarer, bool teamVulnerable[2], Score score,
                                  GameEvent gameEvent, QMap<PlayerPosition, QString> playerPositions,
-                                 CardSet playerHand, CardSet dummyHand)
+                                 QMap<PlayerPosition, qint8> playerCardCount, CardSet playerHand, CardSet dummyHand)
 {
     this->phase = phase;
     if(currentBid == nullptr)
@@ -36,6 +36,7 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
     this->score = score;
     this->gameEvent = gameEvent;
     this->playerPositions = playerPositions;
+    this->playerCardCount = playerCardCount;
     this->playerHand = playerHand;
     this->dummyHand = dummyHand;
 }
@@ -43,6 +44,7 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
 // Constructor with parent class GameState referenceand PlayerGameState class attributes
 PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent,
                                  QMap<PlayerPosition, QString> playerPositions,
+                                 QMap<PlayerPosition, qint8> playerCardCount,
                                  CardSet playerHand, CardSet dummyHand)
 {
     phase = gameState.getPhase();
@@ -67,6 +69,7 @@ PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent
     score = gameState.getScore();
     this->gameEvent = gameEvent;
     this->playerPositions = playerPositions;
+    this->playerCardCount = playerCardCount;
     this->playerHand = playerHand;
     this->dummyHand = dummyHand;
 }
@@ -95,6 +98,12 @@ QString PlayerGameState::getPlayerName(PlayerPosition position)
     return playerPositions.value(position);
 }
 
+// Getter for the number of cards in the hand of the player in the position specified by the position argument
+qint8 PlayerGameState::getPlayerCardCount(PlayerPosition position)
+{
+    return playerCardCount.value(position);
+}
+
 // Initialize player game state attributes from JSON object
 void PlayerGameState::read(const QJsonObject &json)
 {
@@ -108,7 +117,7 @@ void PlayerGameState::read(const QJsonObject &json)
     dealer = PlayerPosition(json["dealer"].toInt());
     declarer = PlayerPosition(json["declarer"].toInt());
 
-    // Read GameState non-list non-object attributes from JSON object
+    // Read GameState non-list object attributes from JSON object
     if(json["currentBid"].isNull()){
         currentBid = nullptr;
     }
@@ -133,7 +142,6 @@ void PlayerGameState::read(const QJsonObject &json)
     // Read PlayerGameState non-list object attributes from JSON object
     playerHand.read(json["playerHand"].toObject());
     dummyHand.read(json["dummyHand"].toObject());
-
 
     // Read GameState tricks vector from JSON object
     QJsonArray jsonTricks = json["tricks"].toArray();
@@ -161,6 +169,16 @@ void PlayerGameState::read(const QJsonObject &json)
         PlayerPosition key = PlayerPosition(playerPositionKeys[index].toInt());
         QString value = playerPositionValues[index].toString();
         playerPositions.insert(key, value);
+    }
+
+    // Read PlayerGameState player card counts map from JSON object
+    playerCardCount.clear();
+    QJsonArray playerCardCountKeys = json["playerCardCountKeys"].toArray();
+    QJsonArray playerCardCountValues = json["playerCardCountValues"].toArray();
+    for(qint8 index = 0; index < playerCardCountKeys.size(); ++index){
+        PlayerPosition key = PlayerPosition(playerCardCountKeys[index].toInt());
+        qint8 value = playerCardCountValues[index].toInt();
+        playerCardCount.insert(key, value);
     }
 }
 
@@ -226,16 +244,28 @@ void PlayerGameState::write(QJsonObject &json) const
     json["teamVulnerable"] = jsonTeamVulnerableArray;
 
     // Add PlayerGameState player positions map to JSON object
-    QMapIterator<PlayerPosition, QString> iter(playerPositions);
+    QMapIterator<PlayerPosition, QString> iter1(playerPositions);
     QJsonArray playerPositionKeys;
     QJsonArray playerPositionValues;
-    while (iter.hasNext()) {
-        iter.next();
-        playerPositionKeys.append(iter.key());
-        playerPositionValues.append(iter.value());
+    while (iter1.hasNext()) {
+        iter1.next();
+        playerPositionKeys.append(iter1.key());
+        playerPositionValues.append(iter1.value());
     }
     json["playerPositionKeys"] = playerPositionKeys;
     json["playerPositionValues"] = playerPositionValues;
+
+    // Add PlayerGameState player card counts map to JSON object
+    QMapIterator<PlayerPosition, qint8> iter2(playerCardCount);
+    QJsonArray playerCardCountKeys;
+    QJsonArray playerCardCountValues;
+    while (iter2.hasNext()) {
+        iter2.next();
+        playerCardCountKeys.append(iter2.key());
+        playerCardCountValues.append(iter2.value());
+    }
+    json["playerCardCountKeys"] = playerCardCountKeys;
+    json["playerCardCountValues"] = playerCardCountValues;
 }
 
 bool PlayerGameState::operator ==(const PlayerGameState& playerGameState) const
@@ -267,5 +297,6 @@ bool PlayerGameState::operator ==(const PlayerGameState& playerGameState) const
             score == playerGameState.score &&
             gameEvent == playerGameState.gameEvent &&
             playerPositions == playerGameState.playerPositions &&
+            playerCardCount == playerGameState.playerCardCount &&
             dummyHand == playerGameState.dummyHand;
 }

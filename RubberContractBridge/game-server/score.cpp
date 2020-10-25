@@ -14,24 +14,32 @@ Score::Score(quint32 backScore[2])
 // Update the score state based on the contract, player hands and result of the latest trick
 void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> playerHands, quint8 declarerTricksWon)
 {
-    // Get double or redouble multiplier
-    qint8 multiplier;
-    switch(contractBid.getCall()){
-        case DOUBLE:
-            multiplier = 2;
-            break;
-        case REDOUBLE:
-            multiplier = 4;
-            break;
-        default:
-            multiplier = 1;
-            break;
+    // Get team roles
+    Team biddingTeam = contractBid.getBiddingTeam();
+    Team defendingTeam;
+    if(biddingTeam == N_S)
+        defendingTeam = E_W;
+    else
+        defendingTeam = N_S;
+
+    // Get doubled or redoubled status and multiplier
+    qint8 multiplier = 1;
+    bool doubled = false;
+    bool redoubled = false;
+    if(contractBid.getCall() == DOUBLE){
+        doubled = true;
+        multiplier = 2;
     }
+    else if(contractBid.getCall() == REDOUBLE){
+        redoubled = true;
+        multiplier = 4;
+    }
+
+    // Get if declaring side is vulnerable
+    bool bidderVulnerable = teamVulnerable[biddingTeam];
 
     // Contract was made
     if(declarerTricksWon >= contractBid.getTricksAbove() + 6){
-        Team biddingTeam = contractBid.getBiddingTeam();
-
         // Get points won per trick
         qint8 trickPoints;
         qint8 overtrickPoints;
@@ -51,9 +59,9 @@ void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> pl
         }
 
         // Adjust overtrick points if doubled or redoubled
-        if(contractBid.getCall() == DOUBLE || contractBid.getCall() == REDOUBLE){
+        if(doubled || redoubled){
             overtrickPoints = 100 * multiplier * 0.5;
-            if(teamVulnerable[biddingTeam])
+            if(bidderVulnerable)
                 overtrickPoints *= 2;
         }
 
@@ -71,10 +79,161 @@ void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> pl
         // Update overtrick points
         qint8 overTricks = declarerTricksWon - (contractBid.getTricksAbove() + 6);
         overtricks[biddingTeam] += overTricks * trickPoints;
+
+        // Apply slam bonuses
+        if(declarerTricksWon == 12){
+            // Small slam
+            if(bidderVulnerable)
+                slamBonuses[biddingTeam] += 750;
+            else
+                slamBonuses[biddingTeam] += 500;
+        }
+        else if(declarerTricksWon == 13){
+            // Grand slam
+            if(bidderVulnerable)
+                slamBonuses[biddingTeam] += 1500;
+            else
+                slamBonuses[biddingTeam] += 1000;
+        }
+
+        // Apply double or redoubled bonus
+        if(doubled)
+            doubleBonuses[biddingTeam] += 50;
+        else if (redoubled)
+            redoubleBonuses[biddingTeam] += 100;
+
     }
     // Contract was not made
     else{
+        qint8 numUndertricks = contractBid.getTricksAbove() + 6 - declarerTricksWon;
 
+        // Apply undertrick penalty points for 1st undertrick
+        if(bidderVulnerable){
+            if(doubled)
+                undertricks[defendingTeam] += 200;
+            else if(redoubled)
+                undertricks[defendingTeam] += 400;
+            else
+                undertricks[defendingTeam] += 100;
+        }
+        else{
+            if(doubled)
+                undertricks[defendingTeam] += 100;
+            else if(redoubled)
+                undertricks[defendingTeam] += 200;
+            else
+                undertricks[defendingTeam] += 50;
+        }
+
+        // Apply undertrick penalty points for 2nd and 3rd undertrick
+        if(numUndertricks >= 2){
+            // Get multiplier for 2nd trick or 2nd trick and third trick present
+            qint8 numTricks;
+            if(numUndertricks == 2)
+                numTricks = 1;
+            else if(numUndertricks > 2)
+                numTricks = 2;
+
+            // Apply penalty points
+            if(bidderVulnerable){
+                if(doubled)
+                    undertricks[defendingTeam] += 300 * numTricks;
+                else if(redoubled)
+                    undertricks[defendingTeam] += 600 * numTricks;
+                else
+                    undertricks[defendingTeam] += 100 * numTricks;
+            }
+            else{
+                if(doubled)
+                    undertricks[defendingTeam] += 200 * numTricks;
+                else if(redoubled)
+                    undertricks[defendingTeam] += 400 * numTricks;
+                else
+                    undertricks[defendingTeam] += 50 * numTricks;
+            }
+        }
+
+        // Apply undertrick penalty points for 4th and subsequent undertricks
+        // Apply undertrick penalty points for 2nd and 3rd undertrick
+        if(numUndertricks > 1){
+            // Get multiplier for number of tricks above and including 4
+            qint8 numTricks = numUndertricks - 3;
+
+            // Apply penalty points
+            if(bidderVulnerable){
+                if(doubled)
+                    undertricks[defendingTeam] += 300 * numTricks;
+                else if(redoubled)
+                    undertricks[defendingTeam] += 600 * numTricks;
+                else
+                    undertricks[defendingTeam] += 100 * numTricks;
+            }
+            else{
+                if(doubled)
+                    undertricks[defendingTeam] += 300 * numTricks;
+                else if(redoubled)
+                    undertricks[defendingTeam] += 600 * numTricks;
+                else
+                    undertricks[defendingTeam] += 50 * numTricks;
+            }
+        }
+    }
+
+    // Check player hands for honors bonus
+    if(contractBid.getTrumpSuit() == NONE){
+        for(qint8 position = NORTH; position <= WEST; ++ position){
+            PlayerPosition playerPosition = PlayerPosition(position);
+            Team team = getTeam(playerPosition);
+            const CardSet &hand = playerHands.value(playerPosition);
+
+            // Check if player has all 4 aces for no trump
+            if(hand.containsCard(Card(DIAMONDS, ACE))
+                    && hand.containsCard(Card(HEARTS, ACE))
+                    && hand.containsCard(Card(DIAMONDS, ACE))
+                    && hand.containsCard(Card(HEARTS, ACE))){
+                honors[team] += 150;
+            }
+        }
+    }
+    else{
+        for(qint8 position = NORTH; position <= WEST; ++ position){
+            PlayerPosition playerPosition = PlayerPosition(position);
+            Team team = getTeam(playerPosition);
+            const CardSet &hand = playerHands.value(playerPosition);
+            CardSuit trumpSuit = contractBid.getTrumpSuit();
+
+            // Check how many of trump suit honors player holds
+            qint8 honorsCount = 0;
+            if(hand.containsCard(Card(trumpSuit, TEN)))
+                ++ honorsCount;
+            if(hand.containsCard(Card(trumpSuit, JACK)))
+                ++ honorsCount;
+            if(hand.containsCard(Card(trumpSuit, QUEEN)))
+                ++ honorsCount;
+            if(hand.containsCard(Card(trumpSuit, KING)))
+                ++ honorsCount;
+            if(hand.containsCard(Card(trumpSuit, ACE)))
+                ++ honorsCount;
+
+            // Apply honors bonuses
+            if(honorsCount == 4)
+                honors[team] += 100;
+            else if(honorsCount == 5)
+                honors[team] += 150;
+        }
+    }
+
+}
+
+// Get the team the player belongs to based on their position
+Team Score::getTeam(PlayerPosition position) const
+{
+    switch (position) {
+        case NORTH:
+        case SOUTH:
+            return N_S;
+        default:
+            return E_W;
     }
 }
 
@@ -144,6 +303,13 @@ void Score::read(const QJsonObject &json)
         contractPoints[team] = conPointsGames;
     }
 
+    // Read games won array from JSON object
+    QJsonArray jsonGamesWonArray = json["gamesWon"].toArray();
+    for (qint8 index = 0; index < jsonGamesWonArray.size(); ++ index) {
+        bool gamesWonElement = jsonGamesWonArray[index].toBool();
+        gamesWon[index] = gamesWonElement;
+    }
+
     // Read back score array from JSON object
     QJsonArray jsonBackScoreArray = json["backScore"].toArray();
     for (qint8 index = 0; index < jsonBackScoreArray.size(); ++ index) {
@@ -152,7 +318,7 @@ void Score::read(const QJsonObject &json)
     }
 
     // Read back score array from JSON object
-    QJsonArray jsonOvertricksArray = json["Overtricks"].toArray();
+    QJsonArray jsonOvertricksArray = json["overtricks"].toArray();
     for (qint8 index = 0; index < jsonOvertricksArray.size(); ++ index) {
         bool overtricksElement = jsonOvertricksArray[index].toBool();
         overtricks[index] = overtricksElement;
@@ -185,6 +351,20 @@ void Score::read(const QJsonObject &json)
         bool teamVulnerableElement = jsonTeamVulnerableArray[index].toBool();
         teamVulnerable[index] = teamVulnerableElement;
     }
+
+    // Read double bonuses array from JSON object
+    QJsonArray jsonDoubleBonusesArray = json["doubleBonuses"].toArray();
+    for (qint8 index = 0; index < jsonDoubleBonusesArray.size(); ++ index) {
+        bool doubleBonusesElement = jsonDoubleBonusesArray[index].toBool();
+        doubleBonuses[index] = doubleBonusesElement;
+    }
+
+    // Read redouble bonuses array from JSON object
+    QJsonArray jsonRedoubleBonusesArray = json["redoubleBonuses"].toArray();
+    for (qint8 index = 0; index < jsonRedoubleBonusesArray.size(); ++ index) {
+        bool redoubleBonusesElement = jsonRedoubleBonusesArray[index].toBool();
+        redoubleBonuses[index] = redoubleBonusesElement;
+    }
 }
 
 // Add Score instance attributes to the JSON object argument
@@ -202,6 +382,12 @@ void Score::write(QJsonObject &json) const
         jsonConPointsTeams.append(jsonConPointsGames);
     }
     json["contractPoints"] = jsonConPointsTeams;
+
+    // Add games won array to JSON object
+    QJsonArray jsonGamesWonArray;
+    for (const bool &gamesWonElement: gamesWon)
+        jsonGamesWonArray.append(gamesWonElement);
+    json["gamesWon"] = jsonGamesWonArray;
 
     // Add back score array to JSON object
     QJsonArray jsonBackScoreArray;
@@ -238,6 +424,18 @@ void Score::write(QJsonObject &json) const
     for (const bool &teamVulnerableElement: teamVulnerable)
         jsonTeamVulnerableArray.append(teamVulnerableElement);
     json["teamVulnerable"] = jsonTeamVulnerableArray;
+
+    // Add double bonuses array to JSON object
+    QJsonArray jsonDoubleBonusesArray;
+    for (const bool &doubleBonusesElement: doubleBonuses)
+        jsonDoubleBonusesArray.append(doubleBonusesElement);
+    json["doubleBonuses"] = jsonDoubleBonusesArray;
+
+    // Add redouble bonuses array to JSON object
+    QJsonArray jsonRedoubleBonusesArray;
+    for (const bool &redoubleBonusesElement: redoubleBonuses)
+        jsonRedoubleBonusesArray.append(redoubleBonusesElement);
+    json["redoubleBonuses"] = jsonRedoubleBonusesArray;
 }
 
 // Overloaded == relational operator to compare score equality

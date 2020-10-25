@@ -25,12 +25,16 @@ public:
     void write(QJsonObject &json) const;
     bool operator ==(const Score& score) const;
 private:
+    Team getTeam(PlayerPosition position) const;
     QVector<quint32> contractPoints[2];
+    quint8 gamesWon[2] = {0, 0};
     quint32 backScore[2] = {0, 0};
     quint32 overtricks[2] = {0, 0};
     quint32 undertricks[2] = {0, 0};
     quint32 honors[2] = {0, 0};
     quint32 slamBonuses[2] = {0, 0};
+    quint32 doubleBonuses[2] = {0, 0};
+    quint32 redoubleBonuses[2] = {0, 0};
     bool teamVulnerable[2] = {false, false};
 };
 

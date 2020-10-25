@@ -2,11 +2,16 @@
 #include <QJsonArray>
 
 // Default constructor
-Score::Score() {}
+Score::Score() {
+    contractPoints[N_S].append(0);
+    contractPoints[E_W].append(0);
+}
 
 // Constructor for subsequent rubber scores initialized with the back score from previous rubber scores
 Score::Score(quint32 backScore[2])
 {
+    contractPoints[N_S].append(0);
+    contractPoints[E_W].append(0);
     this->backScore[N_S] = backScore[N_S];
     this->backScore[E_W] = backScore[E_W];
 }
@@ -36,7 +41,7 @@ void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> pl
     }
 
     // Get if declaring side is vulnerable
-    bool bidderVulnerable = teamVulnerable[biddingTeam];
+    bool bidderVulnerable = getTeamVulnerable(biddingTeam);
 
     // Contract was made
     if(declarerTricksWon >= contractBid.getTricksAbove() + 6){
@@ -225,6 +230,116 @@ void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> pl
 
 }
 
+// Check if a team won the current game based on the current contract points
+bool Score::isGameWinner() const
+{
+    return contractPoints[N_S].last() >= 100 || contractPoints[E_W].last() >= 100;
+}
+
+// Check if a team won the current rubber based on the current contract points and gamesWon
+bool Score::isRubberWinner() const
+{
+    return getGamesWon(N_S) == 2 || getGamesWon(E_W) == 2;
+}
+
+// Get the winner of the game based on the current contract points
+// Only call this function after isWinner() returns true
+Team Score::getGameWinner() const
+{
+    if(contractPoints[N_S].last() >= 100)
+        return N_S;
+    else
+        return E_W;
+}
+
+// Get the winner of the rubber based on the number of games won
+// Only call this function after isRubberWinner() returns true
+Team Score::getRubberWinner() const
+{
+    if(getGamesWon(N_S) == 2)
+        return N_S;
+    else
+        return E_W;
+}
+
+// Get the winner of the match based on the contract points and premium scores
+// Call this if isMatchDraw() returns false as this returns E_W as winner if draw
+Team Score::getMatchWinner() const
+{
+    if(getTotalScore(N_S) > getTotalScore(E_W))
+        return N_S;
+    else
+        return E_W;
+}
+
+// Gets whether the match is a draw based on the total scores
+bool Score::isMatchDraw() const
+{
+    return getTotalScore(N_S) == getTotalScore(E_W);
+}
+
+// If isRubberWinner() returns true, returns the total scores for the finished rubber
+// If isRubberWinner() returns false, returns the total scores for an unfinished rubber
+// Only call this function after finaliseRubber() is called
+quint32 Score::getTotalScore(Team team) const
+{
+    quint32 totalScore = 0;
+    for(quint32 points: contractPoints[team])
+        totalScore += points;
+    totalScore += backScore[team];
+    totalScore += overtricks[team];
+    totalScore += undertricks[team];
+    totalScore += honors[team];
+    totalScore += slamBonuses[team];
+    totalScore += doubleBonuses[team];
+    totalScore += redoubleBonuses[team];
+    totalScore += rubberBonuses[team];
+
+    return totalScore;
+}
+
+// If isRubberWinner() returns true, calculates the finished rubber bonus and stores result in rubberBonus
+// If isRubberWinner() returns false, calculates the unfinished rubber bonus and stores result in rubberBonus
+void Score::finaliseRubber()
+{
+    if(isRubberWinner()){
+        Team rubberWinner = getRubberWinner();
+        if(getGamesWon(getOppositeTeam(rubberWinner)) == 0)
+            rubberBonuses[rubberWinner] += 700;
+        else
+            rubberBonuses[rubberWinner] += 500;
+    }
+    else{
+        // Check if only one side has won a game
+        if(getGamesWon(N_S) == 1 && getGamesWon(E_W) == 0)
+            rubberBonuses[N_S] += 300;
+        else if(getGamesWon(N_S) == 0 && getGamesWon(E_W) == 1)
+            rubberBonuses[E_W] += 300;
+        else if(contractPoints[N_S].last() > 0 && contractPoints[E_W].last() == 0)
+            rubberBonuses[N_S] += 100;
+        else if(contractPoints[N_S].last() == 0 && contractPoints[E_W].last() > 0)
+            rubberBonuses[E_W] += 100;
+    }
+}
+
+// Close off the contract points for the current game and initialise to zero for the new game
+// Only call this fuction after isWinner() returns true
+// Do not call this function when creating the score object for the first time
+void Score::nextGame()
+{
+    contractPoints[N_S].append(0);
+    contractPoints[E_W].append(0);
+}
+
+// Get the opposition team of the specified team
+Team Score::getOppositeTeam(Team team) const
+{
+    if(team == N_S)
+        return E_W;
+    else
+        return N_S;
+}
+
 // Get the team the player belongs to based on their position
 Team Score::getTeam(PlayerPosition position) const
 {
@@ -243,6 +358,17 @@ Team Score::getTeam(PlayerPosition position) const
 const QVector<quint32> Score::getContractPoints(Team team) const
 {
     return contractPoints[team];
+}
+
+// Getter for the games won in the current rubber by the specified team
+quint8 Score::getGamesWon(Team team) const
+{
+    quint8 gamesWon = 0;
+    for(qint8 i = 0; i < contractPoints[team].size(); i++){
+        if(contractPoints[team].value(i) >= 100)
+            ++ gamesWon;
+    }
+    return gamesWon;
 }
 
 // Getter for the back score for the specified team
@@ -275,16 +401,16 @@ quint32 Score::getSlamBonuses(Team team) const
     return slamBonuses[team];
 }
 
+// Getter for the rubber bonuses for the specified team
+quint32 Score::getRubberBonuses(Team team) const
+{
+    return rubberBonuses[team];
+}
+
 // Getter for the vulnerability status for the specified team
 bool Score::getTeamVulnerable(Team team) const
 {
-    return teamVulnerable[team];
-}
-
-// Setter for the vulnerability status for the specified team
-void Score::setTeamVulnerable(Team team)
-{
-    teamVulnerable[team] = true;
+    return getGamesWon(team) > 0;
 }
 
 // Initialize score attributes from JSON object
@@ -301,13 +427,6 @@ void Score::read(const QJsonObject &json)
             conPointsGames.append(points);
         }
         contractPoints[team] = conPointsGames;
-    }
-
-    // Read games won array from JSON object
-    QJsonArray jsonGamesWonArray = json["gamesWon"].toArray();
-    for (qint8 index = 0; index < jsonGamesWonArray.size(); ++ index) {
-        bool gamesWonElement = jsonGamesWonArray[index].toBool();
-        gamesWon[index] = gamesWonElement;
     }
 
     // Read back score array from JSON object
@@ -345,13 +464,6 @@ void Score::read(const QJsonObject &json)
         slamBonuses[index] = slamBonusesElement;
     }
 
-    // Read team vunerable array from JSON object
-    QJsonArray jsonTeamVulnerableArray = json["teamVulnerable"].toArray();
-    for (qint8 index = 0; index < jsonTeamVulnerableArray.size(); ++ index) {
-        bool teamVulnerableElement = jsonTeamVulnerableArray[index].toBool();
-        teamVulnerable[index] = teamVulnerableElement;
-    }
-
     // Read double bonuses array from JSON object
     QJsonArray jsonDoubleBonusesArray = json["doubleBonuses"].toArray();
     for (qint8 index = 0; index < jsonDoubleBonusesArray.size(); ++ index) {
@@ -359,11 +471,11 @@ void Score::read(const QJsonObject &json)
         doubleBonuses[index] = doubleBonusesElement;
     }
 
-    // Read redouble bonuses array from JSON object
-    QJsonArray jsonRedoubleBonusesArray = json["redoubleBonuses"].toArray();
-    for (qint8 index = 0; index < jsonRedoubleBonusesArray.size(); ++ index) {
-        bool redoubleBonusesElement = jsonRedoubleBonusesArray[index].toBool();
-        redoubleBonuses[index] = redoubleBonusesElement;
+    // Read rubber bonuses array from JSON object
+    QJsonArray jsonRubberBonusesArray = json["rubberBonuses"].toArray();
+    for (qint8 index = 0; index < jsonRubberBonusesArray.size(); ++ index) {
+        bool rubberBonusesElement = jsonRubberBonusesArray[index].toBool();
+        rubberBonuses[index] = rubberBonusesElement;
     }
 }
 
@@ -382,12 +494,6 @@ void Score::write(QJsonObject &json) const
         jsonConPointsTeams.append(jsonConPointsGames);
     }
     json["contractPoints"] = jsonConPointsTeams;
-
-    // Add games won array to JSON object
-    QJsonArray jsonGamesWonArray;
-    for (const bool &gamesWonElement: gamesWon)
-        jsonGamesWonArray.append(gamesWonElement);
-    json["gamesWon"] = jsonGamesWonArray;
 
     // Add back score array to JSON object
     QJsonArray jsonBackScoreArray;
@@ -419,12 +525,6 @@ void Score::write(QJsonObject &json) const
         jsonslamBonusesArray.append(slamBonusesElement);
     json["slamBonuses"] = jsonslamBonusesArray;
 
-    // Add team vunerable array to JSON object
-    QJsonArray jsonTeamVulnerableArray;
-    for (const bool &teamVulnerableElement: teamVulnerable)
-        jsonTeamVulnerableArray.append(teamVulnerableElement);
-    json["teamVulnerable"] = jsonTeamVulnerableArray;
-
     // Add double bonuses array to JSON object
     QJsonArray jsonDoubleBonusesArray;
     for (const bool &doubleBonusesElement: doubleBonuses)
@@ -436,6 +536,12 @@ void Score::write(QJsonObject &json) const
     for (const bool &redoubleBonusesElement: redoubleBonuses)
         jsonRedoubleBonusesArray.append(redoubleBonusesElement);
     json["redoubleBonuses"] = jsonRedoubleBonusesArray;
+
+    // Add rubber bonuses array to JSON object
+    QJsonArray jsonRubberBonusesArray;
+    for (const bool &rubberBonusesElement: rubberBonuses)
+        jsonRubberBonusesArray.append(rubberBonusesElement);
+    json["rubberBonuses"] = jsonRubberBonusesArray;
 }
 
 // Overloaded == relational operator to compare score equality
@@ -454,6 +560,10 @@ bool Score::operator ==(const Score& score) const
             honors[E_W] == score.honors[E_W] &&
             slamBonuses[N_S] == score.slamBonuses[N_S] &&
             slamBonuses[E_W] == score.slamBonuses[E_W] &&
-            teamVulnerable[N_S] == score.teamVulnerable[N_S] &&
-            teamVulnerable[E_W] == score.teamVulnerable[E_W];
+            doubleBonuses[N_S] == score.doubleBonuses[N_S] &&
+            doubleBonuses[E_W] == score.doubleBonuses[E_W] &&
+            redoubleBonuses[N_S] == score.redoubleBonuses[N_S] &&
+            redoubleBonuses[E_W] == score.redoubleBonuses[E_W] &&
+            rubberBonuses[N_S] == score.rubberBonuses[N_S] &&
+            rubberBonuses[E_W] == score.rubberBonuses[E_W];
 }

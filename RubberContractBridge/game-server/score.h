@@ -14,20 +14,30 @@ public:
     Score(quint32 backScore[2]);
     void updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> playerHands, quint8 defenderTricksWon);
     const QVector<quint32> getContractPoints(Team team) const;
+    quint8 getGamesWon(Team team) const;
     quint32 getBackScore(Team team) const;
     quint32 getOvertricks(Team team) const;
     quint32 getUndertricks(Team team) const;
     quint32 getHonors(Team team) const;
     quint32 getSlamBonuses(Team team) const;
+    quint32 getRubberBonuses(Team team) const;
     bool getTeamVulnerable(Team team) const;
-    void setTeamVulnerable(Team team);
+    bool isGameWinner() const;
+    bool isRubberWinner() const;
+    void finaliseRubber();
+    void nextGame();
+    Team getGameWinner() const;
+    Team getRubberWinner() const;
+    Team getMatchWinner() const;
+    bool isMatchDraw() const;
+    quint32 getTotalScore(Team team) const;
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
     bool operator ==(const Score& score) const;
 private:
+    Team getOppositeTeam(Team team) const;
     Team getTeam(PlayerPosition position) const;
     QVector<quint32> contractPoints[2];
-    quint8 gamesWon[2] = {0, 0};
     quint32 backScore[2] = {0, 0};
     quint32 overtricks[2] = {0, 0};
     quint32 undertricks[2] = {0, 0};
@@ -35,7 +45,7 @@ private:
     quint32 slamBonuses[2] = {0, 0};
     quint32 doubleBonuses[2] = {0, 0};
     quint32 redoubleBonuses[2] = {0, 0};
-    bool teamVulnerable[2] = {false, false};
+    quint32 rubberBonuses[2] = {0, 0};
 };
 
 #endif // SCORE_H

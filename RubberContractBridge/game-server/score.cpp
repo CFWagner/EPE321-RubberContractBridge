@@ -549,7 +549,8 @@ void Score::write(QJsonObject &json) const
 // and have the same order
 bool Score::operator ==(const Score& score) const
 {
-    return contractPoints == score.contractPoints &&
+    return contractPoints[N_S] == score.contractPoints[N_S] &&
+            contractPoints[E_W] == score.contractPoints[E_W] &&
             backScore[N_S] == score.backScore[N_S] &&
             backScore[E_W] == score.backScore[E_W] &&
             overtricks[N_S] == score.overtricks[N_S] &&

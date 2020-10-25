@@ -108,7 +108,7 @@ void PlayerGameState::read(const QJsonObject &json)
     dealer = PlayerPosition(json["dealer"].toInt());
     declarer = PlayerPosition(json["declarer"].toInt());
 
-    // Read GameState non-list non-object attributes from JSON object
+    // Read GameState non-list object attributes from JSON object
     if(json["currentBid"].isNull()){
         currentBid = nullptr;
     }
@@ -133,7 +133,6 @@ void PlayerGameState::read(const QJsonObject &json)
     // Read PlayerGameState non-list object attributes from JSON object
     playerHand.read(json["playerHand"].toObject());
     dummyHand.read(json["dummyHand"].toObject());
-
 
     // Read GameState tricks vector from JSON object
     QJsonArray jsonTricks = json["tricks"].toArray();

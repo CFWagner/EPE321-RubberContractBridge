@@ -1,6 +1,8 @@
 #ifndef CLIENTNETWORK_H
 #define CLIENTNETWORK_H
 
+// TODO: Test what happens when the server is closed but not the client. Is the client informed of that?
+
 #include <QObject>
 #include <QTcpSocket>
 #include <QDataStream>
@@ -52,8 +54,8 @@ signals:
     void loginResult(bool loginSuccessful, QString reason);
     void updateGameState(PlayerGameState gameState);
     void messageReceived(QString source, QString msg);
-    //void serverDisconnected(); // Not used anymore, all terminations will happen through gameTerminated().
-    // If client lost connection to the server, the reason given with gameTerminated will be: "Client lost connection to the server.")
+    void serverDisconnected(); // Only used before a game has been started, all terminations during a game will happen through gameTerminated().
+    // If client lost connection to the server while in a game, the reason given with gameTerminated will be: "Client lost connection to the server.")
 
     void gameTerminated(QString reason); // This can be emmited anytime after a game has been started.
     // When received it means that the connection to the server has been lost or the server terminated the game.

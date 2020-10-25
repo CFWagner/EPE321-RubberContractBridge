@@ -24,7 +24,8 @@ public:
 
     void notifyBidTurn();
     void notifyMoveTurn();
-    void updateGameState(PlayerGameState gameState);
+    void updateGameState(PlayerGameState gameState); // After the game has been started, this should be the first function called.
+    // By calling this function, the client is informed that it has been selected to be part of a game and that the game has started.
     void notifyBidRejected(QString reason);
     void notifyMoveRejected(QString reason);
     void message(QString source, QString msg);

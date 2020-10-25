@@ -322,7 +322,10 @@ void ServerNetwork::validateClient()
 
     // After transmitting the data, disconnect the client if the login was not succsessfull.
     if (!validateRes.isEmpty()){
-        tempSocket->disconnectFromHost();
+        // Prevent the client from logging in again. Client should create a new connection to try again.
+        disconnect(tempSocket, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
+        // It is the client's responsibility to disconnect from the server.
+        // tempSocket->disconnectFromHost();
     }
 }
 

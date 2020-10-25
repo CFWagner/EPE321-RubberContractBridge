@@ -490,6 +490,7 @@ void testClientNetwork::getPlayers()
     QSignalSpy spyClientConnectResult(&testClient1,SIGNAL(connectionResult(int, QString)));
     QSignalSpy spyClientError(&testClient1,SIGNAL(generalError(QString)));
     QSignalSpy spyClientLoginResult(&testClient1,SIGNAL(loginResult(bool, QString)));
+    QSignalSpy spyClientServerDisconnected1(&testClient1,SIGNAL(serverDisconnected()));
 
     // Do something that can result in problems.
     // (Log into the server.)
@@ -500,6 +501,7 @@ void testClientNetwork::getPlayers()
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
     QVERIFY2(spyClientError.count() == 0,"General errors occured in the testClient1.");
+    QVERIFY2(spyClientServerDisconnected1.count() == 0,"Server unexpectedly disconnected.");
 
     QCOMPARE(spyClientLoginResult.count(), 1);
 
@@ -524,6 +526,7 @@ void testClientNetwork::getPlayers()
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
+    spyClientServerDisconnected1.clear();
 
     // Start a clientNetwork
     QString playerName2 = "Player 20"; // Do not change this name, since it is used in following tests.
@@ -534,6 +537,7 @@ void testClientNetwork::getPlayers()
     QSignalSpy spyClientConnectResult2(&testClient2,SIGNAL(connectionResult(int, QString)));
     QSignalSpy spyClientError2(&testClient2,SIGNAL(generalError(QString)));
     QSignalSpy spyClientLoginResult2(&testClient2,SIGNAL(loginResult(bool, QString)));
+    QSignalSpy spyClientServerDisconnected2(&testClient2,SIGNAL(serverDisconnected()));
 
     // ------ Sucessfully connect a second player ---------
 
@@ -548,6 +552,7 @@ void testClientNetwork::getPlayers()
     // Proof that data sent in QJsonObject format is working.
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
     QVERIFY2(spyClientError2.count() == 0,"General errors occured in the testClient.");
+    QVERIFY2(spyClientServerDisconnected2.count() == 0,"Server unexpectedly disconnected.");
 
     QCOMPARE(spyClientLoginResult2.count(), 1);
 
@@ -567,9 +572,11 @@ void testClientNetwork::getPlayers()
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
+    spyClientServerDisconnected1.clear();
     spyClientError2.clear();
     spyClientLoginResult2.clear();
     spyClientConnectResult2.clear();
+    spyClientServerDisconnected2.clear();
 
     // Stop listening
     testServerNet1.stopListening();
@@ -584,6 +591,7 @@ void testClientNetwork::getPlayers()
     QSignalSpy spyClientConnectResult3(&testClient3,SIGNAL(connectionResult(int, QString)));
     QSignalSpy spyClientError3(&testClient3,SIGNAL(generalError(QString)));
     QSignalSpy spyClientLoginResult3(&testClient3,SIGNAL(loginResult(bool, QString)));
+    QSignalSpy spyClientServerDisconnected3(&testClient3,SIGNAL(serverDisconnected()));
 
     // ------ Third player should no be able to connect ---------
 
@@ -598,6 +606,7 @@ void testClientNetwork::getPlayers()
     // Proof that data sent in QJsonObject format is working.
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
     QVERIFY2(spyClientError3.count() == 0,"General errors occured in the testClient.");
+    QVERIFY2(spyClientServerDisconnected3.count() == 0,"Server unexpectedly disconnected.");
 
     QCOMPARE(spyClientLoginResult3.count(), 1);
 
@@ -634,6 +643,17 @@ void testClientNetwork::getPlayers()
 
     // Test to see if it is the correct player.
     // Disconnect the one player 2.
+
+    qInfo() << "Before abort called in test.";
+    qInfo() << "getPlayerSocket2: " << getPlayerSocket2 << " testClient1: " << &testClient1;
+    getPlayerSocket1->abort();
+//    testServerNet1.
+    qInfo() << "After abort called in test.";
+    QVERIFY(spyClientServerDisconnected2.wait(100));
+    QVERIFY2(spyClientServerDisconnected2.count() == 1,"Server unexpectedly disconnected.");
+    QVERIFY2(spyClientServerDisconnected1.count() == 0,"Server unexpectedly disconnected.");
+
+
     // TODO: start a game and then disconnect the client (from the server side).
     // Then test if the correct client emits gameTerminated.
     // Repeat for the other client.

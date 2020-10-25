@@ -1,13 +1,5 @@
 #include "playernetwork.h"
 
-//PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *clientSoc) : QObject(parent)
-//{
-//    // Once ingerited, init the playerName.
-//    PlayerNetwork::playerName = playerName;
-//    PlayerNetwork::clientSoc = clientSoc;
-
-//}
-
 PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *clientSoc)
 {
     // Once ingerited, init the playerName.
@@ -31,40 +23,83 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
 
 }
 
+/**
+ * Destructor
+ */
+
 PlayerNetwork::~PlayerNetwork()
 {
-
+    if (clientSoc != nullptr){
+        clientSoc->abort();
+        clientSoc->deleteLater();
+    }
 }
+
+/**
+ * Send notification to the client that it is their turn to bid.
+ */
 
 void PlayerNetwork::notifyBidTurn()
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "NOTIFY_BID_TURN";
+    txAll(txObj);
 }
+
+/**
+ * Send notification to the client that it is their turn to make a move.
+ */
 
 void PlayerNetwork::notifyMoveTurn()
 {
 
 }
 
+/**
+ * Send playerGameState to client.
+ */
+
 void PlayerNetwork::updateGameState(PlayerGameState gameState)
 {
 
 }
+
+/**
+ * Send notification that the bid has been rejected.
+ * @param reason QString The reason why the bid has been rejected by the server.
+ */
 
 void PlayerNetwork::notifyBidRejected(QString reason)
 {
 
 }
 
+/**
+ * Send notification that the move has been rejected.
+ * @param reason QString The reason why the move has been rejected by the server.
+ */
+
 void PlayerNetwork::notifyMoveRejected(QString reason)
 {
 
 }
 
+/**
+ * Broadcasted chat message sent to the client.
+ * @param source QString Player name of sender.
+ * @param msg QString Message content.
+ */
+
 void PlayerNetwork::message(QString source, QString msg)
 {
 
 }
+
+/**
+ * Transmit this when the game is over, with the reason for the end of the game.
+ * @param reason QString Reason why the game has been terminated.
+ */
 
 void PlayerNetwork::gameTerminated(QString reason)
 {
@@ -75,6 +110,11 @@ QVector<bool> PlayerNetwork::getUnitTest() const
 {
     return bUnitTest;
 }
+
+/**
+ * All received data goes through this.
+ * The function calls the relevant rx functions, depending on the "Type" received.
+ */
 
 void PlayerNetwork::rxAll()
 {
@@ -100,22 +140,17 @@ void PlayerNetwork::rxAll()
         }
 
     } else {
-        // QJsonObject received had errors
+        // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
         qWarning() << "Data received from server has been incorrectly formatted.";
-
-        // TODO: Handel case where data received was incorrect.
-        // If not logged in, dissconnect and signal GUI
-
-        // If logged in, request a resend of the data? Or ignaor it, or stop the client.
-        // Maybe have a last message detail on server side?
-
         return;
     }
 
     // The data received is valid.
     // Choose the function that will handel the data.
     QString tempStr = rxObj["Type"].toString();
+    // Update the prevID
+    prevID = rxObj["ID"].toInt();
 
     if (tempStr == "BID_SEND") {
         rxBidSelected(rxObj);

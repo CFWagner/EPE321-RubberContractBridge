@@ -1,4 +1,4 @@
-#include "gui/entrywindow.h"
+//#include "mainwindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -7,10 +7,4 @@ int main(int argc, char *argv[])
     EntryWindow entryWindow;
     entryWindow.show();
     return rcbApplication.exec();
-    //    testclientlogin testcLogin;
-    //    QTest::qExec(&testcLogin);
-    //    TestServerLogin testLogin;
-    //    QTest::qExec(&testLogin);
-    //    testLobby testlob;
-    //    QTest::qExec(&testlob);
 }

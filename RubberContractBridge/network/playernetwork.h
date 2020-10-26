@@ -24,7 +24,8 @@ public:
 
     void notifyBidTurn();
     void notifyMoveTurn();
-    void updateGameState(PlayerGameState gameState);
+    void updateGameState(PlayerGameState gameState); // After the game has been started, this should be the first function called.
+    // By calling this function, the client is informed that it has been selected to be part of a game and that the game has started.
     void notifyBidRejected(QString reason);
     void notifyMoveRejected(QString reason);
     void message(QString source, QString msg);
@@ -35,10 +36,11 @@ public:
 
 private slots:
     void rxAll();
-    void pingClient();
+    void socketError(QAbstractSocket::SocketError socError);
+//    void pingClient();
 
 signals:
-    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)
+//    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)
     void generalError(QString errorMsg); // All errors. (Should be displayed to the administrator.)
     void bidSelected(Bid bid);
     void moveSelected(Card card);
@@ -50,14 +52,14 @@ private:
     void rxBidSelected(QJsonObject bidObj);
     void rxMoveSelected(QJsonObject moveObj);
     void rxMessage(QJsonObject msgObj);
-    void rxPingReturn();
+//    void rxPingReturn();
     void internalClientDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
 
     QTcpSocket* clientSoc;
     QTimer* keepAlive;
     bool aliveFlag;
     QDataStream in;
-    QDataStream out;
+//    QDataStream out;
     qint64 idCounter;
     qint64 prevID;
 

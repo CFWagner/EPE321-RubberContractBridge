@@ -16,7 +16,6 @@ public:
 private slots:
     void initServer1();
     void initServer2();
-
 signals:
 
 };

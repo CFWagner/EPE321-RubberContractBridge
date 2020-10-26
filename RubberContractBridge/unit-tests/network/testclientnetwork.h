@@ -1,6 +1,9 @@
 #ifndef TESTCLIENTNETWORK_H
 #define TESTCLIENTNETWORK_H
 
+// TODO: Unit test serverDisconnected signal. (Once game has started.)
+// TODO: Set gameStarted = true once game has started.
+
 #include <QObject>
 #include <QtTest/QtTest>
 #include <QSignalSpy>
@@ -16,12 +19,18 @@ public:
 
 
 private slots:
-    void Login();
-
+    // All private slots should be run in the following order, since they depend on each other.
+    void verifyServerWorking();
+    void LoginCorrectly();
+    void wrongServerDetails();
+    void incorrectSocket();
+    void getPlayers();
+    void cleanupTestCase();
 
 signals:
 
 private:
+    void testFunc();
 
 
     QString passwordServer;
@@ -29,15 +38,11 @@ private:
     QHostAddress ip;
     QString playerName;
     ServerNetwork testServerNet1;
-    ClientNetwork testClient1;
 
     QSignalSpy *spyServer;
     QSignalSpy *spyServerPlayerJoined;
     QSignalSpy *spyServerError;
-
-    QSignalSpy *spyClientConnectResult;
-    QSignalSpy *spyClientLoginResult;
-    QSignalSpy *spyClientError;
+    QSignalSpy *spyServerPlayerDisconnected;
 
 };
 

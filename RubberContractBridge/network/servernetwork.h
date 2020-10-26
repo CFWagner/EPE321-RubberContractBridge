@@ -22,13 +22,13 @@ public:
     explicit ServerNetwork(QObject *parent = nullptr, QString nameOfAI = QString("AI"));
     ~ServerNetwork();
 
-    QTcpSocket* getPlayerSoc(QString playerName) const;
-    void setPassword(QString password);
+    QTcpSocket* getPlayerSoc(QString playerName);
+    void setPassword(QString password); // Call before calling initServer.
     void initServer(QHostAddress ip, quint16 port);
-    void stopListening();
+    void stopListening(); // Call this just befor the game starts.
 
     // Unit test data
-    QVector<bool> getUnitTest() const;
+    QVector<bool> getUnitTest();
 
 private slots:
     void connectClient();
@@ -45,9 +45,9 @@ signals:
     // errorMsg is empty except when status = 2, then the actual error will be displayed. (It might not be a port error,
     // but that is the most likely error to have occured. If status = 2 and errorMsg = "The bound address is already in use", then it is
     // definitively the port that is already in use.)
-    // GUI is responsible for creating the messages regarding connection status. (genearl Info and warning signals will not be used for this.)
+    // GUI is responsible for creating the messages regarding connection status. (General Info and Warning signals will not be used for this.)
 
-    void generalInfo(QString infoMsg);
+//    void generalInfo(QString infoMsg);
     // All information, such as the port it connected to. (Should be displayed to the administrator.)
 
     void generalError(QString errorMsg);
@@ -56,6 +56,8 @@ signals:
     void playerJoined(QString playerName);
     void playerDisconnected(QString playerName); // Disconnect from this signal before deleting the serverNetwork class.
     // This is to avoid many unused clients from signaling you when they are deleted.
+    // Disconnect from this signal before the ServerNetwork class gets deleted, since the palyerDisconnected signal will be emitted
+    // for all logged in clients.
 
 private:
     QString validateLogin(QString playerName, QString password);
@@ -67,6 +69,7 @@ private:
     QVector<QTcpSocket*> clientSocTemp;
     QTcpServer* tcpServer;
     QDataStream in;
+    bool bAllowNewClientConnection;
 
     // Unit testing datastructures
     QVector<bool> bUnitTest;

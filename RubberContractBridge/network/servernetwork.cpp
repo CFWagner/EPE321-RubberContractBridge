@@ -12,6 +12,7 @@ ServerNetwork::ServerNetwork(QObject *parent, QString nameOfAI) : QObject(parent
     clientSoc.clear();
     clientSocTemp.clear();
     tcpServer = nullptr;
+    bAllowNewClientConnection = true;
 
     // Init unit test
     bUnitTest.clear();
@@ -30,15 +31,52 @@ ServerNetwork::~ServerNetwork()
     if (tcpServer != nullptr) {
         disconnect(tcpServer, &QTcpServer::newConnection, 0, 0);
         tcpServer->close();
+        tcpServer->deleteLater();
     }
 }
 
-QTcpSocket *ServerNetwork::getPlayerSoc(QString playerName) const
+/*!
+ * \brief Return the socket that corresponds to the playerName.
+ * Return a nullptr if playerName cannot be found.
+ * Player is removed from the ServerNetwork class, signals connecting the clientSocekt with functions in ServerNetwork is disconnected.
+ * ClientSocket destructor signal stay connected, so no need to handel that seperatley.
+ * \param playerName: The name of the player, whose socket is requested. (QString)
+ * \return A pointer to the QTcpSocket of the requested client. Should be used when constructing the PlayerNetwork class.
+ */
+
+QTcpSocket *ServerNetwork::getPlayerSoc(QString playerName)
 {
-    // Return the socket that corresponds to the playerName.
-    // Throw an error if playerName can not be found and return nullptr.
-    return nullptr;
+    // Find the player
+    // disconnect signals
+    // but keep object destructor signal
+    // remove from list (it is now in the hands of the player class)
+    // Return the pointer.
+
+    QTcpSocket* tempSocket = nullptr;
+
+    // Check if the playerName exsists.
+    if (playerNames.contains(playerName)){
+
+        // Get the socket
+        tempSocket = clientSoc.at(playerNames.indexOf(playerName));
+
+        // Remove from clientSoc and playerNames
+        playerNames.removeAll(playerName);
+        clientSoc.removeAll(tempSocket);
+
+        // Disconnect signals
+       disconnect(tempSocket, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
+       disconnect(tempSocket, &QAbstractSocket::disconnected,this, &ServerNetwork::disconnectClient);
+    }
+
+    return tempSocket;
 }
+
+/*!
+ * \brief Set the password of the server. It is the responsibility of the GUI, to validate the strength of the password.
+ * No checking is done in the ServerNetwork class.
+ * \param password: Validated password. (QString)
+ */
 
 void ServerNetwork::setPassword(QString password)
 {
@@ -46,11 +84,17 @@ void ServerNetwork::setPassword(QString password)
     this->password = password;
 }
 
+/*!
+ * Open a port on the given ip address.
+ * Start listening for clients that want to connect.
+ * The IP address can only be set once after the program has started.
+ * \param ip: IP Address of the server. (QHostAddresss)
+ * \param port: port that the server will use. (quint16)
+ */
+
 void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 {
-    // Open a port on the given ip address.
     // Use port 61074.
-    // Start listening for clients that want to connect.
     // The IP address can only be set once after the program has started.
 
     // Prepare bUnitTest
@@ -105,25 +149,32 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 
 }
 
-
+/*!
+ * \brief Stop listening for new client connections.
+ * status = 4 will be returned to for any new client requesting login after stopListening has been called.
+ */
 void ServerNetwork::stopListening()
 {
-    // Stop listen for new client connections.
-
+    bAllowNewClientConnection = false;
 }
 
-QVector<bool> ServerNetwork::getUnitTest() const
+QVector<bool> ServerNetwork::getUnitTest()
 {
+    emit generalError("bUnitTest was requested, but it isn't being used anymore.");
     return bUnitTest;
 }
 
+/*!
+ * Accept new client connections.
+ * Add client to clientSocTemp.
+ * Make signal slot connections.
+ */
+
 void ServerNetwork::connectClient()
 {
-    // Accept new client connections.
-    // Add client to clientSocTemp.
-    // Make signal slot connections.
-
     QTcpSocket* clientConnection = tcpServer->nextPendingConnection();
+
+    qInfo() << "Client trying to connect: " << clientConnection;
 
 
     if (!clientConnection) {
@@ -241,7 +292,6 @@ void ServerNetwork::validateClient()
         // Notify the client of the successfull login.
         txObj["loginSuccessful"] = true;
         txObj["reason"] = "";
-
     } else {
         // The login was not accpeted.
         // Notify the client with a reason and disconnect the client.
@@ -255,9 +305,10 @@ void ServerNetwork::validateClient()
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_10);
 
+
     // Send the login request to the server
     out << txObj;
-    int tempVal = clientSoc.last()->write(block);
+    int tempVal = tempSocket->write(block);
 
     qInfo() << "Number of bytes expected to be sent to the client: " << block.size();
     qInfo() << "Number of bytes sent to client: " << tempVal;
@@ -272,9 +323,19 @@ void ServerNetwork::validateClient()
 
     // After transmitting the data, disconnect the client if the login was not succsessfull.
     if (!validateRes.isEmpty()){
-        tempSocket->disconnectFromHost();
+        // Prevent the client from logging in again. Client should create a new connection to try again.
+        disconnect(tempSocket, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
+        // It is the client's responsibility to disconnect from the server.
+        // tempSocket->disconnectFromHost();
     }
 }
+
+/*!
+ * \brief Handel the process when a client disconnects.
+ * When a client disconnects, check if the client logged in.
+ * If logged in, remove username and client socket.
+ * Signal the GUI to also remove the client.
+ */
 
 void ServerNetwork::disconnectClient()
 {
@@ -282,7 +343,8 @@ void ServerNetwork::disconnectClient()
     // If logged in, remove username and client socket.
     // Signal the GUI to also remove the client.
 
-    qInfo() << "Socket disconnected";
+    qInfo() << "Socket disconnected (Server side)";
+    qInfo() << "Before disconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
 
     // Get the sender's QTcpSocket
     QObject* obj = sender();
@@ -292,6 +354,7 @@ void ServerNetwork::disconnectClient()
         // The client was not logged in
         // Remove from clientSocTemp
         clientSocTemp.removeAll(tempSocket);
+        qInfo() << "Disconnect: Removed from clientSocTemp";
     }
 
     if (clientSoc.contains(tempSocket)){
@@ -304,8 +367,12 @@ void ServerNetwork::disconnectClient()
         playerNames.removeAll(tempPlayerName);
         clientSoc.removeAll(tempSocket);
 
+        qInfo() << "Disconnect: Removed from clientSoc. The player's name is: " + tempPlayerName;
+
         emit playerDisconnected(tempPlayerName);
     }
+
+    qInfo() << "After dissconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
 
 }
 
@@ -314,6 +381,8 @@ void ServerNetwork::disconnectClient()
  * If both are valid, return an empty string.
  * Else return the reason for faliure.
  * This message will be displayed to the user.
+ * Check if new client connections is allowed (bAllowNewClientConnection == true).
+ * Check if the lobby is full. Max 10 players.
  * Check if password match.
  * Check if username is empty.
  * Check if username is longer than 15 chars.
@@ -326,6 +395,14 @@ void ServerNetwork::disconnectClient()
 
 QString ServerNetwork::validateLogin(QString playerName, QString password)
 {
+    if (!bAllowNewClientConnection){
+        return "The game is in progress and no more players are allowed on this server.";
+    }
+
+    // Allow max 10 players (>= since this player has not been added to the list.)
+    if (playerNames.count() >= 10){
+        return "The lobby is full. A maximum of 10 players may be added to the lobby.";
+    }
 
     if (this->password != password){
         return "The password is incorrect.";
@@ -339,12 +416,12 @@ QString ServerNetwork::validateLogin(QString playerName, QString password)
         return "The player name may not be longer than 15 chars.";
     }
 
-    if (playerName == nameOfAI) {
-        return "The palyer may not be given the same name as an AI. AI's name is: " + nameOfAI;
+    if (playerName.contains(nameOfAI)) {
+        return "The player's name may not contain \"" + nameOfAI + "\".";
     }
 
     if (playerNames.contains(playerName)){
-        return "The palyer's name has already been used, please choose another username.";
+        return "The player's name has already been used, please choose another username.";
     }
 
     // General

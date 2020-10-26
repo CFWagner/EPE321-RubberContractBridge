@@ -31,9 +31,9 @@ void ServerLobby::staticGUIElements()
 {
     //QListWidget setup allow multiple selected.
     ui->playerList->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    ui->playerList->addItem("MAT");
-    ui->playerList->addItem("PAT");
-    ui->playerList->takeItem(1);
+//    ui->playerList->addItem("MAT");
+//    ui->playerList->addItem("PAT");
+//    ui->playerList->takeItem(1);
 
     // Buttons setup such as the icons.
     ui->north_b->setIcon(QIcon(":/resources/guiResources/background/playerBackground.png"));
@@ -64,6 +64,11 @@ void ServerLobby::staticGUIElements()
     connect(startGame,&Hover::startGameB,this,&ServerLobby::startGameB);
     //connect(this,&ServerLobby::playersSelected,serverCreated,&Server::playersSelected);
 
+}
+
+QVector<QString> ServerLobby::getplayerNames()
+{
+    return playerNames;
 }
 
 void ServerLobby::addPlayersLobby()

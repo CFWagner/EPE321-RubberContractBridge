@@ -37,6 +37,7 @@ SOURCES += \
     unit-tests/game-server/testscore.cpp \
     unit-tests/game-server/testservergamestate.cpp \
     unit-tests/gui/testentrywindow.cpp \
+    unit-tests/gui/testserverlobby.cpp \
     unit-tests/gui/testserverlogin.cpp \
     unit-tests/network/testclientnetwork.cpp \
     unit-tests/network/testplayernetwork.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
     unit-tests/game-server/testscore.h \
     unit-tests/game-server/testservergamestate.h \
     unit-tests/gui/testentrywindow.h \
+    unit-tests/gui/testserverlobby.h \
     unit-tests/gui/testserverlogin.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \

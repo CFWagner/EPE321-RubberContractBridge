@@ -25,10 +25,13 @@ SOURCES += \
     gui/hover.cpp \
     gui/serverlobby.cpp \
     gui/serverlogin.cpp \
+    logger/logger.cpp \
     main.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
+    not_main.cpp \
+    test_main.cpp \
     unit-tests/ai/testai.cpp \
     unit-tests/game-server/testbid.cpp \
     unit-tests/game-server/testcard.cpp \
@@ -38,6 +41,7 @@ SOURCES += \
     unit-tests/game-server/testservergamestate.cpp \
     unit-tests/gui/testentrywindow.cpp \
     unit-tests/gui/testserverlogin.cpp \
+    unit-tests/logger/testlogger.cpp \
     unit-tests/network/testclientnetwork.cpp \
     unit-tests/network/testplayernetwork.cpp \
     unit-tests/network/testservernetwork.cpp
@@ -67,6 +71,7 @@ HEADERS += \
     gui/hover.h \
     gui/serverlobby.h \
     gui/serverlogin.h \
+    logger/logger.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
@@ -79,6 +84,7 @@ HEADERS += \
     unit-tests/game-server/testservergamestate.h \
     unit-tests/gui/testentrywindow.h \
     unit-tests/gui/testserverlogin.h \
+    unit-tests/logger/testlogger.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \
     unit-tests/network/testservernetwork.h
@@ -182,5 +188,7 @@ DISTFILES += \
 RESOURCES += \
     GUI.qrc \
     GUI.qrc \
+    GUI.qrc \
+    resource.qrc \
     resource.qrc \
     resource.qrc

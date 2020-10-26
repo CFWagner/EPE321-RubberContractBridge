@@ -10,6 +10,7 @@ CONFIG(release, debug|release):DEFINES += QT_NO_INFO_OUTPUT
 
 #All sources classes of the project is addded below.
 SOURCES += \
+    ai/ai.cpp \
     game-server/bid.cpp \
     game-server/card.cpp \
     game-server/cardset.cpp \
@@ -30,6 +31,8 @@ SOURCES += \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
     not_main.cpp \
+    test_main.cpp \
+    unit-tests/ai/testai.cpp \
     unit-tests/game-server/testbid.cpp \
     unit-tests/game-server/testcard.cpp \
     unit-tests/game-server/testcardset.cpp \
@@ -42,6 +45,7 @@ SOURCES += \
 
 #All header files of the project is addded below.
 HEADERS += \
+    ai/ai.h \
     enumerations/BidCall.h \
     enumerations/CardRank.h \
     enumerations/CardSuit.h \
@@ -67,6 +71,7 @@ HEADERS += \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
+    unit-tests/ai/testai.h \
     unit-tests/game-server/testbid.h \
     unit-tests/game-server/testcard.h \
     unit-tests/game-server/testcardset.h \
@@ -89,6 +94,7 @@ FORMS += \
     gui/serverlogin.ui
 
 DISTFILES += \
+    ai_testing.bat \
     guiResources/background/background1.png \
     guiResources/background/background2.png \
     guiResources/background/background3.png \
@@ -174,4 +180,6 @@ DISTFILES += \
 
 RESOURCES += \
     GUI.qrc \
+    GUI.qrc \
+    resource.qrc \
     resource.qrc

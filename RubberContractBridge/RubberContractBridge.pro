@@ -30,8 +30,6 @@ SOURCES += \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
-    not_main.cpp \
-    test_main.cpp \
     unit-tests/ai/testai.cpp \
     unit-tests/game-server/testbid.cpp \
     unit-tests/game-server/testcard.cpp \

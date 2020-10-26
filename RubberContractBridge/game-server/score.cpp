@@ -160,7 +160,7 @@ void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> pl
 
         // Apply undertrick penalty points for 4th and subsequent undertricks
         // Apply undertrick penalty points for 2nd and 3rd undertrick
-        if(numUndertricks > 1){
+        if(numUndertricks >= 4){
             // Get multiplier for number of tricks above and including 4
             qint8 numTricks = numUndertricks - 3;
 

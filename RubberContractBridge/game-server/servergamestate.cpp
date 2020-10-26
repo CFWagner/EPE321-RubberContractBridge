@@ -169,7 +169,24 @@ void ServerGameState::updatePlayState(const Card &card)
             // Update score
             score.updateScore(*contractBid, playerHandsSnapshot, getTricksWon(contractBid->getBiddingTeam()));
 
-            // CHECK FOR COMPLETED GAME / RUBBER
+            // Check if a team has won a second game and therefore the rubber
+            if(score.isRubberWinner()){
+                score.finaliseRubber();
+
+                // Create new score instance for next rubber with back score
+                quint32 backScore[2] = {0, 0};
+                quint32 totalScoreNS = score.getTotalScore(N_S);
+                quint32 totalScoreEW = score.getTotalScore(E_W);
+                if(totalScoreNS > totalScoreEW)
+                    backScore[N_S] = totalScoreNS - totalScoreEW;
+                else
+                    backScore[E_W] = totalScoreEW - totalScoreNS;
+                score = Score(backScore);
+            }
+            // Check if a team has won a game
+            else if(score.isGameWinner()){
+                score.nextGame();
+            }
 
             // Initialise next deal
             nextDeal();

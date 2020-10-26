@@ -299,6 +299,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricks().size(), 2);
     QCOMPARE(serverState.getDealer(), EAST);
     QCOMPARE(serverState.getDeclarer(), NORTH);
+    QCOMPARE(serverState.getTricksWon(NORTH), 1);
+    QCOMPARE(serverState.getTricksWon(EAST), 0);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 0);
+    QCOMPARE(serverState.getTricksWon(WEST), 0);
+    QCOMPARE(serverState.getTricksWon(N_S), 1);
+    QCOMPARE(serverState.getTricksWon(E_W), 0);
 
     // Test attributes after playing 2nd trick where WEST wins with trump card
     serverState.updatePlayState(Card(DIAMONDS, QUEEN));
@@ -318,6 +324,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 3);
     QCOMPARE(serverState.getTricks().size(), 3);
+    QCOMPARE(serverState.getTricksWon(NORTH), 1);
+    QCOMPARE(serverState.getTricksWon(EAST), 0);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 0);
+    QCOMPARE(serverState.getTricksWon(WEST), 1);
+    QCOMPARE(serverState.getTricksWon(N_S), 1);
+    QCOMPARE(serverState.getTricksWon(E_W), 1);
 
     // Test attributes after playing 3rd trick
     serverState.updatePlayState(Card(SPADES, QUEEN));
@@ -332,6 +344,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 4);
+    QCOMPARE(serverState.getTricksWon(NORTH), 1);
+    QCOMPARE(serverState.getTricksWon(EAST), 1);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 0);
+    QCOMPARE(serverState.getTricksWon(WEST), 1);
+    QCOMPARE(serverState.getTricksWon(N_S), 1);
+    QCOMPARE(serverState.getTricksWon(E_W), 2);
 
     // Test attributes after playing 4th trick
     serverState.updatePlayState(Card(HEARTS, KING));
@@ -346,6 +364,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 5);
+    QCOMPARE(serverState.getTricksWon(NORTH), 1);
+    QCOMPARE(serverState.getTricksWon(EAST), 2);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 0);
+    QCOMPARE(serverState.getTricksWon(WEST), 1);
+    QCOMPARE(serverState.getTricksWon(N_S), 1);
+    QCOMPARE(serverState.getTricksWon(E_W), 3);
 
     // Test attributes after playing 5th trick
     serverState.updatePlayState(Card(CLUBS, QUEEN));
@@ -360,6 +384,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 6);
+    QCOMPARE(serverState.getTricksWon(NORTH), 2);
+    QCOMPARE(serverState.getTricksWon(EAST), 2);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 0);
+    QCOMPARE(serverState.getTricksWon(WEST), 1);
+    QCOMPARE(serverState.getTricksWon(N_S), 2);
+    QCOMPARE(serverState.getTricksWon(E_W), 3);
 
     // Test attributes after playing 6th trick
     serverState.updatePlayState(Card(HEARTS, NINE));
@@ -374,6 +404,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 7);
+    QCOMPARE(serverState.getTricksWon(NORTH), 2);
+    QCOMPARE(serverState.getTricksWon(EAST), 2);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 1);
+    QCOMPARE(serverState.getTricksWon(WEST), 1);
+    QCOMPARE(serverState.getTricksWon(N_S), 3);
+    QCOMPARE(serverState.getTricksWon(E_W), 3);
 
     // Test attributes after playing 7th trick
     serverState.updatePlayState(Card(HEARTS, ACE));
@@ -386,6 +422,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 8);
+    QCOMPARE(serverState.getTricksWon(NORTH), 2);
+    QCOMPARE(serverState.getTricksWon(EAST), 2);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 2);
+    QCOMPARE(serverState.getTricksWon(WEST), 1);
+    QCOMPARE(serverState.getTricksWon(N_S), 4);
+    QCOMPARE(serverState.getTricksWon(E_W), 3);
 
     // Test attributes after playing 8th trick
     serverState.updatePlayState(Card(DIAMONDS, KING));
@@ -398,6 +440,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 9);
+    QCOMPARE(serverState.getTricksWon(NORTH), 2);
+    QCOMPARE(serverState.getTricksWon(EAST), 2);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 2);
+    QCOMPARE(serverState.getTricksWon(WEST), 2);
+    QCOMPARE(serverState.getTricksWon(N_S), 4);
+    QCOMPARE(serverState.getTricksWon(E_W), 4);
 
     // Test attributes after playing 9th trick
     serverState.updatePlayState(Card(SPADES, ACE));
@@ -412,6 +460,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 10);
+    QCOMPARE(serverState.getTricksWon(NORTH), 2);
+    QCOMPARE(serverState.getTricksWon(EAST), 2);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 2);
+    QCOMPARE(serverState.getTricksWon(WEST), 3);
+    QCOMPARE(serverState.getTricksWon(N_S), 4);
+    QCOMPARE(serverState.getTricksWon(E_W), 5);
 
     // Test attributes after playing 10th trick
     serverState.updatePlayState(Card(SPADES, TEN));
@@ -426,6 +480,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 11);
+    QCOMPARE(serverState.getTricksWon(NORTH), 2);
+    QCOMPARE(serverState.getTricksWon(EAST), 3);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 2);
+    QCOMPARE(serverState.getTricksWon(WEST), 3);
+    QCOMPARE(serverState.getTricksWon(N_S), 4);
+    QCOMPARE(serverState.getTricksWon(E_W), 6);
 
     // Test attributes after playing 11th trick
     serverState.updatePlayState(Card(DIAMONDS, ACE));
@@ -440,6 +500,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 12);
+    QCOMPARE(serverState.getTricksWon(NORTH), 3);
+    QCOMPARE(serverState.getTricksWon(EAST), 3);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 2);
+    QCOMPARE(serverState.getTricksWon(WEST), 3);
+    QCOMPARE(serverState.getTricksWon(N_S), 5);
+    QCOMPARE(serverState.getTricksWon(E_W), 6);
 
     // Test attributes after playing 12th trick
     serverState.updatePlayState(Card(CLUBS, FIVE));
@@ -454,6 +520,12 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getGameNumber(), 1);
     QCOMPARE(serverState.getDealNumber(), 2);
     QCOMPARE(serverState.getTrickNumber(), 13);
+    QCOMPARE(serverState.getTricksWon(NORTH), 4);
+    QCOMPARE(serverState.getTricksWon(EAST), 3);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 2);
+    QCOMPARE(serverState.getTricksWon(WEST), 3);
+    QCOMPARE(serverState.getTricksWon(N_S), 6);
+    QCOMPARE(serverState.getTricksWon(E_W), 6);
 
     // Test attributes after playing 13th trick
     serverState.updatePlayState(Card(CLUBS, THREE));
@@ -468,5 +540,33 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getDealNumber(), 3);
     QCOMPARE(serverState.getTrickNumber(), 0);
     QCOMPARE(serverState.getDealer(), SOUTH);
+    QCOMPARE(serverState.getTricksWon(NORTH), 5);
+    QCOMPARE(serverState.getTricksWon(EAST), 3);
+    QCOMPARE(serverState.getTricksWon(SOUTH), 2);
+    QCOMPARE(serverState.getTricksWon(WEST), 3);
+    QCOMPARE(serverState.getTricksWon(N_S), 7);
+    QCOMPARE(serverState.getTricksWon(E_W), 6);
 
+    // Check score after playing 13th trick
+    Score score = serverState.getScore();
+    QCOMPARE(score.getContractPoints(N_S).size(), 1);
+    QCOMPARE(score.getContractPoints(E_W).size(), 1);
+    QCOMPARE(score.getContractPoints(N_S).value(0), 0);
+    QCOMPARE(score.getContractPoints(E_W).value(0), 0);
+    QCOMPARE(score.getGamesWon(N_S), 0);
+    QCOMPARE(score.getGamesWon(E_W), 0);
+    QCOMPARE(score.getBackScore(N_S), 0);
+    QCOMPARE(score.getBackScore(E_W), 0);
+    QCOMPARE(score.getOvertricks(N_S), 0);
+    QCOMPARE(score.getOvertricks(E_W), 0);
+    QCOMPARE(score.getUndertricks(N_S), 0);
+    QCOMPARE(score.getUndertricks(E_W), 100);
+    QCOMPARE(score.getHonors(N_S), 0);
+    QCOMPARE(score.getHonors(E_W), 0);
+    QCOMPARE(score.getSlamBonuses(N_S), 0);
+    QCOMPARE(score.getSlamBonuses(E_W), 0);
+    QCOMPARE(score.getRubberBonuses(N_S), 0);
+    QCOMPARE(score.getRubberBonuses(E_W), 0);
+    QCOMPARE(score.getTeamVulnerable(N_S), false);
+    QCOMPARE(score.getTeamVulnerable(E_W), false);
 }

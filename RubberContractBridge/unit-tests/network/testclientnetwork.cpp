@@ -262,7 +262,7 @@ void testClientNetwork::wrongServerDetails()
 
     argumentsC = spyClientLoginResult2.takeFirst();
     QCOMPARE(argumentsC.at(0), false);
-    QCOMPARE(argumentsC.at(1), "The palyer's name has already been used, please choose another username.");
+    QCOMPARE(argumentsC.at(1), "The player's name has already been used, please choose another username.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
@@ -299,7 +299,7 @@ void testClientNetwork::wrongServerDetails()
     // Proof that QJsonObject data transfer works.
     argumentsC = spyClientLoginResult2.takeFirst();
     QCOMPARE(argumentsC.at(0), false);
-    QCOMPARE(argumentsC.at(1), "The palyer may not be given the same name as an AI. AI's name is: AI");
+    QCOMPARE(argumentsC.at(1), "The player's name may not contain \"AI\".");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
@@ -379,6 +379,86 @@ void testClientNetwork::wrongServerDetails()
 
     QVERIFY(spyServerPlayerJoined->count() == 1);
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
+
+
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
+    spyClientError.clear();
+    spyClientLoginResult.clear();
+    spyClientConnectResult.clear();
+    spyClientError2.clear();
+    spyClientLoginResult2.clear();
+    spyClientConnectResult2.clear();
+
+    // Add up to 11 players. (Max is 10 players.)
+
+    QVector<ClientNetwork*> arrTestClientNet;
+    QVector<QString> arrPlayerNames;
+
+    // Add another 7 players (for a total of 9)
+    for (int i = 0; i < 8; i++){
+        arrTestClientNet.append(new ClientNetwork());
+        arrPlayerNames.append("Test player " + QString::number(i+3));
+        qInfo() << "Added: " << arrPlayerNames.at(i);
+        arrTestClientNet.at(i)->txRequestLogin(ip,port,arrPlayerNames.at(i),passwordServer);
+        QVERIFY(spyServerPlayerJoined->wait(100));
+        QVERIFY(spyServerPlayerJoined->count() == i+1);
+    }
+
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
+
+    // Try to connect the 11 player
+    // Start a clientNetwork
+    QString playerName11 = "TestPlayer 11";
+
+    ClientNetwork testClient11;
+
+    // Connect QSpySignal to all relevant signals from the class.
+    QSignalSpy spyClientConnectResult11(&testClient11,SIGNAL(connectionResult(int, QString)));
+    QSignalSpy spyClientError11(&testClient11,SIGNAL(generalError(QString)));
+    QSignalSpy spyClientLoginResult11(&testClient11,SIGNAL(loginResult(bool, QString)));
+
+    // Do something that can result in problems.
+    // (Log into the server.)
+    testClient11.txRequestLogin(ip,port,playerName11,passwordServer);
+
+    QVERIFY(spyClientLoginResult11.wait(100));
+
+    // No warnings should be issused by either the server or the client
+    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
+    QVERIFY2(spyClientError11.count() == 0,"General errors occured in the testClient11.");
+
+    QCOMPARE(spyClientLoginResult11.count(), 1);
+
+    argumentsC = spyClientConnectResult11.takeFirst();
+    // The connection should be sucsessfull.
+    QCOMPARE(argumentsC.at(0), 0);
+
+    argumentsC = spyClientLoginResult11.takeFirst();
+    QCOMPARE(argumentsC.at(0), false);
+    QCOMPARE(argumentsC.at(1), "The lobby is full. A maximum of 10 players may be added to the lobby.");
+
+    QVERIFY(spyServerPlayerJoined->count() == 0); // The player should not have been allowed to join.
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
+
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
+    spyClientError11.clear();
+    spyClientLoginResult11.clear();
+    spyClientConnectResult11.clear();
+
+    for (int i = 0; i < 8; i++){
+        arrTestClientNet.at(i)->deleteLater();
+    }
+
+
 }
 
 /*!
@@ -389,8 +469,9 @@ void testClientNetwork::incorrectSocket()
 {
     // Wait for previous function to finish executing.
     // One wait for each client that needs to disconnect.
-    spyServerPlayerDisconnected->wait(100);
-    spyServerPlayerDisconnected->wait(100);
+    for (int i = 0; i < 10; i++){
+           spyServerPlayerDisconnected->wait(100);
+       }
 
     spyServerPlayerJoined->clear();
     spyServer->clear();

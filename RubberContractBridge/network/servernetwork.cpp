@@ -382,6 +382,7 @@ void ServerNetwork::disconnectClient()
  * Else return the reason for faliure.
  * This message will be displayed to the user.
  * Check if new client connections is allowed (bAllowNewClientConnection == true).
+ * Check if the lobby is full. Max 10 players.
  * Check if password match.
  * Check if username is empty.
  * Check if username is longer than 15 chars.
@@ -398,6 +399,11 @@ QString ServerNetwork::validateLogin(QString playerName, QString password)
         return "The game is in progress and no more players are allowed on this server.";
     }
 
+    // Allow max 10 players (>= since this player has not been added to the list.)
+    if (playerNames.count() >= 10){
+        return "The lobby is full. A maximum of 10 players may be added to the lobby.";
+    }
+
     if (this->password != password){
         return "The password is incorrect.";
     }
@@ -410,12 +416,12 @@ QString ServerNetwork::validateLogin(QString playerName, QString password)
         return "The player name may not be longer than 15 chars.";
     }
 
-    if (playerName == nameOfAI) {
-        return "The palyer may not be given the same name as an AI. AI's name is: " + nameOfAI;
+    if (playerName.contains(nameOfAI)) {
+        return "The player's name may not contain \"" + nameOfAI + "\".";
     }
 
     if (playerNames.contains(playerName)){
-        return "The palyer's name has already been used, please choose another username.";
+        return "The player's name has already been used, please choose another username.";
     }
 
     // General

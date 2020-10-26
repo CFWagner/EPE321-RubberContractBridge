@@ -23,9 +23,9 @@ public:
     ~ServerNetwork();
 
     QTcpSocket* getPlayerSoc(QString playerName);
-    void setPassword(QString password);
+    void setPassword(QString password); // Call before calling initServer.
     void initServer(QHostAddress ip, quint16 port);
-    void stopListening();
+    void stopListening(); // Call this just befor the game starts.
 
     // Unit test data
     QVector<bool> getUnitTest();

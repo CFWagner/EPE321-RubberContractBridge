@@ -10,16 +10,14 @@
 
 int main(int argc, char *argv[])
 {
-        TestBid testBid;
-        QTest::qExec(&testBid);
-        TestCard testCard;
-        QTest::qExec(&testCard);
-        TestCardSet testCardSet;
-        QTest::qExec(&testCardSet);
-        TestServerGameState testServerGameState;
-        QTest::qExec(&testServerGameState);
-        TestPlayerGameState testPlayerGameState;
-        QTest::qExec(&testPlayerGameState);
-        TestScore testScore;
-        QTest::qExec(&testScore);
+    QApplication rcbApplication(argc, argv);
+    EntryWindow entryWindow;
+    entryWindow.show();
+    //    testclientlogin testcLogin;
+    //    QTest::qExec(&testcLogin);
+    //    TestServerLogin testLogin;
+    //    QTest::qExec(&testLogin);
+    //    testLobby testlob;
+    //    QTest::qExec(&testlob);
+    return rcbApplication.exec();
 }

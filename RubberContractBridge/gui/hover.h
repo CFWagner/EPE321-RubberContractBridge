@@ -12,13 +12,16 @@ class Hover : public QLabel
 {
     Q_OBJECT
 public:
-    explicit Hover(int,int, QWidget *parent = 0);
+    explicit Hover(int pageID,int elementID, QWidget *parent = 0);
     void enterEvent(QEvent *);
     void leaveEvent(QEvent *);
     void mousePressEvent(QMouseEvent *);
 signals:
     void attemptConnect();
     void attemptUserLogin();
+    void addPlayersLobby();
+    void clearPlayersLobby();
+    void startGameB();
 private:
     int pageID;
     int elementID;

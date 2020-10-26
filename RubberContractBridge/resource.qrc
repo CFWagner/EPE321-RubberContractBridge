@@ -74,5 +74,11 @@
         <file>guiResources/cards/two_diamonds.png</file>
         <file>guiResources/cards/two_hearts.png</file>
         <file>guiResources/cards/two_spades.png</file>
+        <file>guiResources/buttons/add_green.png</file>
+        <file>guiResources/buttons/add_grey.png</file>
+        <file>guiResources/buttons/clear_green.png</file>
+        <file>guiResources/buttons/clear_grey.png</file>
+        <file>guiResources/buttons/start_green.png</file>
+        <file>guiResources/buttons/start_grey.png</file>
     </qresource>
 </RCC>

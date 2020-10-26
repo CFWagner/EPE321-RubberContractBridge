@@ -6,6 +6,7 @@ ServerLogin::ServerLogin(QWidget *parent) : QWidget(parent), ui(new Ui::ServerLo
     ui->setupUi(this);
     setupWindow();
     staticGUIElements();
+    serverCreated = new Server();
     this->show();
 }
 
@@ -31,10 +32,10 @@ void ServerLogin::setupWindow()
 void ServerLogin::staticGUIElements()
 {
     QPixmap createPixel(":/resources/guiResources/buttons/create_grey.png");
-    Hover *createServer = new Hover(this->pageID,3,this);
-    createServer->setPixmap(createPixel);
-    createServer->setGeometry(130,320,150,64);
-    connect(createServer,&Hover::attemptConnect,this,&ServerLogin::tryConnect);
+    Hover *createServerB = new Hover(this->pageID,3,this);
+    createServerB->setPixmap(createPixel);
+    createServerB->setGeometry(130,320,150,64);
+    connect(createServerB,&Hover::attemptConnect,this,&ServerLogin::tryConnect);
 }
 
 void ServerLogin::tryConnect()
@@ -55,9 +56,23 @@ void ServerLogin::tryConnect()
             portID = ui->portLine->text().toUShort();
         }
         this->close();
-        delete this;
-        ServerLobby *serverLobby = new ServerLobby();
+        ServerLobby *serverLobby = new ServerLobby(serverCreated);
+        connect(this,&ServerLogin::sendServerPassword,serverCreated,&Server::serverPassword);
+        connect(this,&ServerLogin::sendIPAddressPort,serverCreated,&Server::serverIPAddressPort);
+        emit sendServerPassword(password);
+        emit sendIPAddressPort(ipAddress,portID);
+
     }
+
+}
+
+void ServerLogin::connectionResult(int status, QHostAddress ip, quint16 port, QString errorMsg)
+{
+
+}
+
+void ServerLogin::generalError(QString errorMsg)
+{
 
 }
 

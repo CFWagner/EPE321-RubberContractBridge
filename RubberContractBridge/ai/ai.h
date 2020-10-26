@@ -7,7 +7,9 @@
 #include "game-server/card.h"
 #include "game-server/playergamestate.h"
 
-
+#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <QObject>
 
 class AI : public Player
@@ -54,6 +56,7 @@ private:
     PlayerPosition dummypos;
     CardSet dummyPlay;
     Card cardPlayed;
+    Bid bidMade;
     CardSet deck;
     QVector<Bid> bidlist;
 

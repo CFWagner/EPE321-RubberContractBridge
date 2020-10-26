@@ -38,7 +38,27 @@ void AI::notifyBidRejected(QString reason)
 {
     //assuming rejects so redo bid move
     //quite hard to recover this state
-
+    //thus pick random number between 0 and 10 in the list of bids.
+    //pop the last bid from bid list
+    generatebidlist();
+    removebids();
+    //if I fail when I call a pass then I dunno what to do
+    //Is that possible?
+    if (bidMade.getCall()!=PASS)
+    {
+        for (int i = 0 ;i<bidlist.length();i++)
+        {
+            if (bidMade==bidlist[i])
+            {
+                bidlist.remove(i);
+            }
+        }
+    }
+    int seed = time(0);
+    int number = random(seed) % 10;
+    Bid made;
+    made = bidlist[number];
+    //Call the signal here
 }
 void AI::notifyMoveRejected(QString reason)
 {
@@ -626,10 +646,12 @@ Bid AI::guessBid()
             }
 
         }
+        bidMade = suggestion;
         return suggestion;
     }
     else
     {
+        bidMade = suggestion;
         return idea;
     }
 

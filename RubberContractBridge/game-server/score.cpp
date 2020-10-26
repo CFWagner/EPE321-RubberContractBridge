@@ -418,7 +418,7 @@ void Score::read(const QJsonObject &json)
 {
     // Read contractPoints array from JSON object
     QJsonArray jsonConPointsTeams = json["contractPoints"].toArray();
-    for (qint8 team = N_S; team < E_W; ++ team) {
+    for (qint8 team = N_S; team <= E_W; ++ team) {
         QJsonArray jsonConPointsGames = jsonConPointsTeams[team].toArray();
         QVector<quint32> conPointsGames;
         conPointsGames.reserve(jsonConPointsGames.size());
@@ -432,49 +432,49 @@ void Score::read(const QJsonObject &json)
     // Read back score array from JSON object
     QJsonArray jsonBackScoreArray = json["backScore"].toArray();
     for (qint8 index = 0; index < jsonBackScoreArray.size(); ++ index) {
-        bool backScoreElement = jsonBackScoreArray[index].toBool();
+        qint32 backScoreElement = jsonBackScoreArray[index].toInt();
         backScore[index] = backScoreElement;
     }
 
-    // Read back score array from JSON object
+    // Read overtricks array from JSON object
     QJsonArray jsonOvertricksArray = json["overtricks"].toArray();
     for (qint8 index = 0; index < jsonOvertricksArray.size(); ++ index) {
-        bool overtricksElement = jsonOvertricksArray[index].toBool();
+        qint32 overtricksElement = jsonOvertricksArray[index].toInt();
         overtricks[index] = overtricksElement;
     }
 
-    // Read back score array from JSON object
+    // Read undertricks array from JSON object
     QJsonArray jsonUndertricksArray = json["undertricks"].toArray();
     for (qint8 index = 0; index < jsonUndertricksArray.size(); ++ index) {
-        bool undertricksElement = jsonUndertricksArray[index].toBool();
+        qint32 undertricksElement = jsonUndertricksArray[index].toInt();
         undertricks[index] = undertricksElement;
     }
 
-    // Read back score array from JSON object
+    // Read honors array from JSON object
     QJsonArray jsonHonorsArray = json["honors"].toArray();
     for (qint8 index = 0; index < jsonHonorsArray.size(); ++ index) {
-        bool honorsElement = jsonHonorsArray[index].toBool();
+        qint32 honorsElement = jsonHonorsArray[index].toInt();
         honors[index] = honorsElement;
     }
 
-    // Read back score array from JSON object
+    // Read slam array from JSON object
     QJsonArray jsonslamBonusesArray = json["slamBonuses"].toArray();
     for (qint8 index = 0; index < jsonslamBonusesArray.size(); ++ index) {
-        bool slamBonusesElement = jsonslamBonusesArray[index].toBool();
+        qint32 slamBonusesElement = jsonslamBonusesArray[index].toInt();
         slamBonuses[index] = slamBonusesElement;
     }
 
     // Read double bonuses array from JSON object
     QJsonArray jsonDoubleBonusesArray = json["doubleBonuses"].toArray();
     for (qint8 index = 0; index < jsonDoubleBonusesArray.size(); ++ index) {
-        bool doubleBonusesElement = jsonDoubleBonusesArray[index].toBool();
+        qint32 doubleBonusesElement = jsonDoubleBonusesArray[index].toInt();
         doubleBonuses[index] = doubleBonusesElement;
     }
 
     // Read rubber bonuses array from JSON object
     QJsonArray jsonRubberBonusesArray = json["rubberBonuses"].toArray();
     for (qint8 index = 0; index < jsonRubberBonusesArray.size(); ++ index) {
-        bool rubberBonusesElement = jsonRubberBonusesArray[index].toBool();
+        qint32 rubberBonusesElement = jsonRubberBonusesArray[index].toBool();
         rubberBonuses[index] = rubberBonusesElement;
     }
 }
@@ -484,7 +484,7 @@ void Score::write(QJsonObject &json) const
 {
     // Add contractPoints array to JSON object
     QJsonArray jsonConPointsTeams;
-    for (qint8 team = N_S; team < E_W; ++ team) {
+    for (qint8 team = N_S; team <= E_W; ++ team) {
         QVector<quint32> conPointsGames = contractPoints[team];
         QJsonArray jsonConPointsGames;
         for (qint8 game = 0; game < conPointsGames.size(); ++ game) {
@@ -497,49 +497,49 @@ void Score::write(QJsonObject &json) const
 
     // Add back score array to JSON object
     QJsonArray jsonBackScoreArray;
-    for (const bool &backScoreElement: backScore)
+    for (const qint32 &backScoreElement: backScore)
         jsonBackScoreArray.append(backScoreElement);
     json["backScore"] = jsonBackScoreArray;
 
-    // Add back score array to JSON object
+    // Add overtricks array to JSON object
     QJsonArray jsonOvertricksArray;
-    for (const bool &overTricksElement: overtricks)
+    for (const qint32 &overTricksElement: overtricks)
         jsonOvertricksArray.append(overTricksElement);
     json["overtricks"] = jsonOvertricksArray;
 
-    // Add back score array to JSON object
+    // Add undertricks array to JSON object
     QJsonArray jsonUndertricksArray;
-    for (const bool &undertricksElement: backScore)
+    for (const qint32 &undertricksElement: undertricks)
         jsonUndertricksArray.append(undertricksElement);
     json["undertricks"] = jsonUndertricksArray;
 
-    // Add back score array to JSON object
+    // Add honors array to JSON object
     QJsonArray jsonHonorsArray;
-    for (const bool &honorsElement: backScore)
+    for (const qint32 &honorsElement: honors)
         jsonHonorsArray.append(honorsElement);
     json["honors"] = jsonHonorsArray;
 
-    // Add back score array to JSON object
+    // Add slam bonus array to JSON object
     QJsonArray jsonslamBonusesArray;
-    for (const bool &slamBonusesElement: backScore)
+    for (const qint32 &slamBonusesElement: slamBonuses)
         jsonslamBonusesArray.append(slamBonusesElement);
     json["slamBonuses"] = jsonslamBonusesArray;
 
     // Add double bonuses array to JSON object
     QJsonArray jsonDoubleBonusesArray;
-    for (const bool &doubleBonusesElement: doubleBonuses)
+    for (const qint32 &doubleBonusesElement: doubleBonuses)
         jsonDoubleBonusesArray.append(doubleBonusesElement);
     json["doubleBonuses"] = jsonDoubleBonusesArray;
 
     // Add redouble bonuses array to JSON object
     QJsonArray jsonRedoubleBonusesArray;
-    for (const bool &redoubleBonusesElement: redoubleBonuses)
+    for (const qint32 &redoubleBonusesElement: redoubleBonuses)
         jsonRedoubleBonusesArray.append(redoubleBonusesElement);
     json["redoubleBonuses"] = jsonRedoubleBonusesArray;
 
     // Add rubber bonuses array to JSON object
     QJsonArray jsonRubberBonusesArray;
-    for (const bool &rubberBonusesElement: rubberBonuses)
+    for (const qint32 &rubberBonusesElement: rubberBonuses)
         jsonRubberBonusesArray.append(rubberBonusesElement);
     json["rubberBonuses"] = jsonRubberBonusesArray;
 }

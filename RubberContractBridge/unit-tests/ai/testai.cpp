@@ -77,6 +77,37 @@ void testai::testBidGenerate()
 
 }
 
+//This will be used to check if the AI correctly generates a 52 card deck in ascending order
+void testai::testDeckGeneration()
+{
+    playerAI.generatedeck();
+    CardSet testDeck;
+    testDeck = playerAI.getDeck();
+    qDebug() <<"Testing if first element in deck is an ACE of CLUBS";
+    QCOMPARE(testDeck.getCard(0).getSuit(),CLUBS);
+    QCOMPARE(testDeck.getCard(0).getRank(),ACE);
+    qDebug() <<"Testing if last element in deck is a KING of SPADES";
+    QCOMPARE(testDeck.getCard(testDeck.getCardCount()-1).getSuit(),SPADES);
+    QCOMPARE(testDeck.getCard(testDeck.getCardCount()-1).getRank(),KING);
+    qDebug() << "Testing if the deck is of size 52";
+    QCOMPARE(testDeck.getCardCount(),52);
+
+}
+
+//Testing to see if removal tool correctly removes all impossible cards from possibilities.
+void testai::testDeckRemoval()
+{
+   setInitial();
+   playerAI.updateGameState(player1);
+    playerAI.generatedeck();
+   playerAI.removecards(playerAI.myhand);
+   CardSet testDeck;
+   testDeck = playerAI.getDeck();
+   qDebug() <<"Testing if the same amount of cards as in my hand was removed";
+   QCOMPARE(testDeck.getCardCount(),52-playerAI.myhand.getCardCount());
+
+
+;}
 //next test will follow the same but bid is Hearts thus check winning bid
 //winning bid must be spades 2 since i have high card ACE
 void testai::setInitial2()

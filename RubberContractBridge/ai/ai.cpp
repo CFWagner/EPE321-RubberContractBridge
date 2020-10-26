@@ -36,13 +36,25 @@ void AI::updateGameState(PlayerGameState gameState)
 }
 void AI::notifyBidRejected(QString reason)
 {
-    //assuming rejects so redo bid move?
+    //assuming rejects so redo bid move
+    //quite hard to recover this state
 
 }
 void AI::notifyMoveRejected(QString reason)
 {
     //assuming rejects so redo move?
     //shouldn't ever happen if does spot
+    //When move is made that move is saved, initial hand is generated from gamestate thus that should still stay the same after
+    //this function is called. All that needs doing is removing card that caused the error from the hand and making
+    // a new suggested move
+    for (int i=0;i<canPlay.getCardCount();i++)
+    {
+        if (canPlay.getCard(i)==cardPlayed)
+        {
+            canPlay.removeCard(i);
+        }
+    }
+    notifyMoveTurn();
 }
 void AI::gameTerminated(QString reason)
 {
@@ -103,7 +115,7 @@ void AI::removebids()
         }
     }
 }
-//removes impozsible cards from pool
+//removes impossible cards from pool
 void AI::removecards(CardSet handy)
 {
     for (int i = 0;i< handy.getCardCount();i++)
@@ -598,6 +610,22 @@ Bid AI::guessBid()
     }
     if (suggestion.getTricksAbove()>0)
     {
+        //here the random number generator will be used to see if the AI will double or not
+        int total = highest+second;
+        //first just check if this isn't stupid
+        if (total>60)
+        {
+            bool bIsDouble = false;
+            //creates a unique seed based upon the highest and lowest values
+            int seed = highest << 16 | second;
+            //if the number generated is below 32 then call double
+            bIsDouble = random(seed) % 256 < 32;
+            if (bIsDouble)
+            {
+                suggestion.setCall(DOUBLE);
+            }
+
+        }
         return suggestion;
     }
     else
@@ -632,4 +660,23 @@ Bid AI::getBidContract()
 Bid AI::getBidCurrent()
 {
     return currentbid;
+}
+
+CardSet AI::getDeck()
+{
+    return deck;
+}
+
+//To add some flair to the ai, uses the lehmer 32 random number generator to make it possible that the AI
+// might make a "mistake"
+uint32_t AI::random(uint32_t nSeed)
+{
+    nSeed += 0xe120fc15;
+    uint64_t tmp;
+    tmp = (uint64_t)nSeed * 0x4a39b70d;
+    uint32_t m1 = (tmp >> 32) ^ tmp;
+    tmp = (uint64_t)m1 * 0x12fad5c9;
+    uint32_t m2 = (tmp >> 32) ^ tmp;
+    return m2;
+
 }

@@ -25,6 +25,8 @@ private slots:
     void testMoveGanerate3();
     void testMoveGanerate4();
     void testMoveGanerate5();
+    void testDeckGeneration();
+    void testDeckRemoval();
 
 };
 

@@ -27,6 +27,8 @@ public:
     CardSet getHand();
     Bid getBidContract();
     Bid getBidCurrent();
+    CardSet getDeck();
+    uint32_t random(uint32_t nSeed);
     //setters for testing
     void setCurrentBid(Bid bidding);
     void setContractBid(Bid contracter);
@@ -34,15 +36,14 @@ public:
     Card guessMove();
     Bid guessBid();
     void initialBidSet();
+    void generatedeck();
+    void removecards(CardSet handy);
     //move variables here now just for testing
     CardSet myhand;
     CardSet canPlay; //available legal cards to play if size = 0 then try to play trump or higher suit as top card
 private:
-
     void generateAvailableCards();
-    void removecards(CardSet handy);
     void removebids();
-    void generatedeck();
     void generatebidlist();
     PlayerGameState currentState;
     CardSuit trump;

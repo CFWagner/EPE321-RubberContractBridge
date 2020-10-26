@@ -35,7 +35,7 @@ void TestScore::testScore()
     Score score2;
     QCOMPARE(score1, score2);
 
-    // Test attributes after score update with no trump and 0 odd tricks
+    // Test attributes after score update with no trump and 1 odd tricks
     Bid contractBid(NORTH, NONE, 1);
     score1.updateScore(contractBid, getNoHonorsHand(), 7);
     QCOMPARE(score1.getContractPoints(N_S).size(), 1);
@@ -101,7 +101,7 @@ void TestScore::testScore()
     QCOMPARE(score1.isGameWinner(), false);
     QCOMPARE(score1.isRubberWinner(), false);
 
-    // Test attributes after score update with no trump honors hand and 6 odd tricks for grand slam
+    // Test attributes after score update with no trump honors hand and 6 odd tricks for small slam
     contractBid = Bid(SOUTH, NONE, 6);
     score1.updateScore(contractBid, getNSNoTrumpHonorsHand(), 12);
     QCOMPARE(score1.getContractPoints(N_S).size(), 2);
@@ -139,6 +139,42 @@ void TestScore::testScore()
     QCOMPARE(score1.isGameWinner(), false);
     QCOMPARE(score1.isRubberWinner(), false);
 
+    // Test attributes after score update with 4 trump clubs honors hand and 7 odd tricks for grand slam
+    contractBid = Bid(NORTH, CLUBS, 7);
+    score1.updateScore(contractBid, getNSClubs4HonorsHand(), 13);
+    QCOMPARE(score1.getContractPoints(N_S).size(), 3);
+    QCOMPARE(score1.getContractPoints(N_S).last(), 140);
+    QCOMPARE(score1.getGamesWon(N_S), 2);
+    QCOMPARE(score1.getBackScore(N_S), 0);
+    QCOMPARE(score1.getOvertricks(N_S), 0);
+    QCOMPARE(score1.getUndertricks(N_S), 0);
+    QCOMPARE(score1.getHonors(N_S), 250);
+    QCOMPARE(score1.getSlamBonuses(N_S), 2000);
+    QCOMPARE(score1.getRubberBonuses(N_S), 0);
+    QCOMPARE(score1.getTeamVulnerable(N_S), true);
+    QCOMPARE(score1.getTotalScore(N_S), 2620);
+    QCOMPARE(score1.getContractPoints(E_W).size(), 3);
+    QCOMPARE(score1.getContractPoints(E_W).last(), 0);
+    QCOMPARE(score1.getGamesWon(E_W), 1);
+    QCOMPARE(score1.getBackScore(E_W), 0);
+    QCOMPARE(score1.getOvertricks(E_W), 30);
+    QCOMPARE(score1.getUndertricks(E_W), 0);
+    QCOMPARE(score1.getHonors(E_W), 0);
+    QCOMPARE(score1.getSlamBonuses(E_W), 0);
+    QCOMPARE(score1.getRubberBonuses(E_W), 0);
+    QCOMPARE(score1.getTeamVulnerable(E_W), true);
+    QCOMPARE(score1.getTotalScore(E_W), 130);
+    QCOMPARE(score1.isGameWinner(), true);
+    QCOMPARE(score1.isRubberWinner(), true);
+    QCOMPARE(score1.getGameWinner(), N_S);
+
+    // Test attributes after finalising the rubber for a complete rubber
+    score1.finaliseRubber();
+    QCOMPARE(score1.getTotalScore(N_S), 3120);
+    QCOMPARE(score1.getTotalScore(E_W), 130);
+    QCOMPARE(score1.isMatchDraw(), false);
+    QCOMPARE(score1.getRubberWinner(), N_S);
+
     // Generate QJsonObject instance from Score object
     QJsonObject jsonScore;
     score1.write(jsonScore);
@@ -146,6 +182,8 @@ void TestScore::testScore()
     // Initialize Score object using QJsonObject instance and test for before and after equality
     score2.read(jsonScore);
     QCOMPARE(score1 == score2, true);
+
+
 }
 
 // Get hand with no honors

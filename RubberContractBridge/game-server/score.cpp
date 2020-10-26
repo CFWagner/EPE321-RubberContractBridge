@@ -474,7 +474,7 @@ void Score::read(const QJsonObject &json)
     // Read rubber bonuses array from JSON object
     QJsonArray jsonRubberBonusesArray = json["rubberBonuses"].toArray();
     for (qint8 index = 0; index < jsonRubberBonusesArray.size(); ++ index) {
-        qint32 rubberBonusesElement = jsonRubberBonusesArray[index].toBool();
+        qint32 rubberBonusesElement = jsonRubberBonusesArray[index].toInt();
         rubberBonuses[index] = rubberBonusesElement;
     }
 }

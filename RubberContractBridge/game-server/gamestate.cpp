@@ -23,8 +23,6 @@ GameState::GameState(const GameState &gameState)
     this->handToPlay = gameState.handToPlay;
     this->dealer = gameState.dealer;
     this->declarer = gameState.declarer;
-    this->teamVulnerable[N_S] = gameState.teamVulnerable[N_S];
-    this->teamVulnerable[E_W] = gameState.teamVulnerable[E_W];
     this->score = gameState.score;
 }
 
@@ -42,8 +40,6 @@ GameState& GameState::operator = (const GameState &gameState)
     this->handToPlay = gameState.handToPlay;
     this->dealer = gameState.dealer;
     this->declarer = gameState.declarer;
-    this->teamVulnerable[N_S] = gameState.teamVulnerable[N_S];
-    this->teamVulnerable[E_W] = gameState.teamVulnerable[E_W];
     this->score = gameState.score;
     return *this;
 }
@@ -149,7 +145,7 @@ PlayerPosition GameState::getDummy() const
 // Returns whether the specified team is in the vulnerable state
 bool GameState::getTeamVulnerable(Team team) const
 {
-    return teamVulnerable[team];
+    return score.getTeamVulnerable(team);
 }
 
 // Getter for the score for the current match

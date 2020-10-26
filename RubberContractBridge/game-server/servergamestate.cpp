@@ -11,8 +11,6 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     gameNumber = 1;
     dealNumber = 0;
     trickNumber = 0;
-    teamVulnerable[N_S] = false;
-    teamVulnerable[E_W] = false;
     passCount = 0;
     this->dealer = dealer;
     playerTurn = dealer;
@@ -34,6 +32,7 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     }
 }
 
+// Starts the game by dealing all the cards to the players and selecting player for the first turn
 void ServerGameState::startGame()
 {
     nextDeal();

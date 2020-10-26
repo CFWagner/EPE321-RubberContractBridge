@@ -51,8 +51,6 @@ protected:
     PlayerPosition handToPlay;
     PlayerPosition dealer;
     PlayerPosition declarer;
-    // Use team enum as indices: N_S = 0, E_W = 1
-    bool teamVulnerable[2];
     Score score;
 };
 

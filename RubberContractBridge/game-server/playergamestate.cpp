@@ -31,8 +31,6 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
     this->handToPlay = handToPlay;
     this->dealer = dealer;
     this->declarer = declarer;
-    this->teamVulnerable[N_S] = teamVulnerable[N_S];
-    this->teamVulnerable[E_W] = teamVulnerable[E_W];
     this->score = score;
     this->gameEvent = gameEvent;
     this->playerPositions = playerPositions;
@@ -64,8 +62,6 @@ PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent
     handToPlay = gameState.getHandToPlay();
     dealer = gameState.getDealer();
     declarer = gameState.getDeclarer();
-    teamVulnerable[N_S] = gameState.getTeamVulnerable(N_S);
-    teamVulnerable[E_W] = gameState.getTeamVulnerable(E_W);
     score = gameState.getScore();
     this->gameEvent = gameEvent;
     this->playerPositions = playerPositions;
@@ -154,13 +150,6 @@ void PlayerGameState::read(const QJsonObject &json)
         tricks.append(trick);
     }
 
-    // Read GameState team vunerable array from JSON object
-    QJsonArray jsonTeamVulnerableArray = json["teamVulnerable"].toArray();
-    for (qint8 index = 0; index < jsonTeamVulnerableArray.size(); ++ index) {
-        bool teamVulnerableElement = jsonTeamVulnerableArray[index].toBool();
-        teamVulnerable[index] = teamVulnerableElement;
-    }
-
     // Read PlayerGameState player positions map from JSON object
     playerPositions.clear();
     QJsonArray playerPositionKeys = json["playerPositionKeys"].toArray();
@@ -237,12 +226,6 @@ void PlayerGameState::write(QJsonObject &json) const
     }
     json["tricks"] = jsonTricks;
 
-    // Add GameState team vunerable array to JSON object
-    QJsonArray jsonTeamVulnerableArray;
-    for (const bool &teamVulnerableElement: teamVulnerable)
-        jsonTeamVulnerableArray.append(teamVulnerableElement);
-    json["teamVulnerable"] = jsonTeamVulnerableArray;
-
     // Add PlayerGameState player positions map to JSON object
     QMapIterator<PlayerPosition, QString> iter1(playerPositions);
     QJsonArray playerPositionKeys;
@@ -292,8 +275,6 @@ bool PlayerGameState::operator ==(const PlayerGameState& playerGameState) const
             handToPlay == playerGameState.handToPlay &&
             dealer == playerGameState.dealer &&
             declarer == playerGameState.declarer &&
-            teamVulnerable[N_S] == playerGameState.teamVulnerable[N_S] &&
-            teamVulnerable[E_W] == playerGameState.teamVulnerable[E_W] &&
             score == playerGameState.score &&
             gameEvent == playerGameState.gameEvent &&
             playerPositions == playerGameState.playerPositions &&

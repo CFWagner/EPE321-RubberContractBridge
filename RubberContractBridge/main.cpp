@@ -10,14 +10,14 @@
 
 int main(int argc, char *argv[])
 {
-//        TestBid testBid;
-//        QTest::qExec(&testBid);
-//        TestCard testCard;
-//        QTest::qExec(&testCard);
-//        TestCardSet testCardSet;
-//        QTest::qExec(&testCardSet);
-//        TestServerGameState testServerGameState;
-//        QTest::qExec(&testServerGameState);
+        TestBid testBid;
+        QTest::qExec(&testBid);
+        TestCard testCard;
+        QTest::qExec(&testCard);
+        TestCardSet testCardSet;
+        QTest::qExec(&testCardSet);
+        TestServerGameState testServerGameState;
+        QTest::qExec(&testServerGameState);
         TestPlayerGameState testPlayerGameState;
         QTest::qExec(&testPlayerGameState);
         TestScore testScore;

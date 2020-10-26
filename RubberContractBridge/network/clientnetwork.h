@@ -20,6 +20,7 @@ class ClientNetwork : public QObject
 public:
     explicit ClientNetwork(QObject *parent = nullptr);
     ~ClientNetwork();
+    void abort();
 
     // Unit test data
     QVector<bool> getUnitTest();

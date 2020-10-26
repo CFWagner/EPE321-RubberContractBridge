@@ -56,6 +56,8 @@ signals:
     void playerJoined(QString playerName);
     void playerDisconnected(QString playerName); // Disconnect from this signal before deleting the serverNetwork class.
     // This is to avoid many unused clients from signaling you when they are deleted.
+    // Disconnect from this signal before the ServerNetwork class gets deleted, since the palyerDisconnected signal will be emitted
+    // for all logged in clients.
 
 private:
     QString validateLogin(QString playerName, QString password);

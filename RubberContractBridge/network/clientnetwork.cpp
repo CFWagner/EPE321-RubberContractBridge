@@ -42,7 +42,21 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
 ClientNetwork::~ClientNetwork()
 {
     if (tcpSoc != nullptr){
-        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
+//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
+        tcpSoc->abort();
+    }
+}
+
+/**
+ * Used for testing the abort function.
+ * Do not use for anything else than food.
+ * At any time.
+ */
+
+void ClientNetwork::abort()
+{
+    if (tcpSoc != nullptr){
+//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
         tcpSoc->abort();
     }
 }
@@ -75,13 +89,13 @@ void ClientNetwork::txRequestLogin(QHostAddress serverIP, quint16 port, QString 
     tempPassword = password;
 
     // Prevent the function from
-    disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
+//    disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
 
     // If connection has already been made, abort it.
     tcpSoc->abort();
 
     // If the server disconnects the client
-    connect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
+//    connect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
 
     tcpSoc->connectToHost(serverIP, port);
 
@@ -201,8 +215,6 @@ void ClientNetwork::internalServerDisconnected()
 {
     // TODO: Return player name. Look at disconnection and when game has been started. (Setting the bool for that. - Not in this function.)
 
-    qWarning() << "Client: " + playerName + " disconnected from the server.";
-
     if (gameStarted){
         qWarning() << "Client: " + playerName + " emitted gameTerminated.";
 
@@ -211,20 +223,22 @@ void ClientNetwork::internalServerDisconnected()
 
         // Update relevant variables (Not complete list, since Client should be restarted.)
         gameStarted = false;
-        bLoggedIn = false;
-        playerName = "";
 
         // Prevent the function to call itself.
-        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
+//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
 
-        // Ensure that the client has been disconnected from the server.
-        tcpSoc->abort();
     } else {
         // The game has not yet been started.
         qWarning() << "Client: " + playerName + " emitted serverDisconnected.";
         emit serverDisconnected();
 
     }
+
+    bLoggedIn = false;
+    playerName = "";
+
+    // Ensure that the client has been disconnected from the server.
+    tcpSoc->abort();
 }
 
 /*!
@@ -282,12 +296,18 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
                             "and check that the host IP address and port settings are correct.");
         break;
 
+        // If the host disconnects from the client.
+    case QAbstractSocket::RemoteHostClosedError:
+        internalServerDisconnected();
+        break;
+
+
     default:
         emit connectionResult(1, "The following error occurred: " + tcpSoc->errorString());
     }
 
     // Prevent class from emmitting 2 signals.
-    disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
+//    disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
 
     tcpSoc->abort();
 }
@@ -407,7 +427,7 @@ void ClientNetwork::rxLoginResult(QJsonObject resObj)
     // If login was unsuccessful, disconnect from the host.
     if (!bLoggedIn){
         // Prevent the class from emitting 2 signals.
-        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
+//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
         tcpSoc->abort();
         qInfo() << "Login was unseccessfull and client is aborting connection with host.";
     }else{

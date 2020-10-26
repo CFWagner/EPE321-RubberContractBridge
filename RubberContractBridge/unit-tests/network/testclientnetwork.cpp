@@ -13,6 +13,7 @@ testClientNetwork::testClientNetwork(QObject *parent) : QObject(parent)
     spyServer = new QSignalSpy(&testServerNet1, SIGNAL(connectionResult(int,QHostAddress,quint16,QString)));
     spyServerError = new QSignalSpy(&testServerNet1, SIGNAL(generalError(QString)));
     spyServerPlayerJoined = new QSignalSpy(&testServerNet1, SIGNAL(playerJoined(QString)));
+    spyServerPlayerDisconnected = new QSignalSpy(&testServerNet1, SIGNAL(playerDisconnected(QString)));
 }
 
 testClientNetwork::~testClientNetwork()
@@ -21,6 +22,7 @@ testClientNetwork::~testClientNetwork()
     spyServer->deleteLater();
     spyServerPlayerJoined->deleteLater();
     spyServerError->deleteLater();
+    spyServerPlayerDisconnected->deleteLater();
 }
 
 void testClientNetwork::verifyServerWorking()
@@ -28,6 +30,7 @@ void testClientNetwork::verifyServerWorking()
     QVERIFY(spyServer->isValid());
     QVERIFY(spyServerError->isValid());
     QVERIFY(spyServerPlayerJoined->isValid());
+    QVERIFY(spyServerPlayerDisconnected->isValid());
 
     // Server should be able to connect to port.
     testServerNet1.initServer(ip,port);
@@ -74,6 +77,7 @@ void testClientNetwork::LoginCorrectly()
     // No warnings should be issused by either the server or the client
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
     QVERIFY2(spyClientError.count() == 0,"General errors occured in the testClient1.");
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     QCOMPARE(spyClientLoginResult.count(), 1);
 
@@ -97,12 +101,16 @@ void testClientNetwork::LoginCorrectly()
 
 void testClientNetwork::wrongServerDetails()
 {
+    // Wait for previous slot to finish executing. (Deleteing all vaiables.)
+    spyServerPlayerDisconnected->wait(100);
+
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
 
     // Start a clientNetwork (this should work)
-    playerName = "TestPlayer 1";
+    playerName = "TestPlayer 100";
 
     // Use wrong password.
     QString password_wrong = "hiodaf jdf";
@@ -137,6 +145,7 @@ void testClientNetwork::wrongServerDetails()
     QCOMPARE(argumentsC.at(1), "The password is incorrect.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
 
     // Login with correct password after loggin in with wrong password.
@@ -144,6 +153,7 @@ void testClientNetwork::wrongServerDetails()
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -172,6 +182,7 @@ void testClientNetwork::wrongServerDetails()
     QCOMPARE(argumentsC.at(1), "");
 
     QVERIFY(spyServerPlayerJoined->count() == 1);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     // Try to connect again after already being connected
 
@@ -179,6 +190,7 @@ void testClientNetwork::wrongServerDetails()
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -207,6 +219,7 @@ void testClientNetwork::wrongServerDetails()
     QCOMPARE(argumentsC.at(0), 3);
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     // ------ Let a second player join with same name -------
     // The connection should work, but the server should send and error and disconnect the client.
@@ -214,6 +227,7 @@ void testClientNetwork::wrongServerDetails()
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -249,10 +263,12 @@ void testClientNetwork::wrongServerDetails()
     QCOMPARE(argumentsC.at(1), "The palyer's name has already been used, please choose another username.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -284,10 +300,12 @@ void testClientNetwork::wrongServerDetails()
     QCOMPARE(argumentsC.at(1), "The palyer may not be given the same name as an AI. AI's name is: AI");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -319,10 +337,12 @@ void testClientNetwork::wrongServerDetails()
     QCOMPARE(argumentsC.at(1), "The player name may not be longer than 15 chars.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -356,8 +376,7 @@ void testClientNetwork::wrongServerDetails()
     QCOMPARE(argumentsC.at(1), "");
 
     QVERIFY(spyServerPlayerJoined->count() == 1);
-
-
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 }
 
 /*!
@@ -366,9 +385,15 @@ void testClientNetwork::wrongServerDetails()
 
 void testClientNetwork::incorrectSocket()
 {
+    // Wait for previous function to finish executing.
+    // One wait for each client that needs to disconnect.
+    spyServerPlayerDisconnected->wait(100);
+    spyServerPlayerDisconnected->wait(100);
+
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
 
 
     // Start a clientNetwork (this should work)
@@ -406,11 +431,13 @@ void testClientNetwork::incorrectSocket()
                               "and check that the host IP address and port settings are correct.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -437,10 +464,12 @@ void testClientNetwork::incorrectSocket()
                               "and check that the host IP address and port settings are correct.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -467,6 +496,7 @@ void testClientNetwork::incorrectSocket()
                               "and check that the host IP address and port settings are correct.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 }
 
 
@@ -476,9 +506,13 @@ void testClientNetwork::incorrectSocket()
 
 void testClientNetwork::getPlayers()
 {
+    // Wait for previous slot to finish executing. (Deleteing all vaiables.)
+    spyServerPlayerDisconnected->wait(100);
+
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
 
 
     // Start a clientNetwork (this should work)
@@ -517,12 +551,15 @@ void testClientNetwork::getPlayers()
     QList<QVariant> arguments = spyServerPlayerJoined->takeFirst();
     QCOMPARE(arguments.at(0), playerName);
 
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
+
     // ------ Let a second player join with same name -------
     // The connection should work, but the server should send and error and disconnect the client.
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -565,10 +602,12 @@ void testClientNetwork::getPlayers()
     QCOMPARE(argumentsC.at(1), "");
 
     QVERIFY(spyServerPlayerJoined->count() == 1);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
     spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
     spyClientError.clear();
     spyClientLoginResult.clear();
     spyClientConnectResult.clear();
@@ -577,6 +616,86 @@ void testClientNetwork::getPlayers()
     spyClientLoginResult2.clear();
     spyClientConnectResult2.clear();
     spyClientServerDisconnected2.clear();
+
+
+    // ------ Let a 4th player join with same name -------
+    // This player is added to test how the server responds to an unexpended disconnection of the clients.
+    // The 3rd player will be tried to be added after the 4th player.
+    // The connection should work, but the server should send and error and disconnect the client.
+
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
+    spyClientError.clear();
+    spyClientLoginResult.clear();
+    spyClientConnectResult.clear();
+    spyClientServerDisconnected1.clear();
+
+    // Start a clientNetwork
+    QString playerName4 = "Player 40"; // Do not change this name, since it is used in following tests.
+
+    ClientNetwork testClient4;
+
+    // Connect QSpySignal to all relevant signals from the class.
+    QSignalSpy spyClientConnectResult4(&testClient4,SIGNAL(connectionResult(int, QString)));
+    QSignalSpy spyClientError4(&testClient4,SIGNAL(generalError(QString)));
+    QSignalSpy spyClientLoginResult4(&testClient4,SIGNAL(loginResult(bool, QString)));
+    QSignalSpy spyClientServerDisconnected4(&testClient4,SIGNAL(serverDisconnected()));
+
+    // ------ Sucessfully connect a 4th player ---------
+
+    // Do something that can result in problems.
+    // (Log into the server.)
+    // Remember to monitor both the client and the server.
+    testClient4.txRequestLogin(ip,port,playerName4,passwordServer);
+
+    QVERIFY(spyClientLoginResult4.wait(100));
+
+    // No warnings should be issused by either the server or the client
+    // Proof that data sent in QJsonObject format is working.
+    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
+    QVERIFY2(spyClientError4.count() == 0,"General errors occured in the testClient.");
+    QVERIFY2(spyClientServerDisconnected4.count() == 0,"Server unexpectedly disconnected.");
+
+    QCOMPARE(spyClientLoginResult4.count(), 1);
+
+    argumentsC = spyClientConnectResult4.takeFirst();
+    // The connection should be sucsessfull.
+    QCOMPARE(argumentsC.at(0), 0);
+
+    argumentsC = spyClientLoginResult4.takeFirst();
+    QCOMPARE(argumentsC.at(0), true);
+    QCOMPARE(argumentsC.at(1), "");
+
+    QVERIFY(spyServerPlayerJoined->count() == 1);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
+
+
+    // Forecfully disconnect the client
+    testClient4.abort();
+    QVERIFY(spyServerPlayerDisconnected->wait(100));
+
+    QVERIFY2(spyServerPlayerDisconnected->count() == 1,"Player should have disconnected from testServerNet1.");
+
+
+    spyServerPlayerJoined->clear();
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerDisconnected->clear();
+    spyClientError.clear();
+    spyClientLoginResult.clear();
+    spyClientConnectResult.clear();
+    spyClientServerDisconnected1.clear();
+    spyClientError2.clear();
+    spyClientLoginResult2.clear();
+    spyClientConnectResult2.clear();
+    spyClientServerDisconnected2.clear();
+    spyClientError4.clear();
+    spyClientLoginResult4.clear();
+    spyClientConnectResult4.clear();
+    spyClientServerDisconnected4.clear();
+
 
     // Stop listening
     testServerNet1.stopListening();
@@ -619,6 +738,7 @@ void testClientNetwork::getPlayers()
     QCOMPARE(argumentsC.at(1), "The game is in progress and no more players are allowed on this server.");
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
     // Tests getPlayerSockets
 
@@ -646,18 +766,22 @@ void testClientNetwork::getPlayers()
 
     qInfo() << "Before abort called in test.";
     qInfo() << "getPlayerSocket2: " << getPlayerSocket2 << " testClient1: " << &testClient1;
-    getPlayerSocket1->abort();
-//    testServerNet1.
+    getPlayerSocket2->abort();
+
     qInfo() << "After abort called in test.";
     QVERIFY(spyClientServerDisconnected2.wait(100));
     QVERIFY2(spyClientServerDisconnected2.count() == 1,"Server unexpectedly disconnected.");
-    QVERIFY2(spyClientServerDisconnected1.count() == 0,"Server unexpectedly disconnected.");
+    QVERIFY2(spyClientServerDisconnected1.count() == 0,"Server did not unexpectedly disconnected.");
+
+    // Close the server
+    getPlayerSocket1->abort();
+    QVERIFY(spyClientServerDisconnected1.wait(100));
+    QVERIFY2(spyClientServerDisconnected1.count() == 1,"Server unexpectedly disconnected.");
 
 
     // TODO: start a game and then disconnect the client (from the server side).
     // Then test if the correct client emits gameTerminated.
     // Repeat for the other client.
-
 
 }
 
@@ -667,6 +791,7 @@ void testClientNetwork::cleanupTestCase()
     spyServer->deleteLater();
     spyServerPlayerJoined->deleteLater();
     spyServerError->deleteLater();
+    spyServerPlayerDisconnected->deleteLater();
     qInfo() << "Deleted the spyServerError";
 }
 

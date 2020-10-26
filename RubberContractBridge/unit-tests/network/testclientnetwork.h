@@ -42,6 +42,7 @@ private:
     QSignalSpy *spyServer;
     QSignalSpy *spyServerPlayerJoined;
     QSignalSpy *spyServerError;
+    QSignalSpy *spyServerPlayerDisconnected;
 
 };
 

@@ -1,22 +1,22 @@
 #include "gui/entrywindow.h"
 #include <QApplication>
-#include <unit-tests/game-server/testbid.h>
-#include <unit-tests/game-server/testcard.h>
-#include <unit-tests/game-server/testcardset.h>
-#include <unit-tests/game-server/testplayergamestate.h>
-#include <unit-tests/game-server/testservergamestate.h>
+
+#include "unit-tests/gui/testentrywindow.h"
+#include "unit-tests/gui/testserverlogin.h"
 //Unit tests
 
 int main(int argc, char *argv[])
 {
     QApplication rcbApplication(argc, argv);
-    EntryWindow entryWindow;
-    entryWindow.show();
-    //    testclientlogin testcLogin;
-    //    QTest::qExec(&testcLogin);
-    //    TestServerLogin testLogin;
-    //    QTest::qExec(&testLogin);
-    //    testLobby testlob;
-    //    QTest::qExec(&testlob);
+    // RUN Game normally
+    // EntryWindow *entryWindow = new EntryWindow();
+
+    // Unit tests
+    // Entry Window
+    // testEntryWindow testEW;
+    // QTest::qExec(&testEW);
+    // Server Login
+    testServerLogin testSLogs;
+    QTest::qExec(&testSLogs);
     return rcbApplication.exec();
 }

@@ -1,11 +1,8 @@
 #include "serverlobby.h"
 #include "ui_serverlobby.h"
 
-ServerLobby::ServerLobby(Server *serverCreated, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::ServerLobby)
+ServerLobby::ServerLobby(QWidget *parent) :QWidget(parent), ui(new Ui::ServerLobby)
 {
-    this->serverCreated = serverCreated;
     ui->setupUi(this);
     setupWindow();
     staticGUIElements();
@@ -65,7 +62,7 @@ void ServerLobby::staticGUIElements()
     startGame->setGeometry(400,270,150,64);
     // Connect the startGameB and playersSelected form Hover to Server and ServerLobby.
     connect(startGame,&Hover::startGameB,this,&ServerLobby::startGameB);
-    connect(this,&ServerLobby::playersSelected,serverCreated,&Server::playersSelected);
+    //connect(this,&ServerLobby::playersSelected,serverCreated,&Server::playersSelected);
 
 }
 

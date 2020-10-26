@@ -20,10 +20,22 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
+    gui/clientlogin.cpp \
+    gui/entrywindow.cpp \
+    gui/hover.cpp \
+    gui/serverlobby.cpp \
+    gui/serverlogin.cpp \
     main.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
+    not_main.cpp \
+    unit-tests/game-server/testbid.cpp \
+    unit-tests/game-server/testcard.cpp \
+    unit-tests/game-server/testcardset.cpp \
+    unit-tests/game-server/testplayergamestate.cpp \
+    unit-tests/game-server/testscore.cpp \
+    unit-tests/game-server/testservergamestate.cpp \
     unit-tests/network/testclientnetwork.cpp \
     unit-tests/network/testplayernetwork.cpp \
     unit-tests/network/testservernetwork.cpp
@@ -47,9 +59,20 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
+    gui/clientlogin.h \
+    gui/entrywindow.h \
+    gui/hover.h \
+    gui/serverlobby.h \
+    gui/serverlogin.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
+    unit-tests/game-server/testbid.h \
+    unit-tests/game-server/testcard.h \
+    unit-tests/game-server/testcardset.h \
+    unit-tests/game-server/testplayergamestate.h \
+    unit-tests/game-server/testscore.h \
+    unit-tests/game-server/testservergamestate.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \
     unit-tests/network/testservernetwork.h
@@ -58,3 +81,97 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+FORMS += \
+    gui/clientlogin.ui \
+    gui/entrywindow.ui \
+    gui/serverlobby.ui \
+    gui/serverlogin.ui
+
+DISTFILES += \
+    guiResources/background/background1.png \
+    guiResources/background/background2.png \
+    guiResources/background/background3.png \
+    guiResources/background/clientButton2.png \
+    guiResources/background/green.png \
+    guiResources/background/grey.png \
+    guiResources/background/login.png \
+    guiResources/background/playerBackground.png \
+    guiResources/background/qwe.png \
+    guiResources/background/robot.png \
+    guiResources/background/selectedButton.png \
+    guiResources/background/serverButton2.png \
+    guiResources/background/unselectedButton.png \
+    guiResources/background/userIcon.png \
+    guiResources/buttons/add_green.png \
+    guiResources/buttons/add_grey.png \
+    guiResources/buttons/c_green.png \
+    guiResources/buttons/c_grey.png \
+    guiResources/buttons/clear_green.png \
+    guiResources/buttons/clear_grey.png \
+    guiResources/buttons/create_green.png \
+    guiResources/buttons/create_grey.png \
+    guiResources/buttons/login_green.png \
+    guiResources/buttons/login_grey.png \
+    guiResources/buttons/s_green.png \
+    guiResources/buttons/s_grey.png \
+    guiResources/buttons/start_green.png \
+    guiResources/buttons/start_grey.png \
+    guiResources/cards/ace_clubs.png \
+    guiResources/cards/ace_diamonds.png \
+    guiResources/cards/ace_hearts.png \
+    guiResources/cards/ace_spades.png \
+    guiResources/cards/back_card.png \
+    guiResources/cards/eight_clubs.png \
+    guiResources/cards/eight_diamonds.png \
+    guiResources/cards/eight_hearts.png \
+    guiResources/cards/eight_spades.png \
+    guiResources/cards/five_clubs.png \
+    guiResources/cards/five_diamonds.png \
+    guiResources/cards/five_hearts.png \
+    guiResources/cards/five_spades.png \
+    guiResources/cards/four_clubs.png \
+    guiResources/cards/four_diamonds.png \
+    guiResources/cards/four_hearts.png \
+    guiResources/cards/four_spades.png \
+    guiResources/cards/jack_clubs.png \
+    guiResources/cards/jack_diamonds.png \
+    guiResources/cards/jack_hearts.png \
+    guiResources/cards/jack_spades.png \
+    guiResources/cards/king_clubs.png \
+    guiResources/cards/king_diamonds.png \
+    guiResources/cards/king_hearts.png \
+    guiResources/cards/king_spades.png \
+    guiResources/cards/nine_clubs.png \
+    guiResources/cards/nine_diamonds.png \
+    guiResources/cards/nine_hearts.png \
+    guiResources/cards/nine_spades.png \
+    guiResources/cards/queen_clubs.png \
+    guiResources/cards/queen_diamonds.png \
+    guiResources/cards/queen_hearts.png \
+    guiResources/cards/queen_spades.png \
+    guiResources/cards/seven_clubs.png \
+    guiResources/cards/seven_diamonds.png \
+    guiResources/cards/seven_hearts.png \
+    guiResources/cards/seven_spades.png \
+    guiResources/cards/six_clubs.png \
+    guiResources/cards/six_diamonds.png \
+    guiResources/cards/six_hearts.png \
+    guiResources/cards/six_spades.png \
+    guiResources/cards/ten_clubs.png \
+    guiResources/cards/ten_diamonds.png \
+    guiResources/cards/ten_hearts.png \
+    guiResources/cards/ten_spades.png \
+    guiResources/cards/three_clubs.png \
+    guiResources/cards/three_diamonds.png \
+    guiResources/cards/three_hearts.png \
+    guiResources/cards/three_spades.png \
+    guiResources/cards/two_clubs.png \
+    guiResources/cards/two_diamonds.png \
+    guiResources/cards/two_hearts.png \
+    guiResources/cards/two_spades.png \
+    swapMains.bat
+
+RESOURCES += \
+    GUI.qrc \
+    resource.qrc

@@ -89,13 +89,11 @@ void Hover::mousePressEvent(QMouseEvent *event)
 {
     if (this->elementID == 1)
     {
-        ServerLogin *serverLogin = new ServerLogin();
-        parent->close();
+        emit gotoServerLogin();
     }
     else if (this->elementID == 2)
     {
-        ClientLogin *clientLogin = new ClientLogin();
-        parent->close();
+        emit gotoClientLogin();
     }
     else if (this->elementID == 3)
     {

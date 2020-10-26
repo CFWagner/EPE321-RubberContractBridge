@@ -19,12 +19,16 @@ public:
     ~ClientLogin();
     void setupWindow();
     void staticGUIElements();
-
-public slots:
+    ///////////////////////////////////
     // The clientLogin attempts to login after providing all the details needed
     // as well as pressing the login button.
+    ///////////////////////////////////
+public slots:
     void attemptLogin();
 
+    ///////////////////////////////////
+    // The clientLogin attempts to login after providing all the details needed
+    ///////////////////////////////////
 private slots:
     void on_infoButton_clicked();
 

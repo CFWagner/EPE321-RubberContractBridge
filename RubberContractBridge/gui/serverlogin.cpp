@@ -6,7 +6,6 @@ ServerLogin::ServerLogin(QWidget *parent) : QWidget(parent), ui(new Ui::ServerLo
     ui->setupUi(this);
     setupWindow();
     staticGUIElements();
-    serverCreated = new Server();
     this->show();
 }
 
@@ -24,6 +23,7 @@ void ServerLogin::setupWindow()
     QPalette palette;
     palette.setBrush(QPalette::Background, bkgnd);
     this->setPalette(palette);
+
     //Fix the size of the window to a specified 415 by 520 ratio (16:12)
     this->setFixedSize(415,520);
     this->setWindowTitle ("Rubber Contract Bridge");
@@ -35,6 +35,8 @@ void ServerLogin::staticGUIElements()
     Hover *createServerB = new Hover(this->pageID,3,this);
     createServerB->setPixmap(createPixel);
     createServerB->setGeometry(130,320,150,64);
+
+    // If button is pressed I try and connect.
     connect(createServerB,&Hover::attemptConnect,this,&ServerLogin::tryConnect);
 }
 
@@ -48,19 +50,19 @@ void ServerLogin::tryConnect()
         if(ui->ipLine->text() == "" || ui->portLine->text() == "")
         {
             ipAddress = QHostAddress::LocalHost;
-            portID = defaultPort;
+            portID = 61074;
         }
         else
         {
             ipAddress = QHostAddress(ui->ipLine->text());
             portID = ui->portLine->text().toUShort();
         }
+        serverLob = new ServerLobby();
         this->close();
-        ServerLobby *serverLobby = new ServerLobby(serverCreated);
-        connect(this,&ServerLogin::sendServerPassword,serverCreated,&Server::serverPassword);
-        connect(this,&ServerLogin::sendIPAddressPort,serverCreated,&Server::serverIPAddressPort);
-        emit sendServerPassword(password);
-        emit sendIPAddressPort(ipAddress,portID);
+        //        connect(this,&ServerLogin::sendServerPassword,serverCreated,&Server::serverPassword);
+        //        connect(this,&ServerLogin::sendIPAddressPort,serverCreated,&Server::serverIPAddressPort);
+        emit serverPassword(password);
+        emit serverIPAddressPort(ipAddress,portID);
 
     }
 
@@ -68,12 +70,50 @@ void ServerLogin::tryConnect()
 
 void ServerLogin::connectionResult(int status, QHostAddress ip, quint16 port, QString errorMsg)
 {
-
+    // Once the server Password and IPAddress is sent the network will notify the GUI that it was successful,
+    //in creating the server.
+    QString msg = "";
+    if(status == 0)
+    {
+        //serverLob = new ServerLobby();
+        //this->close();
+    }
+    else if (status == 1)
+    {
+        msg = "Invalid IP-Address";
+        QMessageBox::warning(this,"Server setup failure",msg);
+    }
+    else if (status == 2)
+    {
+        msg = errorMsg;
+        QMessageBox::warning(this,"Server setup failure",msg);
+    }
+    else if (status == 3)
+    {
+        msg = "The server can only be initialized once. Nothing was changed.";
+        QMessageBox::warning(this,"Server setup failure",msg);
+    }
 }
 
 void ServerLogin::generalError(QString errorMsg)
 {
+    //General errors may occure.
+    QMessageBox::warning(this,"Error message",errorMsg);
+}
 
+QString ServerLogin::getPassword()
+{
+    return password;
+}
+
+QHostAddress ServerLogin::getIPAddress()
+{
+    return ipAddress;
+}
+
+quint16 ServerLogin::getPort()
+{
+    return portID;
 }
 
 bool ServerLogin::checkValidPassword()

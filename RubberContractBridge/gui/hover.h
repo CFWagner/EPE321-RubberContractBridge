@@ -1,8 +1,6 @@
 #ifndef HOVER_H
 #define HOVER_H
 
-#include "serverlogin.h"
-#include "clientlogin.h"
 #include <QtWidgets>
 #include <QMouseEvent>
 #include <QEvent>
@@ -17,6 +15,8 @@ public:
     void leaveEvent(QEvent *);
     void mousePressEvent(QMouseEvent *);
 signals:
+    void gotoServerLogin();
+    void gotoClientLogin();
     void attemptConnect();
     void attemptUserLogin();
     void addPlayersLobby();

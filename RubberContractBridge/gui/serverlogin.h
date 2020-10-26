@@ -27,6 +27,9 @@ public:
 public slots:
     // The server attempts to create the server given the details provided.
     void tryConnect();
+    void connectionResult(int status, QHostAddress ip, quint16 port, QString errorMsg);
+    void generalError(QString errorMsg);
+
 signals:
     void sendServerPassword (QString password);
     void sendIPAddressPort (QHostAddress ipAddress,quint16 portID);
@@ -38,7 +41,6 @@ private:
     QString password;
     QHostAddress ipAddress;
     quint16 defaultPort = 61074;
-
     Server *serverCreated;
 
 

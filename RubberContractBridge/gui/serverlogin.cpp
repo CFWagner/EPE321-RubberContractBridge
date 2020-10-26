@@ -66,6 +66,16 @@ void ServerLogin::tryConnect()
 
 }
 
+void ServerLogin::connectionResult(int status, QHostAddress ip, quint16 port, QString errorMsg)
+{
+
+}
+
+void ServerLogin::generalError(QString errorMsg)
+{
+
+}
+
 bool ServerLogin::checkValidPassword()
 {
     // Checks if the password is valid, it must contain one of the characters below and must

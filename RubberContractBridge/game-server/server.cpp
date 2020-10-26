@@ -12,7 +12,7 @@ void Server::gameEvent(GameEvent event)
 
 void Server::playersSelected(QVector<QString> playerNames)
 {
-
+    qDebug () << playerNames;
 }
 
 void Server::playerDisconnected()

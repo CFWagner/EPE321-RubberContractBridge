@@ -20,6 +20,8 @@ signals:
     void attemptConnect();
     void attemptUserLogin();
     void addPlayersLobby();
+    void clearPlayersLobby();
+    void startGameB();
 private:
     int pageID;
     int elementID;

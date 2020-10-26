@@ -44,6 +44,7 @@ ClientNetwork::~ClientNetwork()
     if (tcpSoc != nullptr){
 //        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
         tcpSoc->abort();
+        tcpSoc->deleteLater();
     }
 }
 

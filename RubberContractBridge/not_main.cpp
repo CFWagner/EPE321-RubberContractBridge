@@ -13,11 +13,11 @@ int main(int argc, char *argv[])
     testServerNetwork testServerNet;
     QTest::qExec(&testServerNet);
     
-    testPlayerNetwork testPlayerNet;
-    QTest::qExec(&testPlayerNet);
-    
     testClientNetwork testClientNet;
     QTest::qExec(&testClientNet);
+
+    testPlayerNetwork testPlayerNet;
+    QTest::qExec(&testPlayerNet);
 
     return rcbApplication.exec();
 }

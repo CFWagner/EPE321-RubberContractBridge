@@ -31,6 +31,7 @@ ServerNetwork::~ServerNetwork()
     if (tcpServer != nullptr) {
         disconnect(tcpServer, &QTcpServer::newConnection, 0, 0);
         tcpServer->close();
+        tcpServer->deleteLater();
     }
 }
 

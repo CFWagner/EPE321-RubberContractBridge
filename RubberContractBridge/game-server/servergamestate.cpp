@@ -69,6 +69,9 @@ void ServerGameState::nextDeal()
         playerHands[targetPlayer].addCard(deck.removeTopCard());
     }
 
+    // Take snapshot of players hands at start of deal to use to check for honors in later score calculation
+    playerHandsSnapshot = playerHands;
+
     // Select dealer for first turn
     playerTurn = dealer;
 }
@@ -158,7 +161,7 @@ void ServerGameState::updatePlayState(const Card &card)
         // Determine winner
         PlayerPosition winner = determineTrickWinner();
 
-        // TO ADD: UPDATE SCORE
+
 
         // Check if deal round is complete
         if(tricks.size() == 13){

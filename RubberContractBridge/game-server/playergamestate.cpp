@@ -8,9 +8,9 @@ PlayerGameState::PlayerGameState() {}
 // Constructor with all attributes
 PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const Bid* contractBid,
                                  qint8 gameNumber, qint8 dealNumber, qint8 trickNumber,
-                                 QVector<CardSet> tricks, PlayerPosition playerTurn,
+                                 QVector<CardSet> tricks, qint8 tricksWon[4], PlayerPosition playerTurn,
                                  PlayerPosition handToPlay, PlayerPosition dealer,
-                                 PlayerPosition declarer, bool teamVulnerable[2], Score score,
+                                 PlayerPosition declarer, Score score,
                                  GameEvent gameEvent, QMap<PlayerPosition, QString> playerPositions,
                                  QMap<PlayerPosition, qint8> playerCardCount, CardSet playerHand, CardSet dummyHand)
 {
@@ -27,6 +27,10 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
     this->dealNumber =dealNumber;
     this->trickNumber = trickNumber;
     this->tricks = tricks;
+    this->tricksWon[NORTH] = tricksWon[NORTH];
+    this->tricksWon[EAST] = tricksWon[EAST];
+    this->tricksWon[SOUTH] = tricksWon[SOUTH];
+    this->tricksWon[WEST] = tricksWon[WEST];
     this->playerTurn = playerTurn;
     this->handToPlay = handToPlay;
     this->dealer = dealer;
@@ -58,6 +62,10 @@ PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent
     dealNumber = gameState.getDealNumber();
     trickNumber = gameState.getTrickNumber();
     tricks = gameState.getTricks();
+    this->tricksWon[NORTH] = gameState.getTricksWon(NORTH);
+    this->tricksWon[EAST] = gameState.getTricksWon(EAST);
+    this->tricksWon[SOUTH] = gameState.getTricksWon(SOUTH);
+    this->tricksWon[WEST] = gameState.getTricksWon(WEST);
     playerTurn = gameState.getPlayerTurn();
     handToPlay = gameState.getHandToPlay();
     dealer = gameState.getDealer();
@@ -169,6 +177,13 @@ void PlayerGameState::read(const QJsonObject &json)
         qint8 value = playerCardCountValues[index].toInt();
         playerCardCount.insert(key, value);
     }
+
+    // Read tricks won array from JSON object
+    QJsonArray jsonTricksWonArray = json["tricksWon"].toArray();
+    for (qint8 index = 0; index < jsonTricksWonArray.size(); ++ index) {
+        qint8 tricksWonElement = jsonTricksWonArray[index].toInt();
+        tricksWon[index] = tricksWonElement;
+    }
 }
 
 // Add PlayerGameState instance attributes to the JSON object argument
@@ -249,6 +264,12 @@ void PlayerGameState::write(QJsonObject &json) const
     }
     json["playerCardCountKeys"] = playerCardCountKeys;
     json["playerCardCountValues"] = playerCardCountValues;
+
+    // Add tricks won array to JSON object
+    QJsonArray jsonTricksWonArray;
+    for (const qint8 &tricksWonElement: tricksWon)
+        jsonTricksWonArray.append(tricksWonElement);
+    json["tricksWon"] = jsonTricksWonArray;
 }
 
 bool PlayerGameState::operator ==(const PlayerGameState& playerGameState) const
@@ -271,6 +292,10 @@ bool PlayerGameState::operator ==(const PlayerGameState& playerGameState) const
             gameNumber == playerGameState.gameNumber &&
             dealNumber == playerGameState.dealNumber &&
             tricks == playerGameState.tricks &&
+            tricksWon[NORTH] == tricksWon[NORTH] &&
+            tricksWon[EAST] == tricksWon[EAST] &&
+            tricksWon[SOUTH] == tricksWon[SOUTH] &&
+            tricksWon[WEST] == tricksWon[WEST] &&
             playerTurn == playerGameState.playerTurn &&
             handToPlay == playerGameState.handToPlay &&
             dealer == playerGameState.dealer &&

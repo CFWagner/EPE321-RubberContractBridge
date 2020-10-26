@@ -19,6 +19,10 @@ GameState::GameState(const GameState &gameState)
     this->dealNumber = gameState.dealNumber;
     this->trickNumber = gameState.trickNumber;
     this->tricks = gameState.tricks;
+    this->tricksWon[NORTH] = gameState.tricksWon[NORTH];
+    this->tricksWon[EAST] = gameState.tricksWon[EAST];
+    this->tricksWon[SOUTH] = gameState.tricksWon[SOUTH];
+    this->tricksWon[WEST] = gameState.tricksWon[WEST];
     this->playerTurn = gameState.playerTurn;
     this->handToPlay = gameState.handToPlay;
     this->dealer = gameState.dealer;
@@ -36,6 +40,10 @@ GameState& GameState::operator = (const GameState &gameState)
     this->dealNumber = gameState.dealNumber;
     this->trickNumber = gameState.trickNumber;
     this->tricks = gameState.tricks;
+    this->tricksWon[NORTH] = gameState.tricksWon[NORTH];
+    this->tricksWon[EAST] = gameState.tricksWon[EAST];
+    this->tricksWon[SOUTH] = gameState.tricksWon[SOUTH];
+    this->tricksWon[WEST] = gameState.tricksWon[WEST];
     this->playerTurn = gameState.playerTurn;
     this->handToPlay = gameState.handToPlay;
     this->dealer = gameState.dealer;
@@ -140,6 +148,21 @@ PlayerPosition GameState::getDummy() const
             return EAST;
 
     }
+}
+
+// Getter for the number of tricks won in the current deal by the specified player
+qint8 GameState::getTricksWon(PlayerPosition position) const
+{
+    return tricksWon[position];
+}
+
+// Getter for the number of tricks won in the current deal by the specified team
+qint8 GameState::getTricksWon(Team team) const
+{
+    if(team == N_S)
+        return tricksWon[NORTH] + tricksWon[SOUTH];
+    else
+        return tricksWon[EAST] + tricksWon[WEST];
 }
 
 // Returns whether the specified team is in the vulnerable state

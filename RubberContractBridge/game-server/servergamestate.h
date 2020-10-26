@@ -24,6 +24,7 @@ public:
     void setPlayerHands(const QMap<PlayerPosition, CardSet> &playerHands);
 private:
     QMap<PlayerPosition, CardSet> playerHands; // List of cards in each players hand
+    QMap<PlayerPosition, CardSet> playerHandsSnapshot; // Snapshot of cards in each players hand at start of deal
     CardSet deck; // Set of 52 unique cards that are dealt at the start of each round
     qint8 passCount; // Number of consecutive passes made during the bidding phase
     PlayerPosition determineTrickWinner() const;

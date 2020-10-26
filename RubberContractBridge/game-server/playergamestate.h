@@ -13,11 +13,10 @@ public:
     PlayerGameState();
     PlayerGameState(GamePhase phase, const Bid* currentBid, const Bid* contractBid,
                     qint8 gameNumber,qint8 dealNumber, qint8 trickNumber,
-                    QVector<CardSet> tricks, PlayerPosition playerTurn,
+                    QVector<CardSet> tricks, qint8 tricksWon[4], PlayerPosition playerTurn,
                     PlayerPosition handToPlay, PlayerPosition dealer,
-                    PlayerPosition declarer, bool teamVulnerable[2],
-                    Score score, GameEvent gameEvent, QMap<PlayerPosition, QString> playerPositions,
-                    QMap<PlayerPosition, qint8> playerCardCount,
+                    PlayerPosition declarer, Score score, GameEvent gameEvent, QMap<PlayerPosition,
+                    QString> playerPositions, QMap<PlayerPosition, qint8> playerCardCount,
                     CardSet playerHand, CardSet dummyHand);
     PlayerGameState(const GameState &gameState, GameEvent gameEvent,
                     QMap<PlayerPosition, QString> playerPositions,

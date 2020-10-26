@@ -15,11 +15,11 @@ void TestPlayerGameState::testPlayerGameState()
     qint8 dealNumber = 0;
     qint8 trickNumber = 0;
     QVector<CardSet> tricks;
+    qint8 tricksWon[4] = {0, 0, 0, 0};
     PlayerPosition playerTurn = NORTH;
     PlayerPosition handToPlay = NORTH;
     PlayerPosition dealer = NORTH;
     PlayerPosition declarer = NORTH;
-    bool teamVulnerable[2] = {false, false};
     Score score;
     GameEvent gameEvent = PLAY_START;
     QMap<PlayerPosition, QString> playerPositions;
@@ -29,8 +29,8 @@ void TestPlayerGameState::testPlayerGameState()
 
     // Construct PlayerGameState instance
     PlayerGameState playerState(phase, currentBid, contractBid, gameNumber, dealNumber,
-                                trickNumber, tricks, playerTurn, handToPlay, dealer, declarer,
-                                teamVulnerable, score, gameEvent, playerPositions, playerCardCount,
+                                trickNumber, tricks, tricksWon, playerTurn, handToPlay,
+                                dealer, declarer, score, gameEvent, playerPositions, playerCardCount,
                                 playerHand, dummyHand);
 
     // Test PlayerGameState instance attributes
@@ -44,8 +44,12 @@ void TestPlayerGameState::testPlayerGameState()
     QCOMPARE(playerState.getHandToPlay(), handToPlay);
     QCOMPARE(playerState.getDealer(), dealer);
     QCOMPARE(playerState.getDeclarer(), declarer);
-    QCOMPARE(playerState.getTeamVulnerable(N_S), teamVulnerable[N_S]);
-    QCOMPARE(playerState.getTeamVulnerable(E_W), teamVulnerable[E_W]);
+    QCOMPARE(playerState.getTeamVulnerable(N_S), false);
+    QCOMPARE(playerState.getTeamVulnerable(E_W), false);
+    QCOMPARE(playerState.getTricksWon(NORTH), tricksWon[NORTH]);
+    QCOMPARE(playerState.getTricksWon(EAST), tricksWon[EAST]);
+    QCOMPARE(playerState.getTricksWon(SOUTH), tricksWon[SOUTH]);
+    QCOMPARE(playerState.getTricksWon(WEST), tricksWon[WEST]);
     QCOMPARE(playerState.getEvent(), gameEvent);
 
     // Compare list based attributes
@@ -133,8 +137,8 @@ void TestPlayerGameState::testPlayerGameState()
 
     // Construct PlayerGameState instance
     PlayerGameState playerState3(phase, currentBid, contractBid, gameNumber, dealNumber,
-                                trickNumber, tricks, playerTurn, handToPlay, dealer, declarer,
-                                teamVulnerable, score, gameEvent, playerPositions, playerCardCount,
+                                trickNumber, tricks, tricksWon, playerTurn, handToPlay, dealer, declarer,
+                                score, gameEvent, playerPositions, playerCardCount,
                                 playerHand, dummyHand);
 
     // Test PlayerGameState instance attributes
@@ -148,8 +152,12 @@ void TestPlayerGameState::testPlayerGameState()
     QCOMPARE(playerState3.getHandToPlay(), handToPlay);
     QCOMPARE(playerState3.getDealer(), dealer);
     QCOMPARE(playerState3.getDeclarer(), declarer);
-    QCOMPARE(playerState3.getTeamVulnerable(N_S), teamVulnerable[N_S]);
-    QCOMPARE(playerState3.getTeamVulnerable(E_W), teamVulnerable[E_W]);
+    QCOMPARE(playerState3.getTeamVulnerable(N_S), false);
+    QCOMPARE(playerState3.getTeamVulnerable(E_W), false);
+    QCOMPARE(playerState.getTricksWon(NORTH), tricksWon[NORTH]);
+    QCOMPARE(playerState.getTricksWon(EAST), tricksWon[EAST]);
+    QCOMPARE(playerState.getTricksWon(SOUTH), tricksWon[SOUTH]);
+    QCOMPARE(playerState.getTricksWon(WEST), tricksWon[WEST]);
     QCOMPARE(playerState3.getEvent(), gameEvent);
 
     // Compare list based attributes
@@ -194,6 +202,12 @@ void TestPlayerGameState::testPlayerGameState()
     QCOMPARE(gameState1.getDeclarer(), playerState3.getDeclarer());
     QCOMPARE(gameState1.getTeamVulnerable(N_S), playerState3.getTeamVulnerable(N_S));
     QCOMPARE(gameState1.getTeamVulnerable(E_W), playerState3.getTeamVulnerable(E_W));
+    QCOMPARE(gameState1.getTricksWon(N_S), playerState3.getTricksWon(N_S));
+    QCOMPARE(gameState1.getTricksWon(E_W), playerState3.getTricksWon(E_W));
+    QCOMPARE(gameState1.getTricksWon(NORTH), playerState3.getTricksWon(NORTH));
+    QCOMPARE(gameState1.getTricksWon(EAST), playerState3.getTricksWon(EAST));
+    QCOMPARE(gameState1.getTricksWon(SOUTH), playerState3.getTricksWon(SOUTH));
+    QCOMPARE(gameState1.getTricksWon(WEST), playerState3.getTricksWon(WEST));
 
     // Compare list based attributes
     for(qint8 i = 0; i < tricks.size(); ++ i){

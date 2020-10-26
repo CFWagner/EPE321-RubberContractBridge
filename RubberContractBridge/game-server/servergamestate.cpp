@@ -161,10 +161,17 @@ void ServerGameState::updatePlayState(const Card &card)
         // Determine winner
         PlayerPosition winner = determineTrickWinner();
 
-
+        // Update tricks won tally
+        tricksWon[winner] += 1;
 
         // Check if deal round is complete
         if(tricks.size() == 13){
+            // Update score
+            score.updateScore(*contractBid, playerHandsSnapshot, getTricksWon(contractBid->getBiddingTeam()));
+
+            // CHECK FOR COMPLETED GAME / RUBBER
+
+            // Initialise next deal
             nextDeal();
             return;
         }

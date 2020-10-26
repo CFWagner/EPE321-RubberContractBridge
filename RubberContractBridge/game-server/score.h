@@ -12,7 +12,7 @@ class Score
 public:
     Score();
     Score(quint32 backScore[2]);
-    void updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> playerHands, quint8 defenderTricksWon);
+    void updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> playerHands, quint8 declarerTricksWon);
     const QVector<quint32> getContractPoints(Team team) const;
     quint8 getGamesWon(Team team) const;
     quint32 getBackScore(Team team) const;

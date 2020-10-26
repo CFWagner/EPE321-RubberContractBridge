@@ -47,6 +47,7 @@ private:
     void generateAvailableCards();
     void removebids();
     void generatebidlist();
+    void generateDeckOptions();
     PlayerGameState currentState;
     CardSuit trump;
     CardSet dummyhand;

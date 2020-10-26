@@ -149,6 +149,49 @@ void AI::removecards(CardSet handy)
         }
     }
 }
+
+//Generates all possible cards that might be part of opponents hand that can be played
+void AI::generateDeckOptions()
+{
+    generatedeck();
+    removecards(myhand);
+    if (dummyhand.getCardCount()!=0)
+    {
+        removecards(dummyhand);
+    }
+    if (currentState.getTricks().length()!=0)
+    {
+        for (int i=0;i<currentState.getTricks().length();i++)
+        {
+            if (currentState.getTricks()[i].getCardCount()!=0)
+                removecards(currentState.getTricks()[i]);
+        }
+    }
+    //first check if trump cards are still in circulation
+    int amount = 0;
+    if (trump!=NONE)
+    {
+        for (int i = 0;i<deck.getCardCount();i++)
+        {
+            if (deck.getCard(i).getSuit()!=trump)
+            {
+                amount++;
+            }
+        }
+    }
+    //remove all non trump suits if trump exists
+    // also only if a trump is in circulation do we care about this
+    if ((trump!=NONE) && (amount!=deck.getCardCount()))
+    {
+        for (int i = 0;i<deck.getCardCount();i++)
+        {
+            if (deck.getCard(i).getSuit()!=trump)
+            {
+                deck.removeCard(i);
+            }
+        }
+    }
+}
 //initialize the needed variables to play a card
 void AI::initialMainSet()
 {
@@ -376,15 +419,40 @@ Card AI::guessMove()
                  }
                  else
                  {
-                     //I will win and let dummy toss lowest
-                     suggestion=canPlay.getCard(canPlay.getCardCount()-1);
+                     if (dummyPlay.getCardCount()==0)
+                     {
+                         //can't see dummy yet play lowest hope dummy can do it
+                         suggestion = canPlay.getCard(0);
+                     }
+                     else
+                     {//I will win and let dummy toss lowest
+                     suggestion=canPlay.getCard(canPlay.getCardCount()-1);}
 
                  }
          }
          case 1:
          {
-             //I am first defender no idea what is dummy yet try starve out cards? leave for second defender to win?
-             suggestion=canPlay.getCard(0);
+             //I am first defender check if dummy is visible
+            if (dummyPlay.getCardCount()==0)
+            {
+                //I can't see dummy so try to play low and see what happens
+                suggestion=canPlay.getCard(0);
+            }
+            else
+            {
+                //I can see the dummy if the dummy has a high card toss low
+                if (canPlay.getCard(canPlay.getCardCount()-1)<dummyPlay.getCard(dummyPlay.getCardCount()-1))
+                {
+                    suggestion=canPlay.getCard(0);
+
+                }
+                else
+                {
+                    //I have a high card not sure what my friend has. RNG will help at and so pick highest
+                    suggestion = canPlay.getCard(canPlay.getCardCount()-1);
+                }
+            }
+
 
          }
          case 2:
@@ -393,7 +461,7 @@ Card AI::guessMove()
              if (canPlay.getCard(canPlay.getCardCount()-1)<currentTricks.getCard(0))
              {
 
-                 //My first player played a high card high card so toss lowest
+                 //My first player played a high card so toss lowest
                  suggestion=canPlay.getCard(0);
 
              }
@@ -430,8 +498,80 @@ Card AI::guessMove()
          }
 
     }
-    cardPlayed=suggestion;
-   return suggestion;
+    generateDeckOptions();
+    //Check how many higher cards are in circulation than currently selected
+    int total = 0;
+    for (int i = 0;i<deck.getCardCount();i++)
+    {
+        if (suggestion<deck.getCard(i))
+        {
+            total++;
+        }
+    }
+    if (total>0)
+    {
+        //there are higher cards
+        //first find position of the card
+        int position = 0;
+        for (int i=0;i<canPlay.getCardCount();i++)
+        {
+            if (canPlay.getCard(i)==suggestion)
+            {
+                position=i;
+            }
+        }
+        if (position==canPlay.getCardCount()-1)
+        {
+            //playing best card, maybe not good idea so in interval [0,position)
+            //generate a number and play that 20% of the time
+            bool flag = false;
+            int seed = time(0);
+            flag = random(seed) % 100 < 20;
+            if (flag)
+            {
+                int seeder = time(0);
+                int newpos=random(seeder) % 100*position;
+                newpos = newpos/100;
+                suggestion = canPlay.getCard(newpos);
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+            else
+            {
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+        }
+        else
+        {
+            //Do the same for the top just a smaller chance of occuring
+            bool flag = false;
+            int seed = time(0);
+            flag = random(seed) % 100 < 10;
+            if (flag)
+            {
+                int newpos=random(time(0)) % 100*position;
+                newpos = newpos/100;
+                suggestion = canPlay.getCard(newpos);
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+            else
+            {
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+
+        }
+
+    }
+    else
+    {
+        //playing highest card
+        cardPlayed=suggestion;
+       return suggestion;
+    }
+
 
 }
 Bid AI::guessBid()

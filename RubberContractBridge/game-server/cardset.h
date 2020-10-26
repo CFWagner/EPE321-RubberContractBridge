@@ -1,6 +1,5 @@
 #ifndef CARDSET_H
 #define CARDSET_H
-
 #include "card.h"
 
 // Represents any collection of cards that occurs during the bridge game

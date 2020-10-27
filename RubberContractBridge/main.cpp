@@ -4,6 +4,7 @@
 #include "unit-tests/gui/testentrywindow.h"
 #include "unit-tests/gui/testserverlogin.h"
 #include "unit-tests/gui/testserverlobby.h"
+#include "unit-tests/gui/testclientlogin.h"
 //Unit tests
 
 int main(int argc, char *argv[])
@@ -22,5 +23,8 @@ int main(int argc, char *argv[])
     // Server Lobby
     testServerLobby testSLobs;
     QTest::qExec(&testSLobs);
+    // Client Lobby
+    testClientLogin testCLogs;
+    QTest::qExec(&testCLogs);
     return rcbApplication.exec();
 }

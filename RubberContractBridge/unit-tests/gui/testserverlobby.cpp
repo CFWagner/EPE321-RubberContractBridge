@@ -130,6 +130,7 @@ void testServerLobby::testSerLob()
     QTest::qWait(500);
     QTest::mouseMove (testSLob, QPoint(475,290),-1);
     QTest::qWait(500);
+
     // Check if sent
     QTest::mouseClick (testSLob->childAt(QPoint(475,290)), Qt::LeftButton, Qt::NoModifier, QPoint(475,290),100);
     //Send the names of the players and bots selected to server.

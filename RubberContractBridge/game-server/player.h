@@ -27,6 +27,7 @@ public:
     PlayerPosition getPosition() const;
     Team getTeam() const;
     void setPosition(PlayerPosition position);
+    void setPlayerName(QString playerName);
 protected:
     QString playerName;
     PlayerPosition position;

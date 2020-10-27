@@ -39,4 +39,6 @@ private:
 };
 Q_DECLARE_METATYPE(PlayerGameState);
 
+Q_DECLARE_METATYPE(PlayerGameState);
+
 #endif // PLAYERGAMESTATE_H

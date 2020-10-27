@@ -1,6 +1,8 @@
 #include "gui/entrywindow.h"
 #include "gui/bidwindow.h"
 #include <QApplication>
+#include "unit-tests/game-server/testgameserver.h"
+#include "unit-tests/game-server/testserver.h"
 
 #include "unit-tests/gui/testentrywindow.h"
 #include "unit-tests/gui/testserverlogin.h"

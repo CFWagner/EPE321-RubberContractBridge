@@ -5,6 +5,7 @@ QT += testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++11
 CONFIG += no_testcase_installs
+CONFIG += resources_big
 CONFIG(release, debug|release):DEFINES += QT_NO_INFO_OUTPUT
 
 #All sources classes of the project is addded below.
@@ -27,22 +28,27 @@ SOURCES += \
     gui/hover.cpp \
     gui/serverlobby.cpp \
     gui/serverlogin.cpp \
+    logger/logger.cpp \
     main.cpp \
     network/servernetwork.cpp \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
     unit-tests/ai/testai.cpp \
+    unit-tests/game-server/stubs/playerstub.cpp \
     unit-tests/game-server/testbid.cpp \
     unit-tests/game-server/testcard.cpp \
     unit-tests/game-server/testcardset.cpp \
+    unit-tests/game-server/testgameserver.cpp \
     unit-tests/game-server/testplayergamestate.cpp \
     unit-tests/game-server/testscore.cpp \
+    unit-tests/game-server/testserver.cpp \
     unit-tests/game-server/testservergamestate.cpp \
     unit-tests/gui/testbiddingphase.cpp \
     unit-tests/gui/testclientlogin.cpp \
     unit-tests/gui/testentrywindow.cpp \
     unit-tests/gui/testserverlobby.cpp \
     unit-tests/gui/testserverlogin.cpp \
+    unit-tests/logger/testlogger.cpp \
     unit-tests/network/testclientnetwork.cpp \
     unit-tests/network/testplayernetwork.cpp \
     unit-tests/network/testservernetwork.cpp
@@ -74,21 +80,26 @@ HEADERS += \
     gui/hover.h \
     gui/serverlobby.h \
     gui/serverlogin.h \
+    logger/logger.h \
     network/servernetwork.h \
     network/playernetwork.h \
     network/clientnetwork.h \
     unit-tests/ai/testai.h \
+    unit-tests/game-server/stubs/playerstub.h \
     unit-tests/game-server/testbid.h \
     unit-tests/game-server/testcard.h \
     unit-tests/game-server/testcardset.h \
+    unit-tests/game-server/testgameserver.h \
     unit-tests/game-server/testplayergamestate.h \
     unit-tests/game-server/testscore.h \
+    unit-tests/game-server/testserver.h \
     unit-tests/game-server/testservergamestate.h \
     unit-tests/gui/testbiddingphase.h \
     unit-tests/gui/testclientlogin.h \
     unit-tests/gui/testentrywindow.h \
     unit-tests/gui/testserverlobby.h \
     unit-tests/gui/testserverlogin.h \
+    unit-tests/logger/testlogger.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \
     unit-tests/network/testservernetwork.h
@@ -191,7 +202,4 @@ DISTFILES += \
     swapMains.bat
 
 RESOURCES += \
-    GUI.qrc \
-    GUI.qrc \
-    resource.qrc \
     resource.qrc

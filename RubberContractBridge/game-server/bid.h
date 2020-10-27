@@ -34,4 +34,6 @@ private:
 };
 Q_DECLARE_METATYPE(Bid);
 
+Q_DECLARE_METATYPE(Bid);
+
 #endif // BID_H

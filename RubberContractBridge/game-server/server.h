@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include "gameserver.h"
+#include "network/servernetwork.h"
 #include <QHostAddress>
 #include <QObject>
 
@@ -12,6 +13,8 @@ class Server : public QObject
     Q_OBJECT
 public:
     explicit Server(QObject *parent = nullptr);
+    ~Server();
+    const ServerNetwork& getServerNetwork() const;
 public slots:
     void gameEvent(GameEvent event);
     void playersSelected(QVector<QString> playerNames);
@@ -19,7 +22,8 @@ public slots:
     void serverPassword(QString passwordSent);
     void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
 private:
-    GameServer gameServer;
+    ServerNetwork* serverNetwork;
+    GameServer* gameServer;
 };
 
 #endif // SERVER_H

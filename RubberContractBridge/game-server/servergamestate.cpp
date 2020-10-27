@@ -1,10 +1,7 @@
 #include "servergamestate.h"
 
-// Default constructor
-ServerGameState::ServerGameState() {}
-
 // Initialises all attributes to values for start of match
-ServerGameState::ServerGameState(PlayerPosition dealer)
+ServerGameState::ServerGameState(QObject *parent) : QObject(parent)
 {
     // Initialise attributes
     phase = BIDDING;
@@ -12,7 +9,7 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     dealNumber = 0;
     trickNumber = 0;
     passCount = 0;
-    this->dealer = dealer;
+    dealer = NORTH;
     playerTurn = dealer;
     handToPlay = NORTH;
     declarer = NORTH;
@@ -30,12 +27,16 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
             deck.addCard(card);
         }
     }
+
+    // Signal game state has been initialized
+    emit gameEvent(INITIALIZE);
 }
 
 // Starts the game by dealing all the cards to the players and selecting player for the first turn
 void ServerGameState::startGame()
 {
     nextDeal();
+    emit gameEvent(BID_START);
 }
 
 // Prepare game for next deal round
@@ -54,6 +55,8 @@ void ServerGameState::nextDeal()
     trickNumber = 0;
     tricks.clear();
     passCount = 0;
+    for(qint8 i = 0; i < 4; ++ i)
+        tricksWon[i] = 0;
 
     // Clear player hands
     for(qint8 player = NORTH; player <= WEST; ++ player)
@@ -65,8 +68,9 @@ void ServerGameState::nextDeal()
     // Deal cards in clockwise direction
     // Select player to dealer's left as first player to receive a card
     PlayerPosition targetPlayer = PlayerPosition((dealer + 1) % 4);
-    while(deck.getCardCount() > 0){
-        playerHands[targetPlayer].addCard(deck.removeTopCard());
+    for(int index = 0; index < deck.getCardCount(); ++ index){
+        playerHands[targetPlayer].addCard(deck.getCard(index));
+        targetPlayer = PlayerPosition((targetPlayer + 1) % 4);
     }
 
     // Take snapshot of players hands at start of deal to use to check for honors in later score calculation
@@ -114,11 +118,17 @@ void ServerGameState::updateBidState(const Bid &bid)
     // Select player to left of most recent player to play for next turn
     playerTurn = PlayerPosition((playerTurn + 1) % 4);
 
+    // Signal that a player has made a bid
+    emit gameEvent(PLAYER_BID);
+
     // Check if bid has been made
     if(currentBid == nullptr){
         // Redeal cards if 4 passes have been made given no bid has been made
-        if(passCount == 4)
+        if(passCount == 4){
             nextDeal();
+            // Signal that the bidding has been restarted
+            emit gameEvent(BID_RESTART);
+        }
     }
     else{
         // Check if 3 passes have been made given a bid has been made
@@ -132,6 +142,10 @@ void ServerGameState::updateBidState(const Bid &bid)
             playerTurn = PlayerPosition((declarer + 1) % 4);
             handToPlay = playerTurn;
             nextTrick();
+            // Signal that the cardplay phase has started
+            emit gameEvent(BID_END);
+            emit gameEvent(PLAY_START);
+            emit gameEvent(TRICK_START);
         }
     }
 }
@@ -158,6 +172,9 @@ void ServerGameState::updatePlayState(const Card &card)
 
     // Check if trick is complete
     if(currentTrick->getCardCount() == 4){
+        // Signal that a player has played a card
+        emit gameEvent(PLAYER_MOVED);
+
         // Determine winner
         PlayerPosition winner = determineTrickWinner();
 
@@ -171,6 +188,8 @@ void ServerGameState::updatePlayState(const Card &card)
 
             // Check if a team has won a second game and therefore the rubber
             if(score.isRubberWinner()){
+                // Initialise next rubber
+                // TO DO: Add next rubber function
                 score.finaliseRubber();
 
                 // Create new score instance for next rubber with back score
@@ -182,14 +201,25 @@ void ServerGameState::updatePlayState(const Card &card)
                 else
                     backScore[E_W] = totalScoreEW - totalScoreNS;
                 score = Score(backScore);
+
+                gameNumber = 1;
             }
             // Check if a team has won a game
             else if(score.isGameWinner()){
+                // Intialise next game
+                // TO DO: Add next game function
                 score.nextGame();
+                dealNumber = 0;
+                gameNumber++;
             }
 
             // Initialise next deal
             nextDeal();
+
+            // Signal that a trick and play has been completed
+            emit gameEvent(TRICK_END);
+            emit gameEvent(PLAY_END);
+            emit gameEvent(BID_START);
             return;
         }
 
@@ -199,15 +229,25 @@ void ServerGameState::updatePlayState(const Card &card)
             playerTurn = declarer;
         else
             playerTurn = handToPlay;
+
+        // Signal that a trick has been completed
+        emit gameEvent(TRICK_END);
+
         nextTrick();
+
+        // Signal that next trick has started
+        emit gameEvent(TRICK_START);
     }
-    // Get next hand to play and player positoin
+    // Get next hand to play and player position
     else{
         handToPlay = PlayerPosition((handToPlay + 1) % 4);
         if(handToPlay == getDummy())
             playerTurn = declarer;
         else
             playerTurn = handToPlay;
+
+        // Signal that a player has played a card
+        emit gameEvent(PLAYER_MOVED);
     }
 }
 

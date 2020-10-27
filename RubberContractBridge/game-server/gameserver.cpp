@@ -75,8 +75,10 @@ void GameServer::gameEvent(GameEvent gameEvent)
         broadcastStateUpdate(gameEvent);
         break;
     case INITIALIZE:
+        break;
     case MATCH_END:
-    default:
+        for(Player* player: players)
+            player->gameTerminated("Match Completed");
         break;
     }
 }
@@ -84,20 +86,33 @@ void GameServer::gameEvent(GameEvent gameEvent)
 // Slot for when a player chooses a bid for their bidding turn
 void GameServer::bidSelected(Bid bid)
 {
-    state->updateBidState(bid);
+    // Check if bid is valid
+    if(state->isBidValid(bid)){
+        state->updateBidState(bid);
+    }
+    else{
+        Player* senderPlayer = (Player*) sender();
+        senderPlayer->notifyBidRejected("Invalid Bid");
+    }
 }
 
 // Slot for when a player selects a card for their turn
 void GameServer::moveSelected(Card card)
 {
-    state->updatePlayState(card);
+    // Check if card is valid
+    if(state->isCardValid(card)){
+        state->updatePlayState(card);
+    }
+    else{
+        Player* senderPlayer = (Player*) sender();
+        senderPlayer->notifyMoveRejected("Invalid Card");
+    }
 }
 
 // Slot for when a player sends a message
 void GameServer::messageGenerated(QString message)
 {
-    QObject* senderObject = sender();
-    Player* senderPlayer = (Player*) senderObject;
+    Player* senderPlayer = (Player*) sender();
     for(Player* player: players)
         player->message(senderPlayer->getPlayerName(), message);
 }

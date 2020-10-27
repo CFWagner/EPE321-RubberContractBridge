@@ -12,6 +12,7 @@ void TestServerGameState::testServerGameState()
     ServerGameState serverState;
 
     // Initialise singal monitoring
+    qRegisterMetaType<GameEvent>("GameEvent");
     QSignalSpy spyGameEvent(&serverState, SIGNAL(gameEvent(GameEvent)));
 
     // Verify correct instantiation of attributes

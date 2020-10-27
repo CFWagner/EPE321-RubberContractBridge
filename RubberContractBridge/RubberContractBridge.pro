@@ -5,6 +5,7 @@ QT += testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++11
 CONFIG += no_testcase_installs
+CONFIG += resources_big
 CONFIG(release, debug|release):DEFINES += QT_NO_INFO_OUTPUT
 
 #All sources classes of the project is addded below.

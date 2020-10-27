@@ -20,50 +20,6 @@ testPlayerNetwork::testPlayerNetwork(QObject *parent) : QObject(parent)
 }
 
 /**
- * Destructor
- */
-
-testPlayerNetwork::~testPlayerNetwork()
-{
-    // Ensure that all QSignalSpy objects are deleted.
-    spyServer->deleteLater();
-    spyServerPlayerJoined->deleteLater();
-    spyServerError->deleteLater();
-    spyServerPlayerDisconnected->deleteLater();
-
-    for (int i = 0; i < testClientNet.count(); i++){
-        qInfo() << i;
-        spyClientConnectResult[i]->deleteLater();
-        spyClientError[i]->deleteLater();
-        spyClientLoginResult[i]->deleteLater();
-        spyClientServerDisconnected[i]->deleteLater();
-        spyClientGameTerminated[i]->deleteLater();
-
-        spyClientNotifyBidTurn[i]->deleteLater();
-        spyClientNotifyMoveTurn[i]->deleteLater();
-        spyClientNotifyBidRejected[i]->deleteLater();
-        spyClientNotifyMoveRejected[i]->deleteLater();
-        spyClientUpdateGameState[i]->deleteLater();
-        spyClientMessageReceived[i]->deleteLater();
-
-        testClientNet[i]->deleteLater();
-    }
-
-    for (int i = 0; i < testPlayerNet.count(); i++){
-        qInfo() << i;
-        spyPlayerGeneralError[i]->deleteLater();
-        spyPlayerBidSelected[i]->deleteLater();
-        spyPlayerMoveSelected[i]->deleteLater();
-        spyPlayerMessageGenerated[i]->deleteLater();
-        spyPlayerClientDisconnected[i]->deleteLater();
-
-        testPlayerNet[i]->deleteLater();
-    }
-
-    testServerNetA.deleteLater();
-}
-
-/**
  * Setup and verify the server.
  */
 
@@ -100,25 +56,200 @@ void testPlayerNetwork::addClients()
 
     // TODO: login to the server and get tcpsockets, so that players can be initialised.
     // Do first test on notification_bid.
-    addPlayerNetwork(playerNames[2]);
-    addPlayerNetwork(playerNames[3]);
-    addPlayerNetwork(playerNames[1]);
-    addPlayerNetwork(playerNames[0]);
+    for (int i = 0; i < 4; i++){
+        addPlayerNetwork(playerNames[i]);
+    }
 
     // The server should stop listening for new logon attempts
     testServerNetA.stopListening();
 
     // Calling the following function should make the test fail
     // addManyClients(1);
+}
+
+/**
+ * Test repetitive communication.
+ * This includes PlayerNetwork to ClientNetwork and ClientNetwork to PlayerNetwork communication.
+ */
+
+void testPlayerNetwork::testRepetitiveCommunication()
+{
+    int k = 0;
+    // PlayerNetwork to ClientNetwork
+
+    // Repeat the test many times
+    for (int j = 0; j < 10; j++){
+
+        // notifyBidTurn
+        k = 0;
+        testPlayerNet[k]->notifyBidTurn();
+        QVERIFY(spyClientNotifyBidTurn[k]->wait(100));
+        QCOMPARE(spyClientNotifyBidTurn[k]->count(), 1);
+        spyClientNotifyBidTurn[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+
+        // notifyMoveTurn
+        k = 0;
+        testPlayerNet[k]->notifyMoveTurn();
+        QVERIFY(spyClientNotifyMoveTurn[k]->wait(100));
+        QCOMPARE(spyClientNotifyMoveTurn[k]->count(), 1);
+        spyClientNotifyMoveTurn[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+
+        // notifyBidTurn
+        k = 3;
+        testPlayerNet[k]->notifyBidTurn();
+        QVERIFY(spyClientNotifyBidTurn[k]->wait(100));
+        QCOMPARE(spyClientNotifyBidTurn[k]->count(), 1);
+        spyClientNotifyBidTurn[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+
+        // notifyMoveTurn
+        k = 2;
+        testPlayerNet[k]->notifyMoveTurn();
+        QVERIFY(spyClientNotifyMoveTurn[k]->wait(100));
+        QCOMPARE(spyClientNotifyMoveTurn[k]->count(), 1);
+        spyClientNotifyMoveTurn[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+
+        // notifyBidTurn
+        k = 3;
+        testPlayerNet[k]->notifyBidTurn();
+        QVERIFY(spyClientNotifyBidTurn[k]->wait(100));
+        QCOMPARE(spyClientNotifyBidTurn[k]->count(), 1);
+        spyClientNotifyBidTurn[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+
+        // notifyMoveTurn
+        k = 1;
+        testPlayerNet[k]->notifyMoveTurn();
+        QVERIFY(spyClientNotifyMoveTurn[k]->wait(100));
+        QCOMPARE(spyClientNotifyMoveTurn[k]->count(), 1);
+        spyClientNotifyMoveTurn[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+
+        // notifyMoveTurn
+        k = 1;
+        testPlayerNet[k]->notifyMoveTurn();
+        QVERIFY(spyClientNotifyMoveTurn[k]->wait(100));
+        QCOMPARE(spyClientNotifyMoveTurn[k]->count(), 1);
+        spyClientNotifyMoveTurn[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+    }
+
+    // ClientNetwork to PlayerNetwork
+
 
 }
 
 /**
- * Get QTcpSocket, create the players. Test signals if you have time.
+ * Test all transmit functions and receive signals are operating correctly.
+ * This includes PlayerNetwork to ClientNetwork and ClientNetwork to PlayerNetwork communication.
  */
 
-void testPlayerNetwork::addPlayers()
+void testPlayerNetwork::testCommunications()
 {
+    int k = 0;
+    // PlayerNetwork to ClientNetwork
+
+    // notifyBidTurn
+    k = 0;
+    testPlayerNet[k]->notifyBidTurn();
+    QVERIFY(spyClientNotifyBidTurn[k]->wait(100));
+    QCOMPARE(spyClientNotifyBidTurn[k]->count(), 1);
+    spyClientNotifyBidTurn[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // notifyMoveTurn
+    k = 0;
+    testPlayerNet[k]->notifyMoveTurn();
+    QVERIFY(spyClientNotifyMoveTurn[k]->wait(100));
+    QCOMPARE(spyClientNotifyMoveTurn[k]->count(), 1);
+    spyClientNotifyMoveTurn[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // updateGameState
+    k = 0;
+
+    // Create Player game state
+    PlayerGameState originalPlayerGameState = generatePlayerGameState();
+
+    testPlayerNet[k]->updateGameState(originalPlayerGameState);
+    QVERIFY(spyClientUpdateGameState[k]->wait(100));
+    QCOMPARE(spyClientUpdateGameState[k]->count(), 1);
+    qInfo() << spyClientUpdateGameState[k];
+    QCOMPARE(qvariant_cast<PlayerGameState>(spyClientUpdateGameState[k]->at(0).at(0)), originalPlayerGameState);
+    spyClientUpdateGameState[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+
+    // ClientNetwork to PlayerNetwork
+}
+
+void testPlayerNetwork::cleanupTestCase()
+{
+    // Ensure that all QSignalSpy objects are deleted.
+       spyServer->deleteLater();
+       spyServerPlayerJoined->deleteLater();
+       spyServerError->deleteLater();
+       spyServerPlayerDisconnected->deleteLater();
+
+       for (int i = 0; i < testClientNet.count(); i++){
+           spyClientConnectResult[i]->deleteLater();
+           spyClientError[i]->deleteLater();
+           spyClientLoginResult[i]->deleteLater();
+           spyClientServerDisconnected[i]->deleteLater();
+           spyClientGameTerminated[i]->deleteLater();
+
+           spyClientNotifyBidTurn[i]->deleteLater();
+           spyClientNotifyMoveTurn[i]->deleteLater();
+           spyClientNotifyBidRejected[i]->deleteLater();
+           spyClientNotifyMoveRejected[i]->deleteLater();
+           spyClientUpdateGameState[i]->deleteLater();
+           spyClientMessageReceived[i]->deleteLater();
+
+           testClientNet[i]->deleteLater();
+       }
+
+       for (int i = 0; i < testPlayerNet.count(); i++){
+           spyPlayerGeneralError[i]->deleteLater();
+           spyPlayerBidSelected[i]->deleteLater();
+           spyPlayerMoveSelected[i]->deleteLater();
+           spyPlayerMessageGenerated[i]->deleteLater();
+           spyPlayerClientDisconnected[i]->deleteLater();
+
+           testPlayerNet[i]->deleteLater();
+       }
 
 }
 
@@ -263,4 +394,126 @@ void testPlayerNetwork::addPlayerNetwork(QString playerName)
     QVERIFY(spyPlayerMessageGenerated[i]->isValid());
     QVERIFY(spyPlayerClientDisconnected[i]->isValid());
 
+}
+
+/**
+ * Check that no clients emmited any siganls
+ */
+
+void testPlayerNetwork::checkAllCientSignals()
+{
+    for (int i = 0; i < testClientNet.count(); i++){
+        QCOMPARE(spyClientConnectResult[i]->count(),0);
+        QCOMPARE(spyClientError[i]->count(),0);
+        QCOMPARE(spyClientLoginResult[i]->count(),0);
+        QCOMPARE(spyClientServerDisconnected[i]->count(),0);
+        QCOMPARE(spyClientGameTerminated[i]->count(),0);
+        QCOMPARE(spyClientNotifyBidTurn[i]->count(),0);
+        QCOMPARE(spyClientNotifyMoveTurn[i]->count(),0);
+        QCOMPARE(spyClientNotifyBidRejected[i]->count(),0);
+        QCOMPARE(spyClientNotifyMoveRejected[i]->count(),0);
+        QCOMPARE(spyClientUpdateGameState[i]->count(),0);
+        QCOMPARE(spyClientMessageReceived[i]->count(),0);
+    }
+}
+
+/**
+ * Check that no players emmited any siganls
+ */
+
+void testPlayerNetwork::checkAllPlayerSignals()
+{
+    for (int i = 0; i < testPlayerNet.count(); i++){
+        QCOMPARE(spyPlayerGeneralError[i]->count(),0);
+        QCOMPARE(spyPlayerBidSelected[i]->count(),0);
+        QCOMPARE(spyPlayerMoveSelected[i]->count(),0);
+        QCOMPARE(spyPlayerMessageGenerated[i]->count(),0);
+        QCOMPARE(spyPlayerClientDisconnected[i]->count(),0);
+    }
+}
+
+/**
+ * Check that the server did not emmit any siganls
+ */
+
+void testPlayerNetwork::checkAllServerSignals()
+{
+    QCOMPARE(spyServerPlayerDisconnected->count(), 0);
+    QCOMPARE(spyServer->count(), 0);
+    QCOMPARE(spyServerError->count(), 0);
+    QCOMPARE(spyServerPlayerJoined->count(), 0);
+}
+
+/**
+ * Generate a PlayerGameState object with game data inside.
+ * @return PlayerGameState initialized to typical values.
+ */
+
+PlayerGameState testPlayerNetwork::generatePlayerGameState()
+{
+    // Initialise attributes
+    GamePhase phase = BIDDING;
+    Bid* currentBid = nullptr;
+    Bid* contractBid = nullptr;
+    qint8 gameNumber = 1;
+    qint8 dealNumber = 0;
+    qint8 trickNumber = 0;
+    QVector<CardSet> tricks;
+    qint8 tricksWon[4] = {0, 0, 0, 0};
+    PlayerPosition playerTurn = NORTH;
+    PlayerPosition handToPlay = NORTH;
+    PlayerPosition dealer = NORTH;
+    PlayerPosition declarer = NORTH;
+    Score score;
+    GameEvent gameEvent = PLAY_START;
+    QMap<PlayerPosition, QString> playerPositions;
+    QMap<PlayerPosition, qint8> playerCardCount;
+    CardSet playerHand;
+    CardSet dummyHand;
+
+    // Populate list attributes
+    CardSet trick1;
+    trick1.addCard(Card(SPADES, ACE));
+    trick1.addCard(Card(HEARTS, ACE));
+    trick1.addCard(Card(CLUBS, ACE));
+    trick1.addCard(Card(DIAMONDS, TWO));
+
+    CardSet trick2;
+    trick2.addCard(Card(SPADES, TWO));
+    trick2.addCard(Card(HEARTS, TWO));
+    trick2.addCard(Card(CLUBS, TWO));
+    trick2.addCard(Card(DIAMONDS, ACE));
+
+    tricks.append(trick1);
+    tricks.append(trick2);
+
+    playerHand.addCard(Card(SPADES, THREE));
+    playerHand.addCard(Card(HEARTS, THREE));
+    playerHand.addCard(Card(CLUBS, THREE));
+    playerHand.addCard(Card(DIAMONDS, THREE));
+
+    dummyHand.addCard(Card(SPADES, FOUR));
+    dummyHand.addCard(Card(HEARTS, FOUR));
+    dummyHand.addCard(Card(CLUBS, FOUR));
+    dummyHand.addCard(Card(DIAMONDS, FOUR));
+
+    playerPositions.insert(NORTH, "Player 1");
+    playerPositions.insert(EAST, "Player 2");
+    playerPositions.insert(SOUTH, "Player 3");
+    playerPositions.insert(WEST, "Player 4");
+
+    playerCardCount.insert(NORTH, 4);
+    playerCardCount.insert(EAST, 4);
+    playerCardCount.insert(SOUTH, 4);
+    playerCardCount.insert(WEST, 4);
+
+    currentBid = new Bid(NORTH, SPADES, 5);
+    contractBid = new Bid(SOUTH, HEARTS, 2);
+
+    // Construct PlayerGameState instance
+    PlayerGameState playerState3(phase, currentBid, contractBid, gameNumber, dealNumber,
+                                trickNumber, tricks, tricksWon, playerTurn, handToPlay, dealer, declarer,
+                                score, gameEvent, playerPositions, playerCardCount,
+                                playerHand, dummyHand);
+    return playerState3;
 }

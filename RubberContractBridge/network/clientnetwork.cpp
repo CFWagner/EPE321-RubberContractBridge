@@ -168,7 +168,7 @@ void ClientNetwork::rxAll()
         rxNotifyBidTurn();
         return;
     }
-    if (tempStr == "NOTIFY_MOVE_TRUN") {
+    if (tempStr == "NOTIFY_MOVE_TURN") {
         rxNotifyMoveTurn();
         return;
     }
@@ -376,7 +376,7 @@ void ClientNetwork::rxNotifyBidTurn()
 
 void ClientNetwork::rxNotifyMoveTurn()
 {
-
+    emit notifyMoveTurn();
 }
 
 /*!

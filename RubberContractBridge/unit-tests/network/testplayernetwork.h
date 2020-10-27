@@ -13,13 +13,14 @@ class testPlayerNetwork : public QObject
     Q_OBJECT
 public:
     explicit testPlayerNetwork(QObject *parent = nullptr);
-    ~testPlayerNetwork();
 
 private slots:
     // All private slots should be run in the following order, since they depend on each other.
     void verifyServerWorking();
     void addClients();
-    void addPlayers();
+    void testRepetitiveCommunication();
+    void testCommunications();
+    void cleanupTestCase();
 
 signals:
 
@@ -27,6 +28,10 @@ signals:
 private:
     void addManyClients(int numberOfClients);
     void addPlayerNetwork(QString playerName);
+    void checkAllCientSignals();
+    void checkAllPlayerSignals();
+    void checkAllServerSignals();
+    PlayerGameState generatePlayerGameState();
 
     QString passwordServer;
     quint16 port;

@@ -53,7 +53,10 @@ void PlayerNetwork::notifyBidTurn()
 
 void PlayerNetwork::notifyMoveTurn()
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "NOTIFY_MOVE_TURN";
+    txAll(txObj);
 }
 
 /**

@@ -88,7 +88,7 @@ void AI::generatedeck()
     deck=CardSet();
     for ( int fooInt = CLUBS ; fooInt != NONE; fooInt++ )
     {
-        for (int holder = ACE; holder!= KING; holder++)
+        for (int holder = TWO; holder!= ACE; holder++)
         {
             CardSuit foo = static_cast<CardSuit>(fooInt);
             CardRank fool = static_cast<CardRank>(holder);
@@ -101,7 +101,7 @@ void AI::generatedeck()
     for ( int fooInt = CLUBS ; fooInt != NONE; fooInt++ )
     {
        CardSuit foo = static_cast<CardSuit>(fooInt);
-       Card dummy = Card(foo,KING);
+       Card dummy = Card(foo,ACE);
        deck.addCard(dummy);
     }
 
@@ -782,7 +782,7 @@ Bid AI::guessBid()
             bIsDouble = random(seed) % 256 < 32;
             if (bIsDouble)
             {
-                suggestion.setCall(DOUBLE);
+                suggestion.setCall(DOUBLE_BID);
             }
 
         }

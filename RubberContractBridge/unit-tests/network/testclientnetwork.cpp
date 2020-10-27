@@ -16,16 +16,10 @@ testClientNetwork::testClientNetwork(QObject *parent) : QObject(parent)
     spyServerPlayerDisconnected = new QSignalSpy(&testServerNet1, SIGNAL(playerDisconnected(QString)));
 }
 
-testClientNetwork::~testClientNetwork()
-{
-    // Ensure that all QSignalSpy objects are deleted.
-//    spyServer->deleteLater();
-//    spyServerPlayerJoined->deleteLater();
-//    spyServerError->deleteLater();
-//    spyServerPlayerDisconnected->deleteLater();
-//    testServerNet1.deleteLater();
-    qInfo() << "Executed testClientNetwork destructor.";
-}
+/**
+ * Startup the server that will be used for all the tests
+ * and validate that the server is working.
+ */
 
 void testClientNetwork::verifyServerWorking()
 {
@@ -877,12 +871,5 @@ void testClientNetwork::cleanupTestCase()
     spyServerPlayerDisconnected->deleteLater();
 //    testServerNet1.deleteLater();  // Gives a memory leak if executed.
 
-    qInfo() << "Deleted the spyServerError";
-}
-
-
-
-void testClientNetwork::testFunc()
-{
-
+    qInfo() << "testClientNetwork cleaded up";
 }

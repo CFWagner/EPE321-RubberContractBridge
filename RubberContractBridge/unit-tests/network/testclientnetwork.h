@@ -15,8 +15,6 @@ class testClientNetwork : public QObject
     Q_OBJECT
 public:
     explicit testClientNetwork(QObject *parent = nullptr);
-    ~testClientNetwork();
-
 
 private slots:
     // All private slots should be run in the following order, since they depend on each other.
@@ -30,9 +28,6 @@ private slots:
 signals:
 
 private:
-    void testFunc();
-
-
     QString passwordServer;
     quint16 port;
     QHostAddress ip;

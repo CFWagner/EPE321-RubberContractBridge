@@ -68,7 +68,7 @@ void testPlayerNetwork::addClients()
 }
 
 /**
- * Test repetitive communication.
+ * Test repetitive communication and to multiple clients.
  * This includes PlayerNetwork to ClientNetwork and ClientNetwork to PlayerNetwork communication.
  */
 
@@ -179,15 +179,106 @@ void testPlayerNetwork::testRepetitiveCommunication()
 
     // ClientNetwork to PlayerNetwork
 
+    for (int j = 0; j < 10; j++){
+        for (int k = 0; k < 4; k++){
+            // txBidSelected
+            // Create Bid
+            Bid originalBid = generateBid();
 
+            // Connect signal
+            connect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+            emit emitTxBidSelected(originalBid);
+            disconnect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+
+            // Validate response
+            QVERIFY(spyPlayerBidSelected[k]->wait(100));
+            QCOMPARE(spyPlayerBidSelected[k]->count(), 1);
+            QCOMPARE(qvariant_cast<Bid>(spyPlayerBidSelected[k]->at(0).at(0)), originalBid);
+            spyPlayerBidSelected[k]->clear();
+
+            checkAllCientSignals();
+            checkAllPlayerSignals();
+            checkAllServerSignals();
+        }
+
+        for (int j = 0; j < 3; j++){
+            // txMoveSelected
+            k = 3;
+
+            // Create Card
+            Card originalCard = generateCard();
+
+            // Connect signal
+            connect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
+            emit emitTxMoveSelected(originalCard);
+            disconnect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
+
+            // Validate response
+            QVERIFY(spyPlayerMoveSelected[k]->wait(100));
+            QCOMPARE(spyPlayerMoveSelected[k]->count(), 1);
+            QCOMPARE(qvariant_cast<Card>(spyPlayerMoveSelected[k]->at(0).at(0)), originalCard);
+            spyPlayerMoveSelected[k]->clear();
+
+            checkAllCientSignals();
+            checkAllPlayerSignals();
+            checkAllServerSignals();
+        }
+
+        // txBidSelected
+        int k = 2;
+
+        // Create Bid
+        Bid originalBid = generateBid();
+
+        // Connect signal
+        connect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+        emit emitTxBidSelected(originalBid);
+        disconnect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+
+        // Validate response
+        QVERIFY(spyPlayerBidSelected[k]->wait(100));
+        QCOMPARE(spyPlayerBidSelected[k]->count(), 1);
+        QCOMPARE(qvariant_cast<Bid>(spyPlayerBidSelected[k]->at(0).at(0)), originalBid);
+        spyPlayerBidSelected[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+    }
+
+    // Send a large amount of data repetitavely
+    for (int i = 0; i < 50; i++){
+        // txMessage
+        int k = 1;
+
+        // Make reject reason unique by adding text
+        QString messageContent = "This is a message sent from " + playerNames[k] +
+                " with a lot of other data sent with this one message. "
+                "Do not send such long messages, since you are supposed to be focuesd on the game!";
+
+        // Connect signal
+        connect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+        emit emitTxMessage(messageContent);
+        disconnect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+
+        // Validate response
+        QVERIFY(spyPlayerMessageGenerated[k]->wait(100));
+        QCOMPARE(spyPlayerMessageGenerated[k]->count(), 1);
+        QCOMPARE(spyPlayerMessageGenerated[k]->at(0).at(0).toString(), messageContent);
+        spyPlayerMessageGenerated[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+    }
 }
 
 /**
- * Test all transmit functions and receive signals are operating correctly.
- * This includes PlayerNetwork to ClientNetwork and ClientNetwork to PlayerNetwork communication.
+ * Test that all transmit functions and receive signals are operating correctly.
+ * This is communication from PlayerNetwork to ClientNetwork.
  */
 
-void testPlayerNetwork::testCommunications()
+void testPlayerNetwork::testCommunicationsToClient()
 {
     int k = 0;
     // PlayerNetwork to ClientNetwork
@@ -293,9 +384,80 @@ void testPlayerNetwork::testCommunications()
     checkAllCientSignals();
     checkAllPlayerSignals();
     checkAllServerSignals();
+}
 
+/**
+ * Test that all transmit functions and receive signals are operating correctly.
+ * This is communication from ClientNetwork to PlayerNetwork.
+ */
 
+void testPlayerNetwork::testCommunicationsFromClient()
+{
+    int k = 0;
     // ClientNetwork to PlayerNetwork
+
+    // txBidSelected
+    k = 0;
+
+    // Create Bid
+    Bid originalBid = generateBid();
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+    emit emitTxBidSelected(originalBid);
+    disconnect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+
+    // Validate response
+    QVERIFY(spyPlayerBidSelected[k]->wait(100));
+    QCOMPARE(spyPlayerBidSelected[k]->count(), 1);
+    QCOMPARE(qvariant_cast<Bid>(spyPlayerBidSelected[k]->at(0).at(0)), originalBid);
+    spyPlayerBidSelected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // txMoveSelected
+    k = 0;
+
+    // Create Card
+    Card originalCard = generateCard();
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
+    emit emitTxMoveSelected(originalCard);
+    disconnect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
+
+    // Validate response
+    QVERIFY(spyPlayerMoveSelected[k]->wait(100));
+    QCOMPARE(spyPlayerMoveSelected[k]->count(), 1);
+    QCOMPARE(qvariant_cast<Card>(spyPlayerMoveSelected[k]->at(0).at(0)), originalCard);
+    spyPlayerMoveSelected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // txMessage
+    k = 0;
+
+    // Make reject reason unique by adding text
+    QString messageContent = "This is a message sent from " + playerNames[k];
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+    emit emitTxMessage(messageContent);
+    disconnect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+
+    // Validate response
+    QVERIFY(spyPlayerMessageGenerated[k]->wait(100));
+    QCOMPARE(spyPlayerMessageGenerated[k]->count(), 1);
+    QCOMPARE(spyPlayerMessageGenerated[k]->at(0).at(0).toString(), messageContent);
+    spyPlayerMessageGenerated[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
 }
 
 /**
@@ -307,6 +469,7 @@ void testPlayerNetwork::testCommunications()
 void testPlayerNetwork::testErrors()
 {
     int k = 0;
+    // PlayerNetwork to ClientNetwork
 
     // gameTerminated
     k = 0;
@@ -322,6 +485,8 @@ void testPlayerNetwork::testErrors()
     testPlayerNet[k]->gameTerminated(terminationReason);
     QVERIFY(spyClientGameTerminated[k]->wait(100));
     QCOMPARE(spyClientGameTerminated[k]->count(), 1);
+    // The following test works, but not sure that it will always work.
+    // The idea is to restart the server once a datastream error has occured, so this test does not matter.
 //    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), terminationReason);
     spyClientGameTerminated[k]->clear();
 
@@ -357,7 +522,51 @@ void testPlayerNetwork::testErrors()
     checkAllPlayerSignals();
     checkAllServerSignals();
 
-    // TODO: Finish this test and also test from Client to PlayerNetwork
+    // ClientNetwork to PlayerNetwork
+
+    // txMessage
+    k = 0;
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+    emit emitTxMessage(terminationReason);
+    disconnect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+
+    // Validate response
+    QVERIFY(spyPlayerMessageGenerated[k]->wait(100));
+    QCOMPARE(spyPlayerMessageGenerated[k]->count(), 1);
+    // The following test works, but not sure that it will always work.
+    // The idea is to restart the server once a datastream error has occured, so this test does not matter.
+//    QCOMPARE(spyPlayerMessageGenerated[k]->at(0).at(0).toString(), terminationReason);
+    spyPlayerMessageGenerated[k]->clear();
+
+    // Catch errors on the Player side
+    QCOMPARE(spyPlayerGeneralError[k]->count(), 1);
+    QCOMPARE(spyPlayerGeneralError[k]->at(0).at(0).toString(), "Datastream read error occured. It is suggested to restart the game.");
+    spyPlayerGeneralError[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // Test to see if next transmission will work after an datastream error has occured
+    // txMessage
+    k = 0;
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+    emit emitTxMessage(terminationReason2);
+    disconnect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+
+    // Validate response
+    QVERIFY(spyPlayerMessageGenerated[k]->wait(100));
+    QCOMPARE(spyPlayerMessageGenerated[k]->count(), 1);
+    QCOMPARE(spyPlayerMessageGenerated[k]->at(0).at(0).toString(), terminationReason2);
+    spyPlayerMessageGenerated[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
 }
 
 void testPlayerNetwork::cleanupTestCase()
@@ -394,7 +603,6 @@ void testPlayerNetwork::cleanupTestCase()
 
            testPlayerNet[i]->deleteLater();
        }
-
 }
 
 /**
@@ -447,8 +655,12 @@ void testPlayerNetwork::addManyClients(int numberOfClients)
         QVERIFY(spyClientUpdateGameState[i]->isValid());
         QVERIFY(spyClientMessageReceived[i]->isValid());
 
-        // Remember to monitor both the client and the server.
-        testClientNet[i]->txRequestLogin(ip,port,playerNames[i],passwordServer);
+        // Create connection with txRequestLogin slot
+        connect(this, &testPlayerNetwork::emitTxRequestLogin, testClientNet[i], &ClientNetwork::txRequestLogin);
+        emit emitTxRequestLogin(ip,port,playerNames[i],passwordServer);
+        disconnect(this, &testPlayerNetwork::emitTxRequestLogin, testClientNet[i], &ClientNetwork::txRequestLogin);
+
+        // Wait
         QVERIFY(spyClientLoginResult[i]->wait(100));
 
         // No warnings should be issused by either the server or the client
@@ -660,4 +872,36 @@ PlayerGameState testPlayerNetwork::generatePlayerGameState()
                                 score, gameEvent, playerPositions, playerCardCount,
                                 playerHand, dummyHand);
     return playerState3;
+}
+
+/**
+ * Generate a Bid object with game data inside.
+ * @return Bid initialized to typical values.
+ */
+
+Bid testPlayerNetwork::generateBid()
+{
+    // Construct Bid object with valid constructor arguments when call is not BID
+    // Invalid arguments not possible due to enums.
+    PlayerPosition bidder = NORTH;
+    CardSuit trumpSuit = HEARTS;
+    qint8 tricksAbove = 3;
+
+    return Bid(bidder, trumpSuit, tricksAbove);
+}
+
+/**
+ * Generate a Card object with game data inside.
+ * @return Card initialized to typical values.
+ */
+
+Card testPlayerNetwork::generateCard()
+{
+    // Construct Card object with valid constructor arguments.
+    // Invalid arguments not possible due to enums.
+    CardSuit suit = CLUBS;
+    CardRank rank = SEVEN;
+
+    return Card(suit, rank);
+
 }

@@ -10,11 +10,11 @@ int main(int argc, char *argv[])
     QApplication rcbApplication(argc, argv);
 
     // Test the main class
-//    testServerNetwork testServerNet;
-//    QTest::qExec(&testServerNet);
+    testServerNetwork testServerNet;
+    QTest::qExec(&testServerNet);
 
-//    testClientNetwork testClientNet;
-//    QTest::qExec(&testClientNet);
+    testClientNetwork testClientNet;
+    QTest::qExec(&testClientNet);
 
     testPlayerNetwork testPlayerNet;
     QTest::qExec(&testPlayerNet);

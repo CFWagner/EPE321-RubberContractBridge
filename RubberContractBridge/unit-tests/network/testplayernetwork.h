@@ -18,13 +18,18 @@ private slots:
     // All private slots should be run in the following order, since they depend on each other.
     void verifyServerWorking();
     void addClients();
+    void testCommunicationsToClient();
+    void testCommunicationsFromClient();
     void testRepetitiveCommunication();
-    void testCommunications();
     void testErrors();
     void cleanupTestCase();
 
 signals:
-
+    // Signals to connect to NetworkPlayer class
+    void emitTxRequestLogin(QHostAddress serverIP, quint16 port, QString playerName, QString password);
+    void emitTxBidSelected(Bid bid);
+    void emitTxMoveSelected(Card card);
+    void emitTxMessage(QString msg);
 
 private:
     void addManyClients(int numberOfClients);
@@ -33,6 +38,8 @@ private:
     void checkAllPlayerSignals();
     void checkAllServerSignals();
     PlayerGameState generatePlayerGameState();
+    Bid generateBid();
+    Card generateCard();
 
     QString passwordServer;
     quint16 port;

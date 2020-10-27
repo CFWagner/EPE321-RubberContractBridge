@@ -1,4 +1,6 @@
 #include "server.h"
+#include "ai/ai.h"
+#include "network/playernetwork.h"
 
 // Default constructor
 Server::Server(QObject *parent) : QObject(parent)
@@ -35,7 +37,46 @@ void Server::gameEvent(GameEvent event)
 // Player names are ordered NORTH, SOUTH, EAST, WEST in the playerNames vector
 void Server::playersSelected(QVector<QString> playerNames)
 {
+    // Create players and add to game server
+    for(qint8 i = 0; i < playerNames.length(); ++ i){
+        // Get player name and position
+        QString playerName = playerNames.value(i);
+        PlayerPosition position;
+        switch (i) {
+        case 0:
+            position = NORTH;
+            break;
+        case 1:
+            position = SOUTH;
+            break;
+        case 2:
+            position = EAST;
+            break;
+        default:
+            position = WEST;
+            break;
+        }
 
+        // Create players
+        Player* player;
+        // Create AI player
+        if(playerName.contains("BOT")){
+            player = new AI();
+            player->setPlayerName(playerName);
+            player->setPosition(position);
+        }
+        // Create human player
+        else{
+            QTcpSocket* playerSocket = serverNetwork->getPlayerSoc(playerName);
+            player = new PlayerNetwork(nullptr, playerName, playerSocket);
+            player->setPosition(position);
+        }
+
+        gameServer->addPlayer(player);
+    }
+
+    // Start game
+    gameServer->initializeGame();
 }
 
 // Slot for when a player disconnects from the server

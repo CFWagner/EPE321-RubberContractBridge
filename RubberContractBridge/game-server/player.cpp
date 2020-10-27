@@ -27,6 +27,12 @@ Team Player::getTeam() const
     }
 }
 
+// Setter for the player name
+void Player::setPlayerName(QString playerName)
+{
+    this->playerName = playerName;
+}
+
 // Setter for the position the player will play
 void Player::setPosition(PlayerPosition position)
 {

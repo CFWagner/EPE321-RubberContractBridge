@@ -13,6 +13,9 @@ class GameServer : public QObject
     Q_OBJECT
 public:
     explicit GameServer(QObject *parent = nullptr);
+    ~GameServer();
+    void addPlayer(Player* player);
+    void initializeGame();
 public slots:
     void bidSelected(Bid bid);
     void moveSelected(Card card);
@@ -20,7 +23,7 @@ public slots:
 signals:
     void gameEvent(GameEvent event);
 private:
-    ServerGameState state;
+    ServerGameState* state;
     QVector<Player*> players;
 };
 

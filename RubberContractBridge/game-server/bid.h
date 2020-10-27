@@ -32,5 +32,6 @@ private:
     CardSuit trumpSuit; // Suit bid as trump suit. Only relevant if call is BID
     qint8 tricksAbove; // Number of tricks bid. Only relevant if call is BID
 };
+Q_DECLARE_METATYPE(Bid);
 
 #endif // BID_H

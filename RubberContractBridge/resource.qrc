@@ -80,5 +80,42 @@
         <file>guiResources/buttons/clear_grey.png</file>
         <file>guiResources/buttons/start_green.png</file>
         <file>guiResources/buttons/start_grey.png</file>
+        <file>guiResources/buttons/exit_button.png</file>
+        <file>guiResources/bid/clubs_1.png</file>
+        <file>guiResources/bid/clubs_2.png</file>
+        <file>guiResources/bid/clubs_3.png</file>
+        <file>guiResources/bid/clubs_4.png</file>
+        <file>guiResources/bid/clubs_5.png</file>
+        <file>guiResources/bid/clubs_6.png</file>
+        <file>guiResources/bid/clubs_7.png</file>
+        <file>guiResources/bid/diamond_1.png</file>
+        <file>guiResources/bid/diamond_2.png</file>
+        <file>guiResources/bid/diamond_3.png</file>
+        <file>guiResources/bid/diamond_4.png</file>
+        <file>guiResources/bid/diamond_5.png</file>
+        <file>guiResources/bid/diamond_6.png</file>
+        <file>guiResources/bid/diamond_7.png</file>
+        <file>guiResources/bid/heart_1.png</file>
+        <file>guiResources/bid/heart_2.png</file>
+        <file>guiResources/bid/heart_3.png</file>
+        <file>guiResources/bid/heart_4.png</file>
+        <file>guiResources/bid/heart_5.png</file>
+        <file>guiResources/bid/heart_6.png</file>
+        <file>guiResources/bid/heart_7.png</file>
+        <file>guiResources/bid/NT_1.png</file>
+        <file>guiResources/bid/NT_2.png</file>
+        <file>guiResources/bid/NT_3.png</file>
+        <file>guiResources/bid/NT_4.png</file>
+        <file>guiResources/bid/NT_5.png</file>
+        <file>guiResources/bid/NT_6.png</file>
+        <file>guiResources/bid/NT_7.png</file>
+        <file>guiResources/bid/spade_1.png</file>
+        <file>guiResources/bid/spade_2.png</file>
+        <file>guiResources/bid/spade_3.png</file>
+        <file>guiResources/bid/spade_4.png</file>
+        <file>guiResources/bid/spade_5.png</file>
+        <file>guiResources/bid/spade_6.png</file>
+        <file>guiResources/bid/spade_7.png</file>
+        <file>guiResources/bid/arrows.png</file>
     </qresource>
 </RCC>

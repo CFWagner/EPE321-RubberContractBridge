@@ -445,8 +445,23 @@ void ClientNetwork::rxLoginResult(QJsonObject resObj)
 
 void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
 {
+    // The game has started or is in progress
     gameStarted = true;
 
+    // Validate the QJsonObject
+    if (!gsObj.contains("PlayerGameState") || !gsObj["PlayerGameState"].isObject()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qWarning() << "Data received from server has been incorrectly formatted.";
+        return;
+    }
+    QJsonObject jsonPlayerState = gsObj["PlayerGameState"].toObject();
+
+    // Convert to QJsonOnject to PlayerGameState
+    PlayerGameState playerState;
+    playerState.read(jsonPlayerState);
+
+    emit updateGameState(playerState);
 }
 
 /*!

@@ -204,7 +204,6 @@ void testPlayerNetwork::testCommunications()
     testPlayerNet[k]->updateGameState(originalPlayerGameState);
     QVERIFY(spyClientUpdateGameState[k]->wait(100));
     QCOMPARE(spyClientUpdateGameState[k]->count(), 1);
-    qInfo() << spyClientUpdateGameState[k];
     QCOMPARE(qvariant_cast<PlayerGameState>(spyClientUpdateGameState[k]->at(0).at(0)), originalPlayerGameState);
     spyClientUpdateGameState[k]->clear();
 

@@ -65,7 +65,15 @@ void PlayerNetwork::notifyMoveTurn()
 
 void PlayerNetwork::updateGameState(PlayerGameState gameState)
 {
+    // Create the QJsonObject for the PlayerGameState
+    QJsonObject jsonPlayerState;
+    gameState.write(jsonPlayerState);
 
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "UPDATE_GAME_STATE";
+    txObj["PlayerGameState"] = jsonPlayerState;
+    txAll(txObj);
 }
 
 /**

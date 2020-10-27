@@ -11,6 +11,9 @@ void TestServerGameState::testServerGameState()
     // Instantiate ServerGameState
     ServerGameState serverState;
 
+    // Initialise singal monitoring
+    QSignalSpy spyGameEvent(&serverState, SIGNAL(gameEvent(GameEvent)));
+
     // Verify correct instantiation of attributes
     QCOMPARE(serverState.getPhase(), BIDDING);
     QCOMPARE(serverState.getCurrentBid(), nullptr);
@@ -46,6 +49,11 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricks().size(), 0);
     QCOMPARE(serverState.getDealer(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
+
+    // Verify correct signals were emitted
+    QCOMPARE(spyGameEvent.count(), 1);
+    QList<QVariant> arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == BID_START);
 
     // Test bid validation when no valid bids have been made
     QCOMPARE(serverState.isBidValid(Bid(NORTH, PASS)), true);

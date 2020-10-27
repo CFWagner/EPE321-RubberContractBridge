@@ -1,7 +1,8 @@
 #include <QApplication>
+#include "unit-tests/game-server/testgameserver.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication rcbApplication(argc, argv);
-    return rcbApplication.exec();
+    TestGameServer testGameServer;
+    QTest::qExec(&testGameServer);
 }

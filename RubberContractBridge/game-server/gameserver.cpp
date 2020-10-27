@@ -38,7 +38,15 @@ void GameServer::initializeGame()
 
     // Start game by sending first turn notification
     state->startGame();
-    notifyNextPlayerTurn();
+    while(true){
+        bidReceived = false;
+        moveReceived = false;
+
+        notifyNextPlayerTurn();
+
+        // Wait until player completes turn
+        while(!bidReceived && !moveReceived);
+    }
 }
 
 // Send game state updates due to the specified gameEvent tailored to each player
@@ -61,7 +69,7 @@ Player* GameServer::getPlayerInPosition(PlayerPosition position)
 }
 
 // Get the player instance whose turn it is to play
-Player* GameServer::notifyNextPlayerTurn()
+void GameServer::notifyNextPlayerTurn()
 {
     Player* playerTurn = getPlayerInPosition(state->getPlayerTurn());
     if(state->getPhase() == BIDDING)
@@ -100,7 +108,7 @@ void GameServer::bidSelected(Bid bid)
     // Check if bid is valid
     if(state->isBidValid(bid)){
         state->updateBidState(bid);
-        notifyNextPlayerTurn();
+        bidReceived = true;
     }
     else{
         Player* senderPlayer = (Player*) sender();
@@ -114,7 +122,7 @@ void GameServer::moveSelected(Card card)
     // Check if card is valid
     if(state->isCardValid(card)){
         state->updatePlayState(card);
-        notifyNextPlayerTurn();
+        moveReceived = true;
     }
     else{
         Player* senderPlayer = (Player*) sender();

@@ -24,7 +24,9 @@ public slots:
 private:
     void broadcastStateUpdate(GameEvent gameEvent);
     Player* getPlayerInPosition(PlayerPosition position);
-    Player* notifyNextPlayerTurn();
+    void notifyNextPlayerTurn();
+    bool bidReceived;
+    bool moveReceived;
     ServerGameState* state = nullptr;
     QVector<Player*> players;
 };

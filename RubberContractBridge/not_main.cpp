@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     // Test the main class
     testServerNetwork testServerNet;
     QTest::qExec(&testServerNet);
-    
+
     testClientNetwork testClientNet;
     QTest::qExec(&testClientNet);
 

@@ -31,30 +31,36 @@ testPlayerNetwork::~testPlayerNetwork()
     spyServerError->deleteLater();
     spyServerPlayerDisconnected->deleteLater();
 
-    spyClientConnectResult1->deleteLater();
-    spyClientError1->deleteLater();
-    spyClientLoginResult1->deleteLater();
-    spyClientServerDisconnected1->deleteLater();
-    spyClientGameTerminated1->deleteLater();
+    for (int i = 0; i < testClientNet.count(); i++){
+        qInfo() << i;
+        spyClientConnectResult[i]->deleteLater();
+        spyClientError[i]->deleteLater();
+        spyClientLoginResult[i]->deleteLater();
+        spyClientServerDisconnected[i]->deleteLater();
+        spyClientGameTerminated[i]->deleteLater();
 
-    spyClientConnectResult2->deleteLater();
-    spyClientError2->deleteLater();
-    spyClientLoginResult2->deleteLater();
-    spyClientServerDisconnected2->deleteLater();
-    spyClientGameTerminated2->deleteLater();
+        spyClientNotifyBidTurn[i]->deleteLater();
+        spyClientNotifyMoveTurn[i]->deleteLater();
+        spyClientNotifyBidRejected[i]->deleteLater();
+        spyClientNotifyMoveRejected[i]->deleteLater();
+        spyClientUpdateGameState[i]->deleteLater();
+        spyClientMessageReceived[i]->deleteLater();
 
-    generalError1->deleteLater();
-    clientDisconnected1->deleteLater();
+        testClientNet[i]->deleteLater();
+    }
 
-    generalError2->deleteLater();
-    clientDisconnected2->deleteLater();
+    for (int i = 0; i < testPlayerNet.count(); i++){
+        qInfo() << i;
+        spyPlayerGeneralError[i]->deleteLater();
+        spyPlayerBidSelected[i]->deleteLater();
+        spyPlayerMoveSelected[i]->deleteLater();
+        spyPlayerMessageGenerated[i]->deleteLater();
+        spyPlayerClientDisconnected[i]->deleteLater();
 
-    testPlayerNet1->deleteLater();
-    testPlayerNet2->deleteLater();
+        testPlayerNet[i]->deleteLater();
+    }
 
     testServerNetA.deleteLater();
-    testClientNet1.deleteLater();
-    testClientNet2.deleteLater();
 }
 
 /**
@@ -71,8 +77,6 @@ void testPlayerNetwork::verifyServerWorking()
     // Server should be able to connect to port.
     testServerNetA.initServer(ip,port);
 
-
-
     QList<QVariant> arguments = spyServer->takeFirst();
     qInfo() << arguments;
     QVERIFY(arguments.at(0) == 0);
@@ -81,8 +85,7 @@ void testPlayerNetwork::verifyServerWorking()
     QVERIFY(arguments.at(3) == "");
 
     // Were any generalError's emited from testServerNet1?
-    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
-
+    QVERIFY(spyServerError->count() == 0);
 }
 
 /**
@@ -91,34 +94,22 @@ void testPlayerNetwork::verifyServerWorking()
 
 void testPlayerNetwork::addClients()
 {
-    // Connect QSpySignal to all relevant signals from the class.
-    spyClientConnectResult1 = new QSignalSpy(&testClientNet1,SIGNAL(connectionResult(int, QString)));
-    spyClientError1 = new QSignalSpy(&testClientNet1,SIGNAL(generalError(QString)));
-    spyClientLoginResult1 = new QSignalSpy(&testClientNet1,SIGNAL(loginResult(bool, QString)));
-    spyClientServerDisconnected1 = new QSignalSpy(&testClientNet1,SIGNAL(serverDisconnected()));
-    spyClientGameTerminated1 = new QSignalSpy(&testClientNet1,SIGNAL(gameTerminated(QString)));
-
-    spyClientConnectResult2 = new QSignalSpy(&testClientNet2,SIGNAL(connectionResult(int, QString)));
-    spyClientError2 = new QSignalSpy(&testClientNet2,SIGNAL(generalError(QString)));
-    spyClientLoginResult2 = new QSignalSpy(&testClientNet2,SIGNAL(loginResult(bool, QString)));
-    spyClientServerDisconnected2 = new QSignalSpy(&testClientNet2,SIGNAL(serverDisconnected()));
-    spyClientGameTerminated2 = new QSignalSpy(&testClientNet2,SIGNAL(gameTerminated(QString)));
-
-    // Verify signals
-    QVERIFY(spyClientConnectResult1->isValid());
-    QVERIFY(spyClientError1->isValid());
-    QVERIFY(spyClientLoginResult1->isValid());
-    QVERIFY(spyClientServerDisconnected1->isValid());
-    QVERIFY(spyClientGameTerminated1->isValid());
-
-    QVERIFY(spyClientConnectResult2->isValid());
-    QVERIFY(spyClientError2->isValid());
-    QVERIFY(spyClientLoginResult2->isValid());
-    QVERIFY(spyClientServerDisconnected2->isValid());
-    QVERIFY(spyClientGameTerminated2->isValid());
+    // Add
+    addManyClients(4);
+    addManyClients(2);
 
     // TODO: login to the server and get tcpsockets, so that players can be initialised.
     // Do first test on notification_bid.
+    addPlayerNetwork(playerNames[2]);
+    addPlayerNetwork(playerNames[3]);
+    addPlayerNetwork(playerNames[1]);
+    addPlayerNetwork(playerNames[0]);
+
+    // The server should stop listening for new logon attempts
+    testServerNetA.stopListening();
+
+    // Calling the following function should make the test fail
+    // addManyClients(1);
 
 }
 
@@ -128,5 +119,148 @@ void testPlayerNetwork::addClients()
 
 void testPlayerNetwork::addPlayers()
 {
+
+}
+
+/**
+ * Add the number of clients specified and log them into the server.
+ * @param numberOfClients to be added to the server.
+ */
+
+void testPlayerNetwork::addManyClients(int numberOfClients)
+{
+    // Clear all server signals
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerJoined->clear();
+    spyServerPlayerDisconnected->clear();
+
+    // Set start and stop values
+    int startNumClients = testClientNet.count();
+    int upperLimit = numberOfClients + startNumClients;
+    for (int i = startNumClients; i < upperLimit; i++){
+        // Start a clientNetwork (this should work)
+        playerNames.append("AutoPlayer " + QString::number(i));
+        // When transaction is done, this will execute.
+        testClientNet.append(new ClientNetwork);
+
+        // Connect QSpySignal to all relevant signals from the class.
+        spyClientConnectResult.append(new QSignalSpy(testClientNet[i], SIGNAL(connectionResult(int, QString))));
+        spyClientError.append(new QSignalSpy(testClientNet[i], SIGNAL(generalError(QString))));
+        spyClientLoginResult.append(new QSignalSpy(testClientNet[i], SIGNAL(loginResult(bool, QString))));
+        spyClientServerDisconnected.append(new QSignalSpy(testClientNet[i], SIGNAL(serverDisconnected())));
+        spyClientGameTerminated.append(new QSignalSpy(testClientNet[i], SIGNAL(gameTerminated(QString))));
+
+        spyClientNotifyBidTurn.append(new QSignalSpy(testClientNet[i], SIGNAL(notifyBidTurn())));
+        spyClientNotifyMoveTurn.append(new QSignalSpy(testClientNet[i], SIGNAL(notifyMoveTurn())));
+        spyClientNotifyBidRejected.append(new QSignalSpy(testClientNet[i], SIGNAL(notifyBidRejected(QString))));
+        spyClientNotifyMoveRejected.append(new QSignalSpy(testClientNet[i], SIGNAL(notifyMoveRejected(QString))));
+        spyClientUpdateGameState.append(new QSignalSpy(testClientNet[i], SIGNAL(updateGameState(PlayerGameState))));
+        spyClientMessageReceived.append(new QSignalSpy(testClientNet[i], SIGNAL(messageReceived(QString, QString))));
+
+        // Verify signals
+        QVERIFY(spyClientConnectResult[i]->isValid());
+        QVERIFY(spyClientError[i]->isValid());
+        QVERIFY(spyClientLoginResult[i]->isValid());
+        QVERIFY(spyClientServerDisconnected[i]->isValid());
+        QVERIFY(spyClientGameTerminated[i]->isValid());
+
+        QVERIFY(spyClientNotifyBidTurn[i]->isValid());
+        QVERIFY(spyClientNotifyMoveTurn[i]->isValid());
+        QVERIFY(spyClientNotifyBidRejected[i]->isValid());
+        QVERIFY(spyClientNotifyMoveRejected[i]->isValid());
+        QVERIFY(spyClientUpdateGameState[i]->isValid());
+        QVERIFY(spyClientMessageReceived[i]->isValid());
+
+        // Remember to monitor both the client and the server.
+        testClientNet[i]->txRequestLogin(ip,port,playerNames[i],passwordServer);
+        QVERIFY(spyClientLoginResult[i]->wait(100));
+
+        // No warnings should be issused by either the server or the client
+        QVERIFY(spyServerError->count() == 0);
+        QVERIFY(spyClientError[i]->count() == 0);
+        QVERIFY(spyServerPlayerDisconnected->count() == 0);
+        QCOMPARE(spyClientLoginResult[i]->count(), 1);
+        qInfo() << "The value of i: " << i << *spyServerPlayerJoined;
+        QCOMPARE(spyServerPlayerJoined->count(), i-startNumClients+1);
+        QCOMPARE(spyServerPlayerJoined->at(i-startNumClients).at(0), playerNames[i]);
+
+        // Clear all signals
+        spyClientConnectResult[i]->clear();
+        spyClientError[i]->clear();
+        spyClientLoginResult[i]->clear();
+        spyClientServerDisconnected[i]->clear();
+        spyClientGameTerminated[i]->clear();
+    }
+    // Wait a bit to see if any other errors occured
+    QVERIFY(!spyServerError->wait(100));
+
+    // Clear all server signals
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerJoined->clear();
+    spyServerPlayerDisconnected->clear();
+}
+
+/**
+ * Get the socket of the plyer and create playerNetwork.
+ * @param playerName is the name of the Player that should be added. This name must be in the playerNames vecotor.
+ */
+
+void testPlayerNetwork::addPlayerNetwork(QString playerName)
+{
+    QVERIFY(playerNames.contains(playerName));
+    int j = playerNames.indexOf(playerName);
+
+    // Clear all server signals
+    spyServer->clear();
+    spyServerError->clear();
+    spyServerPlayerJoined->clear();
+    spyServerPlayerDisconnected->clear();
+
+    // Clear the clinet's signals
+    spyClientConnectResult[j]->clear();
+    spyClientError[j]->clear();
+    spyClientLoginResult[j]->clear();
+    spyClientServerDisconnected[j]->clear();
+    spyClientGameTerminated[j]->clear();
+
+    // Get the client socket and remove it from the server
+    QTcpSocket* tempSoc = testServerNetA.getPlayerSoc(playerName);
+    QVERIFY(tempSoc != nullptr);
+
+    testPlayerNet.append(new PlayerNetwork(this, playerName, tempSoc));
+
+    // Server should not emit clientDisconnected
+    QVERIFY(!spyServerPlayerDisconnected->wait(100));
+    QVERIFY(spyServerPlayerDisconnected->count() == 0);
+    QVERIFY(spyServer->count() == 0);
+    QVERIFY(spyServerError->count() == 0);
+    QVERIFY(spyServerPlayerJoined->count() == 0);
+
+
+    // Client should also not emit anything
+    QVERIFY(spyClientConnectResult[j]->count() == 0);
+    QVERIFY(spyClientError[j]->count() == 0);
+    QVERIFY(spyClientLoginResult[j]->count() == 0);
+    QVERIFY(spyClientServerDisconnected[j]->count() == 0);
+    QVERIFY(spyClientGameTerminated[j]->count() == 0);
+
+    // Get the last index of the Vector
+    int i = testPlayerNet.count() - 1;
+
+    // Setup signals
+    spyPlayerGeneralError.append(new QSignalSpy(testPlayerNet[i], SIGNAL(generalError(QString))));
+    spyPlayerBidSelected.append(new QSignalSpy(testPlayerNet[i], SIGNAL(bidSelected(Bid))));
+    spyPlayerMoveSelected.append(new QSignalSpy(testPlayerNet[i], SIGNAL(moveSelected(Card))));
+    spyPlayerMessageGenerated.append(new QSignalSpy(testPlayerNet[i], SIGNAL(messageGenerated(QString))));
+    spyPlayerClientDisconnected.append(new QSignalSpy(testPlayerNet[i], SIGNAL(clientDisconnected())));
+
+    // Verify all signals
+    QVERIFY(spyPlayerGeneralError[i]->isValid());
+    QVERIFY(spyPlayerBidSelected[i]->isValid());
+    QVERIFY(spyPlayerMoveSelected[i]->isValid());
+    QVERIFY(spyPlayerMessageGenerated[i]->isValid());
+    QVERIFY(spyPlayerClientDisconnected[i]->isValid());
 
 }

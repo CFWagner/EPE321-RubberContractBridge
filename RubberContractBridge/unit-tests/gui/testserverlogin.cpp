@@ -7,7 +7,8 @@ testServerLogin::testServerLogin(QObject *parent) : QObject(parent)
 
 testServerLogin::~testServerLogin()
 {
-
+    passwordSent->deleteLater();
+    addressSent->deleteLater();
 }
 
 void testServerLogin::testSerLog()
@@ -15,13 +16,13 @@ void testServerLogin::testSerLog()
     // Create instance of the entry window
     testSLog = new ServerLogin();
     createServer = new Server();
-    connect(testSLog,&ServerLogin::serverPassword,createServer,&Server::serverPassword);
-    connect(testSLog,&ServerLogin::serverIPAddressPort,createServer,&Server::serverIPAddressPort);
     while (!testSLog->isVisible()) {
         QTest::qWait(200); // Wait till the window is visable.
     }
     QTest::qWait(1000);
     QVERIFY(testSLog->isVisible()); // Check if visable.
+    connect(testSLog,&ServerLogin::serverPassword,createServer,&Server::serverPassword);
+    connect(testSLog,&ServerLogin::serverIPAddressPort,createServer,&Server::serverIPAddressPort);
 
     //Signals check
     qRegisterMetaType<QHostAddress>();
@@ -73,4 +74,5 @@ void testServerLogin::testSerLog()
     QList<QVariant> argumentAddress = addressSent->takeFirst();
     QVERIFY(qvariant_cast<QHostAddress>(argumentAddress.at(0)) == testSLog->getIPAddress());
     QVERIFY(qvariant_cast<quint16>(argumentAddress.at(1)) == testSLog->getPort());
+    testSLog->serverLob->close();
 }

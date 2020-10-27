@@ -187,9 +187,4 @@ DISTFILES += \
     swapMains.bat
 
 RESOURCES += \
-    GUI.qrc \
-    GUI.qrc \
-    GUI.qrc \
-    resource.qrc \
-    resource.qrc \
     resource.qrc

@@ -25,42 +25,43 @@ signals:
 
 
 private:
+    void addManyClients(int numberOfClients);
+    void addPlayerNetwork(QString playerName);
+
     QString passwordServer;
     quint16 port;
     QHostAddress ip;
     QString playerName;
 
-    QString playerName1;
-    QString playerName2;
+    QVector<QString> playerNames;
 
     ServerNetwork testServerNetA;
-    ClientNetwork testClientNet1;
-    ClientNetwork testClientNet2;
-    PlayerNetwork *testPlayerNet1;
-    PlayerNetwork *testPlayerNet2;
+    QVector<ClientNetwork*> testClientNet;
+    QVector<PlayerNetwork*> testPlayerNet;
 
     QSignalSpy *spyServer;
     QSignalSpy *spyServerPlayerJoined;
     QSignalSpy *spyServerError;
     QSignalSpy *spyServerPlayerDisconnected;
 
-    QSignalSpy *spyClientConnectResult1;
-    QSignalSpy *spyClientError1;
-    QSignalSpy *spyClientLoginResult1;
-    QSignalSpy *spyClientServerDisconnected1;
-    QSignalSpy *spyClientGameTerminated1;
+    QVector<QSignalSpy*> spyClientConnectResult;
+    QVector<QSignalSpy*> spyClientError;
+    QVector<QSignalSpy*> spyClientLoginResult;
+    QVector<QSignalSpy*> spyClientServerDisconnected;
+    QVector<QSignalSpy*> spyClientGameTerminated;
 
-    QSignalSpy *spyClientConnectResult2;
-    QSignalSpy *spyClientError2;
-    QSignalSpy *spyClientLoginResult2;
-    QSignalSpy *spyClientServerDisconnected2;
-    QSignalSpy *spyClientGameTerminated2;
+    QVector<QSignalSpy*> spyClientNotifyBidTurn;
+    QVector<QSignalSpy*> spyClientNotifyMoveTurn;
+    QVector<QSignalSpy*> spyClientNotifyBidRejected;
+    QVector<QSignalSpy*> spyClientNotifyMoveRejected;
+    QVector<QSignalSpy*> spyClientUpdateGameState;
+    QVector<QSignalSpy*> spyClientMessageReceived;
 
-    QSignalSpy *generalError1;
-    QSignalSpy *clientDisconnected1;
-
-    QSignalSpy *generalError2;
-    QSignalSpy *clientDisconnected2;
+    QVector<QSignalSpy*> spyPlayerGeneralError;
+    QVector<QSignalSpy*> spyPlayerBidSelected;
+    QVector<QSignalSpy*> spyPlayerMoveSelected;
+    QVector<QSignalSpy*> spyPlayerMessageGenerated;
+    QVector<QSignalSpy*> spyPlayerClientDisconnected;
 };
 
 #endif // TESTPLAYERNETWORK_H

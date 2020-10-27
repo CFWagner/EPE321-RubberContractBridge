@@ -14,11 +14,11 @@ int main(int argc, char *argv[])
 
     // Unit tests
     // Entry Window
-    // testEntryWindow testEW;
-    // QTest::qExec(&testEW);
+    testEntryWindow testEW;
+    QTest::qExec(&testEW);
     // Server Login
-    // testServerLogin testSLogs;
-    // QTest::qExec(&testSLogs);
+    testServerLogin testSLogs;
+    QTest::qExec(&testSLogs);
     // Server Lobby
     testServerLobby testSLobs;
     QTest::qExec(&testSLobs);

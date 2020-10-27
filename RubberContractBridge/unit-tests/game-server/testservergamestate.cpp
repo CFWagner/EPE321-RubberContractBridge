@@ -9,7 +9,7 @@ TestServerGameState::TestServerGameState(QObject *parent) : QObject(parent) {}
 void TestServerGameState::testServerGameState()
 {
     // Instantiate ServerGameState
-    ServerGameState serverState(NORTH);
+    ServerGameState serverState;
 
     // Verify correct instantiation of attributes
     QCOMPARE(serverState.getPhase(), BIDDING);

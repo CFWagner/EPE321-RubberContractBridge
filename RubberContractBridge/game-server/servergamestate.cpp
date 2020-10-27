@@ -1,10 +1,7 @@
 #include "servergamestate.h"
 
-// Default constructor
-ServerGameState::ServerGameState() {}
-
 // Initialises all attributes to values for start of match
-ServerGameState::ServerGameState(PlayerPosition dealer)
+ServerGameState::ServerGameState(QObject *parent) : QObject(parent)
 {
     // Initialise attributes
     phase = BIDDING;
@@ -12,7 +9,7 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     dealNumber = 0;
     trickNumber = 0;
     passCount = 0;
-    this->dealer = dealer;
+    dealer = NORTH;
     playerTurn = dealer;
     handToPlay = NORTH;
     declarer = NORTH;

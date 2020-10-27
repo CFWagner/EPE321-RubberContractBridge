@@ -75,7 +75,7 @@ void Server::playersSelected(QVector<QString> playerNames)
         gameServer->addPlayer(player);
     }
 
-    // Start game
+    //
     gameServer->initializeGame();
 }
 

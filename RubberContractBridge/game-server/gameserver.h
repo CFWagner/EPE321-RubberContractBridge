@@ -23,6 +23,9 @@ public slots:
 signals:
     void gameEvent(GameEvent event);
 private:
+    void broadcastStateUpdate(GameEvent gameEvent);
+    Player* getPlayerInPosition(PlayerPosition position);
+    Player* getPlayerTurn();
     ServerGameState* state;
     QVector<Player*> players;
 };

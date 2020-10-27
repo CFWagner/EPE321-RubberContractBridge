@@ -6,7 +6,6 @@
 #include <QtTest/QtTest>
 #include <QHostAddress>
 #include <QObject>
-Q_DECLARE_METATYPE(QHostAddress);
 
 class testServerLogin : public QObject
 {

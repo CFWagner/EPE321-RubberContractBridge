@@ -5,6 +5,8 @@
 #include <QHostAddress>
 #include <QObject>
 
+// Highest level class on the server side
+// Purpose is to connect server interface, game server and server networking components
 class Server : public QObject
 {
     Q_OBJECT
@@ -15,7 +17,7 @@ public slots:
     void playersSelected(QVector<QString> playerNames);
     void playerDisconnected();
     void serverPassword(QString passwordSent);
-    void serverIPAddress(QHostAddress addressSent);
+    void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
 private:
     GameServer gameServer;
 };

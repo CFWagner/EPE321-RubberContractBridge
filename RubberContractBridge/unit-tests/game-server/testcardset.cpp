@@ -1,5 +1,6 @@
 #include "testcardset.h"
 
+// Default constructor
 TestCardSet::TestCardSet(QObject *parent) : QObject(parent) {}
 
 // Test for correct construction and operation of CardSet class instance
@@ -41,7 +42,7 @@ void TestCardSet::testCardSet()
     // Populate card set with all of the 52 different cards
     for(qint8 suitVal = CLUBS; suitVal <= SPADES; suitVal++){
         CardSuit suit = CardSuit(suitVal);
-        for(qint8 rankVal = ACE; rankVal <= KING; rankVal++){
+        for(qint8 rankVal = TWO; rankVal <= ACE; rankVal++){
             CardRank rank = CardRank(rankVal);
             Card card(suit, rank);
             cardSet1.addCard(card);
@@ -71,7 +72,5 @@ void TestCardSet::testCardSet()
     cardSet2.read(jsonCardSet);
 
     // Test for correct CardSet state
-    QCOMPARE(cardSet1.getCardCount(), cardSet2.getCardCount());
-    for(qint8 pos = 0; pos < cardSet1.getCardCount() - 1; pos++)
-        QCOMPARE(cardSet1.getCard(pos) == cardSet2.getCard(pos), true);
+    QCOMPARE(cardSet1, cardSet2);
 }

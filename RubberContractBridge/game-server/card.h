@@ -5,6 +5,8 @@
 #include "enumerations/CardRank.h"
 #include <QJsonObject>
 
+// Represents a playing card used during bridge gameplay.
+// Uniquely defined by its suit and rank
 class Card
 {
 public:

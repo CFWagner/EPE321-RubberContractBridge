@@ -29,6 +29,8 @@ public:
     PlayerPosition getDealer() const;
     PlayerPosition getDeclarer() const;
     PlayerPosition getDummy() const;
+    qint8 getTricksWon(PlayerPosition position) const;
+    qint8 getTricksWon(Team team) const;
     bool getTeamVulnerable(Team team) const;
     Score getScore() const;
 protected:
@@ -43,6 +45,9 @@ protected:
     qint8 dealNumber; // Zero before first deal
     qint8 trickNumber; // Zero during BIDDING phase
     QVector<CardSet> tricks;
+    // Number of tricks won by each team in the current deal
+    // Indexed by PlayerPosition enum, NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3
+    qint8 tricksWon[4] = {0, 0, 0, 0};
     // PlayerTurn refers to the position of the player who has to select the card to play
     // When it is time to play from the dummy's hand, playerTurn refers to the declarer's position
     PlayerPosition playerTurn;
@@ -51,8 +56,6 @@ protected:
     PlayerPosition handToPlay;
     PlayerPosition dealer;
     PlayerPosition declarer;
-    // Use team enum as indices: N_S = 0, E_W = 1
-    bool teamVulnerable[2];
     Score score;
 };
 

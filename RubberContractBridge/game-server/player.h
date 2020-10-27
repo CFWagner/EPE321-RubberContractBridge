@@ -8,6 +8,9 @@
 #include "playergamestate.h"
 #include <QObject>
 
+// Represents player that partakes in the game of bridge
+// Abstract class to enable polymorphism so AI and human players can be treated the same
+// way by the game server
 class Player : public QObject
 {
     Q_OBJECT

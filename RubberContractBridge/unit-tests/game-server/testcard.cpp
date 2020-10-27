@@ -1,6 +1,7 @@
 #include "testcard.h"
 #include<QDebug>
 
+// Default constructor
 TestCard::TestCard(QObject *parent) : QObject(parent) {}
 
 // Test for correct construction and operation of Card class instance

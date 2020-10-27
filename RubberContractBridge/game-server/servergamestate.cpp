@@ -11,8 +11,6 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     gameNumber = 1;
     dealNumber = 0;
     trickNumber = 0;
-    teamVulnerable[N_S] = false;
-    teamVulnerable[E_W] = false;
     passCount = 0;
     this->dealer = dealer;
     playerTurn = dealer;
@@ -26,12 +24,18 @@ ServerGameState::ServerGameState(PlayerPosition dealer)
     // Populate card set with all of the 52 different cards
     for(qint8 suitVal = CLUBS; suitVal <= SPADES; suitVal++){
         CardSuit suit = CardSuit(suitVal);
-        for(qint8 rankVal = ACE; rankVal <= KING; rankVal++){
+        for(qint8 rankVal = TWO; rankVal <= ACE; rankVal++){
             CardRank rank = CardRank(rankVal);
             Card card(suit, rank);
             deck.addCard(card);
         }
     }
+}
+
+// Starts the game by dealing all the cards to the players and selecting player for the first turn
+void ServerGameState::startGame()
+{
+    nextDeal();
 }
 
 // Prepare game for next deal round
@@ -65,6 +69,9 @@ void ServerGameState::nextDeal()
         playerHands[targetPlayer].addCard(deck.removeTopCard());
     }
 
+    // Take snapshot of players hands at start of deal to use to check for honors in later score calculation
+    playerHandsSnapshot = playerHands;
+
     // Select dealer for first turn
     playerTurn = dealer;
 }
@@ -88,8 +95,11 @@ void ServerGameState::updateBidState(const Bid &bid)
     }
     // Check if bid is valid
     else if(isBidValid(bid)){
+        // Reset pass counter
+        passCount = 0;
+
         // Update bid
-        if(bid.getCall() == DOUBLE || bid.getCall() == REDOUBLE){
+        if(bid.getCall() == DOUBLE_BID || bid.getCall() == REDOUBLE_BID){
             currentBid->setCall(bid.getCall());
         }
         else{
@@ -104,14 +114,15 @@ void ServerGameState::updateBidState(const Bid &bid)
     // Select player to left of most recent player to play for next turn
     playerTurn = PlayerPosition((playerTurn + 1) % 4);
 
-    // Check if 4 passes have been made
-    if(passCount == 4){
-        // Check if bid has been made
-        if(currentBid == nullptr){
-            // Redeal cards
+    // Check if bid has been made
+    if(currentBid == nullptr){
+        // Redeal cards if 4 passes have been made given no bid has been made
+        if(passCount == 4)
             nextDeal();
-        }
-        else{
+    }
+    else{
+        // Check if 3 passes have been made given a bid has been made
+        if(passCount == 3){
             // Transition to play phase
             phase = CARDPLAY;
             contractBid = currentBid;
@@ -139,22 +150,64 @@ void ServerGameState::updatePlayState(const Card &card)
     CardSet* currentTrick = &tricks[trickNumber - 1];
     currentTrick->addCard(card);
 
+    // Remove card from player hand
+    qint8 removeIndex = 0;
+    while(!(playerHands[handToPlay].getCard(removeIndex) == card))
+        removeIndex++;
+    playerHands[handToPlay].removeCard(removeIndex);
+
     // Check if trick is complete
     if(currentTrick->getCardCount() == 4){
         // Determine winner
         PlayerPosition winner = determineTrickWinner();
 
-        // TO ADD: UPDATE SCORE
+        // Update tricks won tally
+        tricksWon[winner] += 1;
 
         // Check if deal round is complete
         if(tricks.size() == 13){
+            // Update score
+            score.updateScore(*contractBid, playerHandsSnapshot, getTricksWon(contractBid->getBiddingTeam()));
+
+            // Check if a team has won a second game and therefore the rubber
+            if(score.isRubberWinner()){
+                score.finaliseRubber();
+
+                // Create new score instance for next rubber with back score
+                quint32 backScore[2] = {0, 0};
+                quint32 totalScoreNS = score.getTotalScore(N_S);
+                quint32 totalScoreEW = score.getTotalScore(E_W);
+                if(totalScoreNS > totalScoreEW)
+                    backScore[N_S] = totalScoreNS - totalScoreEW;
+                else
+                    backScore[E_W] = totalScoreEW - totalScoreNS;
+                score = Score(backScore);
+            }
+            // Check if a team has won a game
+            else if(score.isGameWinner()){
+                score.nextGame();
+            }
+
+            // Initialise next deal
             nextDeal();
             return;
         }
 
         // Winner plays first next
-        playerTurn = winner;
+        handToPlay = winner;
+        if(handToPlay == getDummy())
+            playerTurn = declarer;
+        else
+            playerTurn = handToPlay;
         nextTrick();
+    }
+    // Get next hand to play and player positoin
+    else{
+        handToPlay = PlayerPosition((handToPlay + 1) % 4);
+        if(handToPlay == getDummy())
+            playerTurn = declarer;
+        else
+            playerTurn = handToPlay;
     }
 }
 
@@ -167,37 +220,55 @@ const CardSet& ServerGameState::getDeck()
 // Generate and return the game state tailored for the player
 PlayerGameState ServerGameState::getPlayerGameState(PlayerPosition player, QVector<Player*> players, GameEvent gameEvent)
 {
+    // Create player positions map and card count map
     QMap<PlayerPosition, QString> playerPositions;
-    for(const Player* player: players)
+    QMap<PlayerPosition, qint8> playerCardCount;
+    for(const Player* player: players){
         playerPositions.insert(player->getPosition(), player->getPlayerName());
+        playerCardCount.insert(player->getPosition(), playerHands.value(player->getPosition()).getCardCount());
+    }
+
+    // Initialise dummy hand sent to player
     CardSet dummyHand;
     if(phase == CARDPLAY)
         dummyHand = playerHands[getDummy()];
-    return PlayerGameState(*this, gameEvent, playerPositions, playerHands[player], dummyHand);
+    return PlayerGameState(*this, gameEvent, playerPositions, playerCardCount, playerHands[player], dummyHand);
+}
+
+// Getter for player hands
+const QMap<PlayerPosition, CardSet>& ServerGameState::getPlayerHands() const
+{
+    return playerHands;
+}
+
+// Setter for player hands
+void ServerGameState::setPlayerHands(const QMap<PlayerPosition, CardSet> &playerHands)
+{
+    this->playerHands = playerHands;
 }
 
 // Check if the new bid is valid given the current bid. Passing nullptr as the current bid
 // argument implies there is no current bid
 bool ServerGameState::isBidValid(const Bid &bid) const
 {
-    // Check if new bid is valid given no bid has been made yet
     if(bid.getCall() == PASS){
         return true;
     }
+    // Check if new bid is valid given no bid has been made yet
     else if(currentBid == nullptr){
         return bid.getCall() == BID;
     }
     else{
         Team currentBidderTeam = getPlayerTeam(currentBid->getBidder());
         Team newBidderTeam = getPlayerTeam(bid.getBidder());
-        if(bid.getCall() == DOUBLE){
+        if(bid.getCall() == DOUBLE_BID){
             // Double is invalid if bid was made by a member of the same team
             return newBidderTeam != currentBidderTeam && currentBid->getCall() == BID;
         }
-        else if(bid.getCall() == REDOUBLE){
+        else if(bid.getCall() == REDOUBLE_BID){
             // Redouble is invalid if the bid was made by a member of the opposing team or
             // the bid was not doubled
-            return newBidderTeam == currentBidderTeam && currentBid->getCall() == DOUBLE;
+            return newBidderTeam == currentBidderTeam && currentBid->getCall() == DOUBLE_BID;
         }
         // Check if new bid is a higher bid than the current bid
         else if(bid > *currentBid){
@@ -220,12 +291,12 @@ bool ServerGameState::isCardValid(const Card &card) const
     if(trick.getCardCount() == 0)
         return true;
 
-    // Check if the card is of the trump suit or matches the suit of the first card played
-    // in the trick
-    if(card.getSuit() == contractBid->getTrumpSuit()
-            || card.getSuit() == trick.getCard(0).getSuit()){
+    // Check if the card matches the suit of the first card played in the trick
+    if(card.getSuit() == trick.getCard(0).getSuit())
         return true;
-    }
+    // Check if player had first suit played in their hand
+    else if(!playerHands[handToPlay].containsSuit(trick.getCard(0).getSuit()))
+        return true;
     return false;
 }
 
@@ -264,5 +335,5 @@ PlayerPosition ServerGameState::determineTrickWinner() const{
     // Identify winning player
     // playerTurn refers to player that played last card in trick
     // Add 1 to get player that played first card then add bestIndex to get winning player
-    return PlayerPosition((playerTurn + bestIndex + 1) % 4);
+    return PlayerPosition((handToPlay + bestIndex + 1) % 4);
 }

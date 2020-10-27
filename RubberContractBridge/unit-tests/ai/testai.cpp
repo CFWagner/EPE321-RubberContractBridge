@@ -14,8 +14,8 @@ testai::testai(QObject *parent) : QObject(parent)
 void testai::setInitial()
 {
     QMap<PlayerPosition,QString> testMap;
+    QMap<PlayerPosition,qint8> testCardCountMap;
     Score testScore=Score();
-    bool testVulnerable[2];
     const Bid* testcontractBid;
     CardSet testSet;
     CardSet testAiHand;
@@ -28,10 +28,11 @@ void testai::setInitial()
     testSet.addCard(Card(SPADES,QUEEN));
     QVector<CardSet> testTricks;
     testTricks.append(testSet);
+    qint8 testTricksWon[4];
 
     testcontractBid = new Bid(NORTH,SPADES,1);
-    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,3,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
-                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,3,1,1,testTricks,testTricksWon,EAST,EAST,EAST,NORTH,
+                                              testScore,PLAY_START,testMap,testCardCountMap,testAiHand,testDummyHand);
 }
 void testai::testHandGenerate()
 {
@@ -113,8 +114,9 @@ void testai::testDeckRemoval()
 void testai::setInitial2()
 {
     QMap<PlayerPosition,QString> testMap;
+    QMap<PlayerPosition,qint8> testCardCountMap;
     Score testScore=Score();
-    bool testVulnerable[2];
+    qint8 testTricksWon[4];
     const Bid* testcontractBid;
     CardSet testSet;
     CardSet testAiHand;
@@ -129,8 +131,8 @@ void testai::setInitial2()
     testTricks.append(testSet);
 
     testcontractBid = new Bid(NORTH,HEARTS,1);
-    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,3,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
-                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,3,1,1, testTricks,testTricksWon,EAST,EAST,EAST,NORTH,
+                                              testScore,PLAY_START,testMap,testCardCountMap,testAiHand,testDummyHand);
 }
 
 void testai::testBidGenerate2()
@@ -152,8 +154,9 @@ void testai::testBidGenerate2()
 void testai::setInitial3()
 {
     QMap<PlayerPosition,QString> testMap;
+    QMap<PlayerPosition,qint8> testCardCountMap;
     Score testScore=Score();
-    bool testVulnerable[2];
+    qint8 testTricksWon[4];
     const Bid* testcontractBid;
     CardSet testSet;
     CardSet testAiHand;
@@ -169,8 +172,8 @@ void testai::setInitial3()
     testTricks.append(testSet);
 
     testcontractBid = new Bid(NORTH,SPADES,1);
-    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,3,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
-                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,3,1,1, testTricks,testTricksWon,EAST,EAST,EAST,NORTH,
+                                              testScore,PLAY_START,testMap,testCardCountMap,testAiHand,testDummyHand);
 
 }
 void testai::testMoveGanerate2()
@@ -199,8 +202,9 @@ void testai::testMoveGanerate2()
 void testai::setInitial4()
 {
     QMap<PlayerPosition,QString> testMap;
+    QMap<PlayerPosition,qint8> testCardCountMap;
     Score testScore=Score();
-    bool testVulnerable[2];
+    qint8 testTricksWon[4];
     const Bid* testcontractBid;
     CardSet testSet;
     CardSet testAiHand;
@@ -215,8 +219,8 @@ void testai::setInitial4()
     QVector<CardSet> testTricks;
     testTricks.append(testSet);
     testcontractBid = new Bid(NORTH,HEARTS,1);
-    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
-                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,testTricksWon,EAST,EAST,EAST,NORTH,
+                                              testScore,PLAY_START,testMap,testCardCountMap,testAiHand,testDummyHand);
 
 }
 
@@ -245,8 +249,9 @@ void testai::testMoveGanerate3()
 void testai::setInitial5()
 {
     QMap<PlayerPosition,QString> testMap;
+    QMap<PlayerPosition,qint8> testCardCountMap;
     Score testScore=Score();
-    bool testVulnerable[2];
+    qint8 testTricksWon[4];
     const Bid* testcontractBid;
     CardSet testSet;
     CardSet testAiHand;
@@ -263,8 +268,8 @@ void testai::setInitial5()
     QVector<CardSet> testTricks;
     testTricks.append(testSet);
     testcontractBid = new Bid(NORTH,NONE,1);
-    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
-                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,testTricksWon,EAST,EAST,EAST,NORTH,
+                                              testScore,PLAY_START,testMap,testCardCountMap,testAiHand,testDummyHand);
 }
 void testai::testMoveGanerate4()
 {
@@ -287,8 +292,9 @@ void testai::testMoveGanerate4()
 void testai::setInitial6()
 {
     QMap<PlayerPosition,QString> testMap;
+    QMap<PlayerPosition,qint8> testCardCountMap;
     Score testScore=Score();
-    bool testVulnerable[2];
+    qint8 testTricksWon[4];
     const Bid* testcontractBid;
     CardSet testSet;
     CardSet testAiHand;
@@ -304,8 +310,8 @@ void testai::setInitial6()
     QVector<CardSet> testTricks;
     testTricks.append(testSet);
     testcontractBid = new Bid(NORTH,NONE,1);
-    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,EAST,EAST,EAST,NORTH,testVulnerable,
-                                              testScore,PLAY_START,testMap,testAiHand,testDummyHand);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,testTricksWon,EAST,EAST,EAST,NORTH,
+                                              testScore,PLAY_START,testMap,testCardCountMap,testAiHand,testDummyHand);
 }
 
 void testai::testMoveGanerate5()

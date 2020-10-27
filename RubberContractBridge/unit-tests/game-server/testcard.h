@@ -6,6 +6,7 @@
 #include <QSignalSpy>
 #include "game-server/card.h"
 
+// Unit test class for Card class
 class TestCard : public QObject
 {
     Q_OBJECT

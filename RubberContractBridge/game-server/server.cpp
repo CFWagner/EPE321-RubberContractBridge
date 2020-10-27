@@ -12,7 +12,7 @@ void Server::gameEvent(GameEvent event)
 
 void Server::playersSelected(QVector<QString> playerNames)
 {
-
+    qDebug () << playerNames;
 }
 
 void Server::playerDisconnected()
@@ -22,10 +22,8 @@ void Server::playerDisconnected()
 
 void Server::serverPassword(QString passwordSent)
 {
-
 }
 
-void Server::serverIPAddress(QHostAddress addressSent)
+void Server::serverIPAddressPort(QHostAddress addressSent,quint16 portSent)
 {
-
 }

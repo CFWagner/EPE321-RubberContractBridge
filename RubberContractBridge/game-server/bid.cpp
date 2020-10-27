@@ -37,6 +37,18 @@ CardSuit Bid::getTrumpSuit() const
     return trumpSuit;
 }
 
+// Get the team the bidder belongs to based on their position
+Team Bid::getBiddingTeam() const
+{
+    switch (bidder) {
+        case NORTH:
+        case SOUTH:
+            return N_S;
+        default:
+            return E_W;
+    }
+}
+
 // Getter for the number of tricks above 6 selected in the bid
 qint8 Bid::getTricksAbove() const
 {

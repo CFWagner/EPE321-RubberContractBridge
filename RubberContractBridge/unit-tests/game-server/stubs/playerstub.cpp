@@ -23,15 +23,19 @@ void PlayerStub::notifyBidTurn()
 // Indicate to the player it is their turn to play a card
 void PlayerStub::notifyMoveTurn()
 {
-    if(playCardPos >= gameState.getPlayerHand().getCardCount())
-        playCardPos = 0;
-
     // Check if card needs to be played from dummy hand
+    CardSet hand;
     if(gameState.getHandToPlay() != gameState.getPlayerTurn() &&
             position == gameState.getDeclarer())
-        emit moveSelected(gameState.getDummyHand().getCard(playCardPos));
+        hand = gameState.getDummyHand();
     else
-        emit moveSelected(gameState.getPlayerHand().getCard(playCardPos));
+        hand = gameState.getPlayerHand();
+
+    // Check card position is not out of range
+    if(playCardPos >= hand.getCardCount())
+        playCardPos = 0;
+
+    emit moveSelected(hand.getCard(playCardPos));
 }
 
 // Send the latest available game state tailored to the player
@@ -49,17 +53,20 @@ void PlayerStub::notifyBidRejected(QString reason)
 // Indicate to the player that the last move was invalid for the given reason
 void PlayerStub::notifyMoveRejected(QString reason)
 {
-    // Try another card position
-    playCardPos++;
-    if(playCardPos >= gameState.getPlayerHand().getCardCount())
-        playCardPos = 0;
-
     // Check if card needs to be played from dummy hand
+    CardSet hand;
     if(gameState.getHandToPlay() != gameState.getPlayerTurn() &&
             position == gameState.getDeclarer())
-        emit moveSelected(gameState.getDummyHand().getCard(playCardPos));
+        hand = gameState.getDummyHand();
     else
-        emit moveSelected(gameState.getPlayerHand().getCard(playCardPos));
+        hand = gameState.getPlayerHand();
+
+    // Try another card position
+    playCardPos++;
+    if(playCardPos >= hand.getCardCount())
+        playCardPos = 0;
+
+    emit moveSelected(hand.getCard(playCardPos));
 }
 
 // Send message to the player where source is the player name

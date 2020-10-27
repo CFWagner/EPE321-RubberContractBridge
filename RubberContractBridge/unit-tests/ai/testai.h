@@ -13,6 +13,7 @@ public:
     void setInitial4();
     void setInitial5();
     void setInitial6();
+    void setInitial7();
     PlayerGameState player1;
     AI playerAI;
     float calculateSTD(float data[], int length);
@@ -40,6 +41,7 @@ private slots:
     void testDeckRemoval();
     void testingGenerator();
     void testingRecovery();
+    void testingBidListGenerate();
 
 
 };

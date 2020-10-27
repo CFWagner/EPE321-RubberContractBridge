@@ -125,11 +125,13 @@ void AI::generatedeck()
 }
 void AI::generatebidlist()
 {
+    //Remember to always reset the bidlist upon new generation
     //does as the name implies. During initial main set prunes selection based upon what was played previously
     //this is used to try and find possible bids to be pulled from
-    for (int i=1 ; i<7 ; i++)
+    bidlist.clear();
+    for (int i=1 ; i<=7 ; i++)
     {
-        for ( int fooInt = CLUBS ; fooInt != NONE; fooInt++ )
+        for ( int fooInt = CLUBS ; fooInt < NONE; fooInt++ )
         {
             CardSuit foo = static_cast<CardSuit>(fooInt);
             Bid dummy = Bid(currentState.getPlayerTurn(),foo,i);
@@ -143,11 +145,13 @@ void AI::generatebidlist()
 void AI::removebids()
 {
     currentbid = *currentState.getCurrentBid();
+    label:
     for (int i=0;i<bidlist.size();i++)
     {
-        if ((bidlist.value(i).getTricksAbove()<=currentbid.getTricksAbove()) && (bidlist.value(i).getTrumpSuit()<= currentbid.getTrumpSuit() ))
+        if ((currentbid.getTricksAbove()*10+currentbid.getTrumpSuit())>=(bidlist.value(i).getTricksAbove()*10+bidlist.value(i).getTrumpSuit()))
         {
-            bidlist.erase(bidlist.begin()+i);
+            bidlist.remove(i);
+            goto label;
         }
     }
 }

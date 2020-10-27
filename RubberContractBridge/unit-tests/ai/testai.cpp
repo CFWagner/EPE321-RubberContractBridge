@@ -586,3 +586,57 @@ void testai::testingRecovery()
 
 }
 
+
+//Testing bidlist generation
+void testai::setInitial7()
+{
+    QMap<PlayerPosition,QString> testMap;
+    QMap<PlayerPosition,qint8> testCardCountMap;
+    Score testScore=Score();
+    qint8 testTricksWon[4];
+    const Bid* testcontractBid;
+    CardSet testSet;
+    CardSet testAiHand;
+    CardSet testDummyHand;
+    testDummyHand.addCard(Card(SPADES,ACE));
+    testAiHand.addCard(Card(HEARTS,THREE));
+    testAiHand.addCard(Card(HEARTS,FOUR));
+    testAiHand.addCard(Card(DIAMONDS,SIX));
+    //CardSuit suit, CardRank rank
+    testSet.addCard(Card(DIAMONDS,TWO));
+    testSet.addCard(Card(HEARTS,TWO));
+    testSet.addCard(Card(SPADES,FIVE));
+    QVector<CardSet> testTricks;
+    testTricks.append(testSet);
+    testcontractBid = new Bid(NORTH,NONE,1);
+    player1 = PlayerGameState(CARDPLAY,testcontractBid,testcontractBid,1,1,1, testTricks,testTricksWon,EAST,EAST,EAST,NORTH,
+                                              testScore,PLAY_START,testMap,testCardCountMap,testAiHand,testDummyHand);
+}
+//Last bid was 1NT so there should only be 30 valid options and nothing below it
+void testai::testingBidListGenerate()
+{
+    setInitial7();
+    Bid bidNow = Bid(NORTH,NONE,1);
+    playerAI.updateGameState(player1);
+    playerAI.initialMainSet();
+    playerAI.generatebidlist();
+    qDebug()<<"Testing the initial bid list size";
+    QCOMPARE(playerAI.bidlist.length(),35);
+    playerAI.removebids();
+    qDebug()<<"Testing the bid list size";
+    QCOMPARE(playerAI.bidlist.length(),30);
+    qDebug()<<"Testing if no possible bid is lower than current";
+    bool isValid = true;
+    for (int i=0;i<playerAI.bidlist.length();i++)
+    {
+        if (bidNow>playerAI.bidlist.value(i))
+        {
+            qDebug()<<playerAI.bidlist.value(i).getTricksAbove();
+            qDebug()<<playerAI.bidlist.value(i).getTrumpSuit();
+            isValid=false;
+        }
+    }
+    QVERIFY(isValid);
+
+}
+

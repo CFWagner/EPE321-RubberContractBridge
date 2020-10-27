@@ -55,6 +55,8 @@ void ServerGameState::nextDeal()
     trickNumber = 0;
     tricks.clear();
     passCount = 0;
+    for(qint8 i = 0; i < 4; ++ i)
+        tricksWon[i] = 0;
 
     // Clear player hands
     for(qint8 player = NORTH; player <= WEST; ++ player)
@@ -66,8 +68,9 @@ void ServerGameState::nextDeal()
     // Deal cards in clockwise direction
     // Select player to dealer's left as first player to receive a card
     PlayerPosition targetPlayer = PlayerPosition((dealer + 1) % 4);
-    while(deck.getCardCount() > 0){
-        playerHands[targetPlayer].addCard(deck.removeTopCard());
+    for(int index = 0; index < deck.getCardCount(); ++ index){
+        playerHands[targetPlayer].addCard(deck.getCard(index));
+        targetPlayer = PlayerPosition((targetPlayer + 1) % 4);
     }
 
     // Take snapshot of players hands at start of deal to use to check for honors in later score calculation
@@ -185,6 +188,8 @@ void ServerGameState::updatePlayState(const Card &card)
 
             // Check if a team has won a second game and therefore the rubber
             if(score.isRubberWinner()){
+                // Initialise next rubber
+                // TO DO: Add next rubber function
                 score.finaliseRubber();
 
                 // Create new score instance for next rubber with back score
@@ -196,10 +201,16 @@ void ServerGameState::updatePlayState(const Card &card)
                 else
                     backScore[E_W] = totalScoreEW - totalScoreNS;
                 score = Score(backScore);
+
+                gameNumber = 1;
             }
             // Check if a team has won a game
             else if(score.isGameWinner()){
+                // Intialise next game
+                // TO DO: Add next game function
                 score.nextGame();
+                dealNumber = 0;
+                gameNumber++;
             }
 
             // Initialise next deal

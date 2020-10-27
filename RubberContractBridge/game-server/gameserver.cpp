@@ -17,6 +17,9 @@ GameServer::~GameServer()
 void GameServer::addPlayer(Player* player)
 {
     players.append(player);
+    connect(player, SIGNAL(bidSelected(Bid)), this, SLOT(bidSelected(Bid)));
+    connect(player, SIGNAL(moveSelected(Card)), this, SLOT(moveSelected(Card)));
+    connect(player, SIGNAL(messageGenerated(QString)), this, SLOT(messageGenerated(QString)));
 }
 
 // Set up and start the bridge game
@@ -25,13 +28,17 @@ void GameServer::initializeGame()
     // TO DO : Randomly select dealer
     state = new ServerGameState();
 
+    // Connect game event signal and slot
+    qRegisterMetaType<GameEvent>("GameEvent");
+    connect(state, SIGNAL(gameEvent(GameEvent)), this, SLOT(gameEvent(GameEvent)));
+
     // Send first set of state updates to players
     // TO DO: Consider waiting for ready message from players
     broadcastStateUpdate(INITIALIZE);
 
     // Start game by sending first turn notification
     state->startGame();
-    getPlayerTurn()->notifyBidTurn();
+    notifyNextPlayerTurn();
 }
 
 // Send game state updates due to the specified gameEvent tailored to each player
@@ -54,9 +61,13 @@ Player* GameServer::getPlayerInPosition(PlayerPosition position)
 }
 
 // Get the player instance whose turn it is to play
-Player* GameServer::getPlayerTurn()
+Player* GameServer::notifyNextPlayerTurn()
 {
-    return getPlayerInPosition(state->getPlayerTurn());
+    Player* playerTurn = getPlayerInPosition(state->getPlayerTurn());
+    if(state->getPhase() == BIDDING)
+        playerTurn->notifyBidTurn();
+    else
+        playerTurn->notifyMoveTurn();
 }
 
 // Slot for when the server game state indicates a game event has occured
@@ -89,6 +100,7 @@ void GameServer::bidSelected(Bid bid)
     // Check if bid is valid
     if(state->isBidValid(bid)){
         state->updateBidState(bid);
+        notifyNextPlayerTurn();
     }
     else{
         Player* senderPlayer = (Player*) sender();
@@ -102,6 +114,7 @@ void GameServer::moveSelected(Card card)
     // Check if card is valid
     if(state->isCardValid(card)){
         state->updatePlayState(card);
+        notifyNextPlayerTurn();
     }
     else{
         Player* senderPlayer = (Player*) sender();

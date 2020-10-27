@@ -23,3 +23,5 @@ Test applications/FortuneClientServer - 2 way/build-fortuneclient-Desktop_x86_wi
 build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Release/
 
 build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Profile/
+
+RubberContractBridge/RubberContractBridge.pro

@@ -20,15 +20,22 @@ public:
     ~ServerLobby();
     void setupWindow();
     void staticGUIElements();
+    QVector<QString> getplayerNames();
+
 public slots:
+    //Add players to the lobby
     void addPlayersLobby();
     void clearPlayersLobby();
+    //Attempt to start game.
     void startGameB();
+    //players are added to the player pool.
     void addPlayer(QString name);
+    //players are removed to the player pool.
     void removePlayer(QString name);
 signals:
     void playersSelected (QVector<QString> playerNames);
 private slots:
+    //Pool buttons to add BOTS.
     void on_north_b_clicked();
     void on_east_b_clicked();
     void on_west_b_clicked();

@@ -553,3 +553,36 @@ void testai::testingGenerator()
 
 }
 
+
+//This will test the recovery feature for a bid and trick
+//Check if new card is played if it's flagged that the move was incorrect
+void testai::testingRecovery()
+{
+    //use initial set 6 for state
+    setInitial6();
+    playerAI.updateGameState(player1);
+    playerAI.initialMainSet();
+    Card firstMove = playerAI.guessMove();
+    Bid firstBid = playerAI.guessBid();
+    playerAI.notifyBidRejected("Some reason");
+    playerAI.notifyMoveRejected("Some reason");
+    Card secondMove = playerAI.cardRecovered;
+    Bid secondBid = playerAI.bidRecovered;
+    qDebug()<<"Check if the moves are different";
+    bool isValid=true;
+    if (firstMove==secondMove)
+    {
+        isValid=false;
+    }
+    QVERIFY(isValid);
+    qDebug()<<"Check if the bids are different";
+    isValid=true;
+    if (firstBid==secondBid)
+    {
+        isValid=false;
+    }
+    QVERIFY(isValid);
+
+
+}
+

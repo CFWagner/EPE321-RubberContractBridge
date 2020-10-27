@@ -39,6 +39,7 @@ private slots:
     void testDeckGeneration();
     void testDeckRemoval();
     void testingGenerator();
+    void testingRecovery();
 
 
 };

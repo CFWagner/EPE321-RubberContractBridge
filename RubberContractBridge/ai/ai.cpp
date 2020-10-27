@@ -29,6 +29,7 @@ void AI::notifyMoveTurn()
     Card maker;
     maker=guessMove();
     //for now no slots or signals since no integration
+    cardRecovered = maker;
 }
 void AI::updateGameState(PlayerGameState gameState)
 {
@@ -38,7 +39,7 @@ void AI::notifyBidRejected(QString reason)
 {
     //assuming rejects so redo bid move
     //quite hard to recover this state
-    //thus pick random number between 0 and 10 in the list of bids.
+    //thus pick random number between 0 and 10 in the list of bid if possible
     //pop the last bid from bid list
     generatebidlist();
     removebids();
@@ -48,17 +49,26 @@ void AI::notifyBidRejected(QString reason)
     {
         for (int i = 0 ;i<bidlist.length();i++)
         {
-            if (bidMade==bidlist[i])
+            if (bidMade==bidlist.value(i))
             {
                 bidlist.remove(i);
             }
         }
     }
     int seed = time(0);
-    int number = random(seed) % 10;
+    int number;
+    if (bidlist.length()<=10)
+    {
+        number = random(seed) % bidlist.length();
+    }
+    else
+    {
+        number = random(seed) % 10;
+    }
     Bid made;
-    made = bidlist[number];
+    made = bidlist.value(number);
     //Call the signal here
+    bidRecovered = made;
 }
 void AI::notifyMoveRejected(QString reason)
 {
@@ -67,6 +77,8 @@ void AI::notifyMoveRejected(QString reason)
     //When move is made that move is saved, initial hand is generated from gamestate thus that should still stay the same after
     //this function is called. All that needs doing is removing card that caused the error from the hand and making
     // a new suggested move
+        generateDeckOptions();
+        generateAvailableCards();
     for (int i=0;i<canPlay.getCardCount();i++)
     {
         if (canPlay.getCard(i)==cardPlayed)
@@ -74,7 +86,11 @@ void AI::notifyMoveRejected(QString reason)
             canPlay.removeCard(i);
         }
     }
-    notifyMoveTurn();
+    int size = canPlay.getCardCount();
+    int seed = time(0);
+    int number = random(seed)%size;
+    cardRecovered = canPlay.getCard(number);
+    //put signal here
 }
 void AI::gameTerminated(QString reason)
 {
@@ -129,7 +145,7 @@ void AI::removebids()
     currentbid = *currentState.getCurrentBid();
     for (int i=0;i<bidlist.size();i++)
     {
-        if ((bidlist[i].getTricksAbove()<=currentbid.getTricksAbove()) && (bidlist[i].getTrumpSuit()<= currentbid.getTrumpSuit() ))
+        if ((bidlist.value(i).getTricksAbove()<=currentbid.getTricksAbove()) && (bidlist.value(i).getTrumpSuit()<= currentbid.getTrumpSuit() ))
         {
             bidlist.erase(bidlist.begin()+i);
         }

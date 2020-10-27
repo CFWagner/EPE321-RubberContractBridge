@@ -196,10 +196,6 @@ void ClientNetwork::rxAll()
         rxGameTerminated(rxObj);
         return;
     }
-    if (tempStr == "PING_RECEIVED") {
-        rxPingReceived();
-        return;
-    }
 
     // Default
     emit generalError("An incorrect 'Type' has been received. The data will be ignored.");
@@ -386,7 +382,15 @@ void ClientNetwork::rxNotifyMoveTurn()
 
 void ClientNetwork::rxNotifyBidRejected(QJsonObject reasonObj)
 {
+    // Validate the QJsonObject
+    if (!reasonObj.contains("BidRejectReason") || !reasonObj["BidRejectReason"].isString()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qWarning() << "Data received from server has been incorrectly formatted.";
+        return;
+    }
 
+    emit notifyBidRejected(reasonObj["BidRejectReason"].toString());
 }
 
 /*!
@@ -396,7 +400,15 @@ void ClientNetwork::rxNotifyBidRejected(QJsonObject reasonObj)
 
 void ClientNetwork::rxNotifyMoveRejected(QJsonObject reasonObj)
 {
+    // Validate the QJsonObject
+    if (!reasonObj.contains("MoveRejectReason") || !reasonObj["MoveRejectReason"].isString()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qWarning() << "Data received from server has been incorrectly formatted.";
+        return;
+    }
 
+    emit notifyMoveRejected(reasonObj["MoveRejectReason"].toString());
 }
 
 
@@ -455,6 +467,8 @@ void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
         qWarning() << "Data received from server has been incorrectly formatted.";
         return;
     }
+
+    // Get the QJsonObject that contains the PlayerGameState data
     QJsonObject jsonPlayerState = gsObj["PlayerGameState"].toObject();
 
     // Convert to QJsonOnject to PlayerGameState
@@ -471,7 +485,15 @@ void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
 
 void ClientNetwork::rxMessage(QJsonObject msgObj)
 {
+    // Validate the QJsonObject
+    if (!msgObj.contains("MsgSource") || !msgObj["MsgSource"].isString() || !msgObj.contains("MsgMessage") || !msgObj["MsgMessage"].isString()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qWarning() << "Data received from server has been incorrectly formatted.";
+        return;
+    }
 
+    emit messageReceived(msgObj["MsgSource"].toString(), msgObj["MsgMessage"].toString());
 }
 
 /*!
@@ -481,14 +503,13 @@ void ClientNetwork::rxMessage(QJsonObject msgObj)
 
 void ClientNetwork::rxGameTerminated(QJsonObject reasonObj)
 {
+    // Validate the QJsonObject
+    if (!reasonObj.contains("TerminationReason") || !reasonObj["TerminationReason"].isString()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qWarning() << "Data received from server has been incorrectly formatted.";
+        return;
+    }
 
-}
-
-/*!
- * \brief ClientNetwork::rxPingReceived
- */
-
-void ClientNetwork::rxPingReceived()
-{
-
+    emit gameTerminated(reasonObj["TerminationReason"].toString());
 }

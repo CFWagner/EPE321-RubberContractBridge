@@ -20,6 +20,7 @@ private slots:
     void addClients();
     void testRepetitiveCommunication();
     void testCommunications();
+    void testErrors();
     void cleanupTestCase();
 
 signals:

@@ -83,7 +83,11 @@ void PlayerNetwork::updateGameState(PlayerGameState gameState)
 
 void PlayerNetwork::notifyBidRejected(QString reason)
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "NOTIFY_BID_REJECTED";
+    txObj["BidRejectReason"] = reason;
+    txAll(txObj);
 }
 
 /**
@@ -93,7 +97,11 @@ void PlayerNetwork::notifyBidRejected(QString reason)
 
 void PlayerNetwork::notifyMoveRejected(QString reason)
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "NOTIFY_MOVE_REJECTED";
+    txObj["MoveRejectReason"] = reason;
+    txAll(txObj);
 }
 
 /**
@@ -104,7 +112,12 @@ void PlayerNetwork::notifyMoveRejected(QString reason)
 
 void PlayerNetwork::message(QString source, QString msg)
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "MESSAGE";
+    txObj["MsgSource"] = source;
+    txObj["MsgMessage"] = msg;
+    txAll(txObj);
 }
 
 /**
@@ -114,7 +127,11 @@ void PlayerNetwork::message(QString source, QString msg)
 
 void PlayerNetwork::gameTerminated(QString reason)
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "GAME_TERMINATED";
+    txObj["TerminationReason"] = reason;
+    txAll(txObj);
 }
 
 QVector<bool> PlayerNetwork::getUnitTest() const

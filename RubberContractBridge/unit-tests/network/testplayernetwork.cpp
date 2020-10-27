@@ -158,6 +158,25 @@ void testPlayerNetwork::testRepetitiveCommunication()
         checkAllServerSignals();
     }
 
+    // Send a large amount of data repetitavely
+    for (int i = 0; i < 50; i++){
+        // updateGameState
+        k = 2;
+
+        // Create Player game state
+        PlayerGameState originalPlayerGameState = generatePlayerGameState();
+
+        testPlayerNet[k]->updateGameState(originalPlayerGameState);
+        QVERIFY(spyClientUpdateGameState[k]->wait(100));
+        QCOMPARE(spyClientUpdateGameState[k]->count(), 1);
+        QCOMPARE(qvariant_cast<PlayerGameState>(spyClientUpdateGameState[k]->at(0).at(0)), originalPlayerGameState);
+        spyClientUpdateGameState[k]->clear();
+
+        checkAllCientSignals();
+        checkAllPlayerSignals();
+        checkAllServerSignals();
+    }
+
     // ClientNetwork to PlayerNetwork
 
 
@@ -195,6 +214,36 @@ void testPlayerNetwork::testCommunications()
     checkAllPlayerSignals();
     checkAllServerSignals();
 
+    // notifyBidRejected
+    k = 0;
+    QString rejectReason = "The bid was rejected because of this very long and ambigious reason. "
+                           "But just to use !@#$%^&*() and \"n\" and a \nnew line we should add 10X+9Y=5Z";
+    testPlayerNet[k]->notifyBidRejected(rejectReason);
+    QVERIFY(spyClientNotifyBidRejected[k]->wait(100));
+    QCOMPARE(spyClientNotifyBidRejected[k]->count(), 1);
+    QCOMPARE(spyClientNotifyBidRejected[k]->at(0).at(0).toString(), rejectReason);
+    spyClientNotifyBidRejected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // notifyMoveRejected
+    k = 0;
+
+    // Make reject reason unique by adding text
+    rejectReason += "Extra text";
+
+    testPlayerNet[k]->notifyMoveRejected(rejectReason);
+    QVERIFY(spyClientNotifyMoveRejected[k]->wait(100));
+    QCOMPARE(spyClientNotifyMoveRejected[k]->count(), 1);
+    QCOMPARE(spyClientNotifyMoveRejected[k]->at(0).at(0).toString(), rejectReason);
+    spyClientNotifyMoveRejected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
     // updateGameState
     k = 0;
 
@@ -211,8 +260,104 @@ void testPlayerNetwork::testCommunications()
     checkAllPlayerSignals();
     checkAllServerSignals();
 
+    // message
+    k = 0;
+
+    // Make reject reason unique by adding text
+    QString sourceName = playerNames[1];
+    QString messageContent = "This is a message sent from me.";
+
+    testPlayerNet[k]->message(sourceName, messageContent);
+    QVERIFY(spyClientMessageReceived[k]->wait(100));
+    QCOMPARE(spyClientMessageReceived[k]->count(), 1);
+    QCOMPARE(spyClientMessageReceived[k]->at(0).at(0).toString(), sourceName);
+    QCOMPARE(spyClientMessageReceived[k]->at(0).at(1).toString(), messageContent);
+    spyClientMessageReceived[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // gameTerminated
+    k = 0;
+    QString terminationReason = "The game 123 was terminated for no apparent reason. "
+                                "Just kidding, nothing was terminated, since this is just a test. "
+                                "How fast can I type very long reasons out?";
+
+    testPlayerNet[k]->gameTerminated(terminationReason);
+    QVERIFY(spyClientGameTerminated[k]->wait(100));
+    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
+    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), terminationReason);
+    spyClientGameTerminated[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
 
     // ClientNetwork to PlayerNetwork
+}
+
+/**
+ * Force a situation where a datastream error will occur.
+ * Then test if the correct signals was transmitted.
+ * Check if data can successfully be transmitted after a datastream error occured.
+ */
+
+void testPlayerNetwork::testErrors()
+{
+    int k = 0;
+
+    // gameTerminated
+    k = 0;
+    QString terminationReason = "The game 123 was terminated for no apparent reason. "
+                                "Just kidding, nothing was terminated, since this is just a test. "
+                                "How fast can I type very long reasons out?";
+
+    // Transmit too much data for the datastream to handel
+    for (int j = 0; j < 9; j++){
+        terminationReason += terminationReason;
+    }
+
+    testPlayerNet[k]->gameTerminated(terminationReason);
+    QVERIFY(spyClientGameTerminated[k]->wait(100));
+    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
+//    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), terminationReason);
+    spyClientGameTerminated[k]->clear();
+
+    // Catch errors on the Client side
+    QCOMPARE(spyClientError[k]->count(), 1);
+    QCOMPARE(spyClientError[k]->at(0).at(0).toString(), "Datastream read error occured. It is suggested to restart the game.");
+    spyClientError[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+
+    // Test to see if next transmission will work after an datastream error has occured
+    // gameTerminated
+    k = 0;
+    QString terminationReason2 = "The game 123 was terminated for no apparent reason. "
+                                "Just kidding, nothing was terminated, since this is just a test. "
+                                "How fast can I type very long reasons out?";
+
+    // Transmit just less than too much data for the datastream to handel
+    for (int j = 0; j < 8; j++){
+        terminationReason2 += terminationReason2;
+    }
+
+    testPlayerNet[k]->gameTerminated(terminationReason2);
+    QVERIFY(spyClientGameTerminated[k]->wait(100));
+    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
+    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), terminationReason2);
+    spyClientGameTerminated[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // TODO: Finish this test and also test from Client to PlayerNetwork
 }
 
 void testPlayerNetwork::cleanupTestCase()

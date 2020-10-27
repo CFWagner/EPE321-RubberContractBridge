@@ -45,8 +45,6 @@ signals:
     // errorMsg is empty except when status = 1, then the actual error will be displayed.
     // GUI is responsible for creating the messages regarding connection status. (genearl Info and warning signals will not be used for this.)
 
-//    void serverNotFound(QString reason);
-//    void generalInfo(QString infoMsg); // All information. (Should be displayed to the player.)
     void generalError(QString errorMsg); // All errors, except serverNotFound(). (Should be displayed to the player.)
     void notifyBidTurn();
     void notifyMoveTurn();
@@ -77,7 +75,6 @@ private:
     void rxUpdateGameState(QJsonObject gsObj);
     void rxMessage(QJsonObject msgObj);
     void rxGameTerminated(QJsonObject reasonObj);
-    void rxPingReceived();
 
     QString playerName;
     QString tempPlayerName;

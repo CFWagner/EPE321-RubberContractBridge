@@ -37,7 +37,6 @@ public:
 private slots:
     void rxAll();
     void socketError(QAbstractSocket::SocketError socError);
-//    void pingClient();
 
 signals:
 //    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)

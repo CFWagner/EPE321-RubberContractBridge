@@ -38,4 +38,6 @@ private:
     CardSet dummyHand; // Cards in the dummy's hand. Nullptr if the gamestate is BIDDING
 };
 
+Q_DECLARE_METATYPE(PlayerGameState);
+
 #endif // PLAYERGAMESTATE_H

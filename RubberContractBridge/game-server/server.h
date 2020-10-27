@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include "gameserver.h"
+#include "network/servernetwork.h"
 #include <QHostAddress>
 #include <QObject>
 
@@ -19,6 +20,7 @@ public slots:
     void serverPassword(QString passwordSent);
     void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
 private:
+    ServerNetwork serverNetwork;
     GameServer gameServer;
 };
 

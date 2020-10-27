@@ -7,6 +7,11 @@
 #include <QHostAddress>
 #include <QObject>
 
+#ifndef DECLARE_METATYPE_QHostAddress
+#define DECLARE_METATYPE_QHostAddress
+Q_DECLARE_METATYPE(QHostAddress);
+#endif // DECLARE_METATYPE_QHostAddress
+
 class testServerLogin : public QObject
 {
     Q_OBJECT

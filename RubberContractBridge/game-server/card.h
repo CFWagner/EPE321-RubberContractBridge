@@ -23,4 +23,6 @@ private:
     CardRank rank;
 };
 
+Q_DECLARE_METATYPE(Card);
+
 #endif // CARD_H

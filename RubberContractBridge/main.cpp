@@ -1,4 +1,3 @@
-#include "gui/entrywindow.h"
 #include <QApplication>
 #include "unit-tests/game-server/testservergamestate.h"
 

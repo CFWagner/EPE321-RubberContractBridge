@@ -4,10 +4,12 @@
 #include "gamestate.h"
 #include "player.h"
 #include "playergamestate.h"
+#include <QObject>
 
 // Represents the complete state of the game for all players at a given instance in time
-class ServerGameState: public GameState, QObject
+class ServerGameState: public QObject, public GameState
 {
+    Q_OBJECT
 public:
     explicit ServerGameState(QObject *parent = nullptr);
     void updateBidState(const Bid &bid);
@@ -22,7 +24,7 @@ public:
     const QMap<PlayerPosition, CardSet>& getPlayerHands() const;
     void setPlayerHands(const QMap<PlayerPosition, CardSet> &playerHands);
 signals:
-    void gameEventOccured(GameEvent gameEvent);
+    void gameEvent(GameEvent gameEvent);
 private:
     QMap<PlayerPosition, CardSet> playerHands; // List of cards in each players hand
     QMap<PlayerPosition, CardSet> playerHandsSnapshot; // Snapshot of cards in each players hand at start of deal

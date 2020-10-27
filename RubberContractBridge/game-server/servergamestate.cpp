@@ -27,12 +27,16 @@ ServerGameState::ServerGameState(QObject *parent) : QObject(parent)
             deck.addCard(card);
         }
     }
+
+    // Signal game state has been initialized
+    emit gameEvent(INITIALIZE);
 }
 
 // Starts the game by dealing all the cards to the players and selecting player for the first turn
 void ServerGameState::startGame()
 {
     nextDeal();
+    emit gameEvent(BID_START);
 }
 
 // Prepare game for next deal round
@@ -111,11 +115,17 @@ void ServerGameState::updateBidState(const Bid &bid)
     // Select player to left of most recent player to play for next turn
     playerTurn = PlayerPosition((playerTurn + 1) % 4);
 
+    // Signal that a player has made a bid
+    emit gameEvent(PLAYER_BID);
+
     // Check if bid has been made
     if(currentBid == nullptr){
         // Redeal cards if 4 passes have been made given no bid has been made
-        if(passCount == 4)
+        if(passCount == 4){
             nextDeal();
+            // Signal that the bidding has been restarted
+            emit gameEvent(BID_RESTART);
+        }
     }
     else{
         // Check if 3 passes have been made given a bid has been made
@@ -129,6 +139,9 @@ void ServerGameState::updateBidState(const Bid &bid)
             playerTurn = PlayerPosition((declarer + 1) % 4);
             handToPlay = playerTurn;
             nextTrick();
+            // Signal that the cardplay phase has started
+            emit gameEvent(PLAY_START);
+            emit gameEvent(TRICK_START);
         }
     }
 }
@@ -155,6 +168,9 @@ void ServerGameState::updatePlayState(const Card &card)
 
     // Check if trick is complete
     if(currentTrick->getCardCount() == 4){
+        // Signal that a player has played a card
+        emit gameEvent(PLAYER_MOVED);
+
         // Determine winner
         PlayerPosition winner = determineTrickWinner();
 
@@ -187,6 +203,11 @@ void ServerGameState::updatePlayState(const Card &card)
 
             // Initialise next deal
             nextDeal();
+
+            // Signal that a trick and play has been completed
+            emit gameEvent(TRICK_END);
+            emit gameEvent(PLAY_END);
+            emit gameEvent(BID_START);
             return;
         }
 
@@ -196,15 +217,25 @@ void ServerGameState::updatePlayState(const Card &card)
             playerTurn = declarer;
         else
             playerTurn = handToPlay;
+
+        // Signal that a trick has been completed
+        emit gameEvent(TRICK_END);
+
         nextTrick();
+
+        // Signal that next trick has started
+        emit gameEvent(TRICK_START);
     }
-    // Get next hand to play and player positoin
+    // Get next hand to play and player position
     else{
         handToPlay = PlayerPosition((handToPlay + 1) % 4);
         if(handToPlay == getDummy())
             playerTurn = declarer;
         else
             playerTurn = handToPlay;
+
+        // Signal that a player has played a card
+        emit gameEvent(PLAYER_MOVED);
     }
 }
 

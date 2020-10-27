@@ -1,8 +1,6 @@
 #ifndef CLIENTNETWORK_H
 #define CLIENTNETWORK_H
 
-// TODO: Test what happens when the server is closed but not the client. Is the client informed of that?
-
 #include <QObject>
 #include <QTcpSocket>
 #include <QDataStream>
@@ -20,7 +18,7 @@ class ClientNetwork : public QObject
 public:
     explicit ClientNetwork(QObject *parent = nullptr);
     ~ClientNetwork();
-    void abort();
+    void abort(); // Only used for testing.
 
     // Unit test data
     QVector<bool> getUnitTest();
@@ -53,10 +51,11 @@ signals:
     void loginResult(bool loginSuccessful, QString reason);
     void updateGameState(PlayerGameState gameState);
     void messageReceived(QString source, QString msg);
-    void serverDisconnected(); // Only used before a game has been started, all terminations during a game will happen through gameTerminated().
-    // If client lost connection to the server while in a game, the reason given with gameTerminated will be: "Client lost connection to the server.")
+    void serverDisconnected();
+    // Only used before a game has been started, all terminations during a game will happen through gameTerminated().
 
     void gameTerminated(QString reason); // This can be emmited anytime after a game has been started.
+    // If client lost connection to the server while in a game, the reason given with gameTerminated will be: "Client lost connection to the server.")
     // When received it means that the connection to the server has been lost or the server terminated the game.
     // The Client (and probably the server) must be RESTARTED, before attempting to connect again.
     // The GUI is responsible for ensuring that the client is RESTARTED. (Do not go back to login page.)
@@ -86,7 +85,6 @@ private:
     QDataStream in;
     qint64 idCounter;
     qint64 prevID;
-
 
     // Unit testing datastructures
     QVector<bool> bUnitTest;

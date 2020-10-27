@@ -854,12 +854,6 @@ void testClientNetwork::getPlayers()
     getPlayerSocket1->abort();
     QVERIFY(spyClientServerDisconnected1.wait(100));
     QVERIFY2(spyClientServerDisconnected1.count() == 1,"Server unexpectedly disconnected.");
-
-
-    // TODO: start a game and then disconnect the client (from the server side).
-    // Then test if the correct client emits gameTerminated.
-    // Repeat for the other client.
-
 }
 
 void testClientNetwork::cleanupTestCase()

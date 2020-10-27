@@ -13,12 +13,6 @@
 Q_DECLARE_METATYPE(QHostAddress); // To allow to test signals with this argument type
 #endif // DECLARE_METATYPE_QHostAddress
 
-// This might not be needed but is included in the Fortune Server example.
-//QT_BEGIN_NAMESPACE
-//class QTcpSocket;
-//class QTcpServer;
-//QT_END_NAMESPACE
-
 class ServerNetwork : public QObject
 {
     Q_OBJECT
@@ -29,7 +23,7 @@ public:
     QTcpSocket* getPlayerSoc(QString playerName);
     void setPassword(QString password); // Call before calling initServer.
     void initServer(QHostAddress ip, quint16 port);
-    void stopListening(); // Call this just befor the game starts.
+    void stopListening(); // Call this just before the game starts and after getting all the Player sockets.
 
     // Unit test data
     QVector<bool> getUnitTest();
@@ -51,17 +45,11 @@ signals:
     // definitively the port that is already in use.)
     // GUI is responsible for creating the messages regarding connection status. (General Info and Warning signals will not be used for this.)
 
-//    void generalInfo(QString infoMsg);
-    // All information, such as the port it connected to. (Should be displayed to the administrator.)
-
     void generalError(QString errorMsg);
     // All errors. (Should be displayed to the administrator.)
 
     void playerJoined(QString playerName);
-    void playerDisconnected(QString playerName); // Disconnect from this signal before deleting the serverNetwork class.
-    // This is to avoid many unused clients from signaling you when they are deleted.
-    // Disconnect from this signal before the ServerNetwork class gets deleted, since the palyerDisconnected signal will be emitted
-    // for all logged in clients.
+    void playerDisconnected(QString playerName);
 
 private:
     QString validateLogin(QString playerName, QString password);

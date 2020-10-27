@@ -50,8 +50,7 @@ ClientNetwork::~ClientNetwork()
 
 /**
  * Used for testing the abort function.
- * Do not use for anything else than food.
- * At any time.
+ * Do not use for anything else than testing.
  */
 
 void ClientNetwork::abort()

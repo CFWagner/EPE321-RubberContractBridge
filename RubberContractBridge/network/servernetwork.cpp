@@ -35,7 +35,7 @@ ServerNetwork::~ServerNetwork()
     }
 }
 
-/*!
+/**
  * \brief Return the socket that corresponds to the playerName.
  * Return a nullptr if playerName cannot be found.
  * Player is removed from the ServerNetwork class, signals connecting the clientSocekt with functions in ServerNetwork is disconnected.
@@ -72,7 +72,7 @@ QTcpSocket *ServerNetwork::getPlayerSoc(QString playerName)
     return tempSocket;
 }
 
-/*!
+/**
  * \brief Set the password of the server. It is the responsibility of the GUI, to validate the strength of the password.
  * No checking is done in the ServerNetwork class.
  * \param password: Validated password. (QString)
@@ -84,7 +84,7 @@ void ServerNetwork::setPassword(QString password)
     this->password = password;
 }
 
-/*!
+/**
  * Open a port on the given ip address.
  * Start listening for clients that want to connect.
  * The IP address can only be set once after the program has started.
@@ -106,7 +106,6 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
     if (tcpServer != nullptr){
         emit connectionResult(3, ip, port, "");
         return;
-
     }
 
     // Test if ip address is valid.
@@ -149,7 +148,7 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 
 }
 
-/*!
+/**
  * \brief Stop listening for new client connections.
  * status = 4 will be returned to for any new client requesting login after stopListening has been called.
  */
@@ -164,7 +163,7 @@ QVector<bool> ServerNetwork::getUnitTest()
     return bUnitTest;
 }
 
-/*!
+/**
  * Accept new client connections.
  * Add client to clientSocTemp.
  * Make signal slot connections.
@@ -192,7 +191,7 @@ void ServerNetwork::connectClient()
     qInfo() << "client added to clientSocTemp";
 }
 
-/*!
+/**
  * Validate the password and username.
  * If valid, add username and client socket.
  * Signal the GUI that a client has logged in.
@@ -330,11 +329,12 @@ void ServerNetwork::validateClient()
     }
 }
 
-/*!
+/**
  * \brief Handel the process when a client disconnects.
  * When a client disconnects, check if the client logged in.
  * If logged in, remove username and client socket.
  * Signal the GUI to also remove the client.
+ * GUI will not be signaled after stopListening has been called.
  */
 
 void ServerNetwork::disconnectClient()
@@ -361,7 +361,6 @@ void ServerNetwork::disconnectClient()
         // The client was logged in
         // Remove from clientSoc and playerNames
         // Inform the serverGUI that the player disconnected.
-        // TODO: This signal emit can cause problems if all emitted when disconnecting, so check this out.
         // Add description in header files.
         QString tempPlayerName = playerNames.at(clientSoc.indexOf(tempSocket));
         playerNames.removeAll(tempPlayerName);
@@ -369,14 +368,15 @@ void ServerNetwork::disconnectClient()
 
         qInfo() << "Disconnect: Removed from clientSoc. The player's name is: " + tempPlayerName;
 
-        emit playerDisconnected(tempPlayerName);
+        // Only emit this before the game has started
+        if (bAllowNewClientConnection) emit playerDisconnected(tempPlayerName);
     }
 
     qInfo() << "After dissconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
 
 }
 
-/*!
+/**
  * Validate the password and playerName.
  * If both are valid, return an empty string.
  * Else return the reason for faliure.

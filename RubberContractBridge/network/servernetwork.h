@@ -7,7 +7,11 @@
 #include <QtNetwork>
 #include <QDebug>
 #include <QDataStream>
+
+#ifndef DECLARE_METATYPE_QHostAddress
+#define DECLARE_METATYPE_QHostAddress
 Q_DECLARE_METATYPE(QHostAddress); // To allow to test signals with this argument type
+#endif // DECLARE_METATYPE_QHostAddress
 
 // This might not be needed but is included in the Fortune Server example.
 //QT_BEGIN_NAMESPACE

@@ -1,6 +1,6 @@
 #include <QApplication>
-#include "unit-tests/game-server/testplayergamestate.h"
-#include "unit-tests/game-server/testservergamestate.h"
+#include "unit-tests/game-server/testgameserver.h"
+#include "unit-tests/game-server/testserver.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 //        entryWindow->show();
 
 //        return rcbApplication.exec();
-    TestPlayerGameState testPlayerGameState;
-    QTest::qExec(&testPlayerGameState);
-    TestServerGameState testServerGameState;
-    QTest::qExec(&testServerGameState);
+    TestGameServer testServer;
+    QTest::qExec(&testServer);
+    TestGameServer testGameServer;
+    QTest::qExec(&testGameServer);
 }

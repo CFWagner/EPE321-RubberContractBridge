@@ -514,6 +514,41 @@ void testai::testingGenerator()
           };
           QVERIFY(isInExpectNormSTD);
 
+//Last test checks if all values are indeed between [0,100]
+//Thus setup new test data and loop through it until exception set flag to false
+      bool isValid = true;
+      int total = 0;
+      //generating 10 000 numbers between 0 and 100
+      int size = 10000;
+      float lower=0.0;
+      float upper= 100.0;
+      float dataSet[size];
+      //just to make sure a seed that hasn't been used yet is used
+      seed = 10001;
+      for (int i=0;i<size;i++)
+      {
+          dataSet[i]=rangeGen(lower,upper);
+          if ((dataSet[i]<0) || (dataSet[i]>100))
+          {
+              isValid = false;
+          }
+          if (dataSet[i]<20)
+          {
+              total++;
+          }
+      }
+      qDebug()<<"Are values in interval [0,100]";
+      QVERIFY(isValid);
+      float percentage = (static_cast<float>(total)/static_cast<float>(size)) *100.0;
+      //The aim is for events to have say 20% chance every number has equal chance so assumption is
+      // if (x<20) should happen roughly 20% of the time. Test this within confidence of 90%
+      qDebug()<<"Is assumption in line 544 correct";
+      isValid = false;
+      if ((20*0.9<=percentage) && (20*1.10>=percentage))
+          {
+          isValid = true;
+      }
+      QVERIFY(isValid);
 
 
 }

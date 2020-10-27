@@ -69,6 +69,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid(), nullptr);
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     serverState.updateBidState(Bid(EAST, PASS));
     QCOMPARE(serverState.getPhase(), BIDDING);
@@ -76,6 +79,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid(), nullptr);
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), SOUTH);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     serverState.updateBidState(Bid(SOUTH, PASS));
     QCOMPARE(serverState.getPhase(), BIDDING);
@@ -83,6 +89,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid(), nullptr);
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     serverState.updateBidState(Bid(WEST, PASS));
     QCOMPARE(serverState.getPhase(), BIDDING);
@@ -91,6 +100,11 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
     QCOMPARE(serverState.getDealer(), EAST);
+    QCOMPARE(spyGameEvent.count(), 2);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == BID_RESTART);
 
     // Test attributes after making a valid bid that isn't a pass
     Bid bid1(EAST, DIAMONDS, 2);
@@ -101,6 +115,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid()->getBidder() == bid1.getBidder(), true);
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), SOUTH);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     // Test bid validation when one valid bid has been made
     QCOMPARE(serverState.isBidValid(Bid(SOUTH, PASS)), true);
@@ -122,6 +139,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid()->getBidder(), EAST);
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     // Test bid validation when one valid double bid has been made
     QCOMPARE(serverState.isBidValid(Bid(WEST, PASS)), true);
@@ -143,6 +163,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid()->getBidder(), EAST);
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     // Test bid validation when one valid redouble bid has been made
     QCOMPARE(serverState.isBidValid(Bid(NORTH, PASS)), true);
@@ -164,6 +187,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid()->getBidder(), bid1.getBidder());
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     // Test attributes after 2 passes with a valid current bid
     serverState.updateBidState(Bid(EAST, PASS));
@@ -174,6 +200,11 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getCurrentBid()->getBidder(), bid1.getBidder());
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
+    QCOMPARE(spyGameEvent.count(), 2);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
     // Test attributes after 3 passes with a valid current bid
     serverState.updateBidState(Bid(WEST, PASS));
@@ -190,6 +221,15 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getDummy(), SOUTH);
     QCOMPARE(serverState.getHandToPlay(), EAST);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
+    QCOMPARE(spyGameEvent.count(), 4);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == BID_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAY_START);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Manually assign player hands
     CardSet northHand;
@@ -271,6 +311,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     QCOMPARE(serverState.getPlayerHands().value(EAST).containsCard(Card(DIAMONDS, EIGHT)), false);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
 
     // Test card validation when cards have been played
     QCOMPARE(serverState.isCardValid(Card(HEARTS, THREE)), false);  // Wrong suit, SOUTH has correct suit
@@ -283,6 +326,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getHandToPlay(), WEST);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
     QCOMPARE(serverState.getPlayerHands().value(SOUTH).containsCard(Card(DIAMONDS, TWO)), false);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
 
     // Test card validation when cards have been played
     QCOMPARE(serverState.isCardValid(Card(SPADES, TWO)), true);  // Wrong suit, WEST doesn't have correct suit
@@ -294,6 +340,9 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     QCOMPARE(serverState.getPlayerHands().value(WEST).containsCard(Card(SPADES, TWO)), false);
+    QCOMPARE(spyGameEvent.count(), 1);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
 
     // Test attributes after playing 4th card to end trick
     serverState.updatePlayState(Card(DIAMONDS, NINE));
@@ -314,6 +363,13 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 0);
     QCOMPARE(serverState.getTricksWon(N_S), 1);
     QCOMPARE(serverState.getTricksWon(E_W), 0);
+    QCOMPARE(spyGameEvent.count(), 3);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 2nd trick where WEST wins with trump card
     serverState.updatePlayState(Card(DIAMONDS, QUEEN));
@@ -339,6 +395,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 1);
     QCOMPARE(serverState.getTricksWon(N_S), 1);
     QCOMPARE(serverState.getTricksWon(E_W), 1);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 3rd trick
     serverState.updatePlayState(Card(SPADES, QUEEN));
@@ -359,6 +428,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 1);
     QCOMPARE(serverState.getTricksWon(N_S), 1);
     QCOMPARE(serverState.getTricksWon(E_W), 2);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 4th trick
     serverState.updatePlayState(Card(HEARTS, KING));
@@ -379,6 +461,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 1);
     QCOMPARE(serverState.getTricksWon(N_S), 1);
     QCOMPARE(serverState.getTricksWon(E_W), 3);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 5th trick
     serverState.updatePlayState(Card(CLUBS, QUEEN));
@@ -399,6 +494,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 1);
     QCOMPARE(serverState.getTricksWon(N_S), 2);
     QCOMPARE(serverState.getTricksWon(E_W), 3);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 6th trick
     serverState.updatePlayState(Card(HEARTS, NINE));
@@ -419,6 +527,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 1);
     QCOMPARE(serverState.getTricksWon(N_S), 3);
     QCOMPARE(serverState.getTricksWon(E_W), 3);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 7th trick
     serverState.updatePlayState(Card(HEARTS, ACE));
@@ -437,6 +558,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 1);
     QCOMPARE(serverState.getTricksWon(N_S), 4);
     QCOMPARE(serverState.getTricksWon(E_W), 3);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 8th trick
     serverState.updatePlayState(Card(DIAMONDS, KING));
@@ -455,6 +589,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 2);
     QCOMPARE(serverState.getTricksWon(N_S), 4);
     QCOMPARE(serverState.getTricksWon(E_W), 4);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 9th trick
     serverState.updatePlayState(Card(SPADES, ACE));
@@ -475,6 +622,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 3);
     QCOMPARE(serverState.getTricksWon(N_S), 4);
     QCOMPARE(serverState.getTricksWon(E_W), 5);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 10th trick
     serverState.updatePlayState(Card(SPADES, TEN));
@@ -495,6 +655,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 3);
     QCOMPARE(serverState.getTricksWon(N_S), 4);
     QCOMPARE(serverState.getTricksWon(E_W), 6);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 11th trick
     serverState.updatePlayState(Card(DIAMONDS, ACE));
@@ -515,6 +688,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 3);
     QCOMPARE(serverState.getTricksWon(N_S), 5);
     QCOMPARE(serverState.getTricksWon(E_W), 6);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 12th trick
     serverState.updatePlayState(Card(CLUBS, FIVE));
@@ -535,6 +721,19 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 3);
     QCOMPARE(serverState.getTricksWon(N_S), 6);
     QCOMPARE(serverState.getTricksWon(E_W), 6);
+    QCOMPARE(spyGameEvent.count(), 6);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_START);
 
     // Test attributes after playing 13th trick
     serverState.updatePlayState(Card(CLUBS, THREE));
@@ -555,6 +754,21 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 3);
     QCOMPARE(serverState.getTricksWon(N_S), 7);
     QCOMPARE(serverState.getTricksWon(E_W), 6);
+    QCOMPARE(spyGameEvent.count(), 7);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == TRICK_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == PLAY_END);
+    arguments = spyGameEvent.takeFirst();
+    QVERIFY(arguments.at(0).toInt() == BID_START);
 
     // Check score after playing 13th trick
     Score score = serverState.getScore();

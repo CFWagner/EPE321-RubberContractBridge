@@ -140,6 +140,7 @@ void ServerGameState::updateBidState(const Bid &bid)
             handToPlay = playerTurn;
             nextTrick();
             // Signal that the cardplay phase has started
+            emit gameEvent(BID_END);
             emit gameEvent(PLAY_START);
             emit gameEvent(TRICK_START);
         }

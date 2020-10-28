@@ -7,7 +7,9 @@
 #include "game-server/card.h"
 #include "game-server/playergamestate.h"
 
-
+#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <QObject>
 
 class AI : public Player
@@ -27,6 +29,8 @@ public:
     CardSet getHand();
     Bid getBidContract();
     Bid getBidCurrent();
+    CardSet getDeck();
+    uint32_t random(uint32_t nSeed);
     //setters for testing
     void setCurrentBid(Bid bidding);
     void setContractBid(Bid contracter);
@@ -34,16 +38,20 @@ public:
     Card guessMove();
     Bid guessBid();
     void initialBidSet();
+    void generatedeck();
+    void removecards(CardSet handy);
+    void generatebidlist();
+    void removebids();
     //move variables here now just for testing
     CardSet myhand;
     CardSet canPlay; //available legal cards to play if size = 0 then try to play trump or higher suit as top card
+    //these variables are for recovery testing, replace when signals are available
+    Card cardRecovered;
+    Bid bidRecovered;
+    QVector<Bid> bidlist;
 private:
-
     void generateAvailableCards();
-    void removecards(CardSet handy);
-    void removebids();
-    void generatedeck();
-    void generatebidlist();
+    void generateDeckOptions();
     PlayerGameState currentState;
     CardSuit trump;
     CardSet dummyhand;
@@ -53,8 +61,8 @@ private:
     PlayerPosition dummypos;
     CardSet dummyPlay;
     Card cardPlayed;
+    Bid bidMade;
     CardSet deck;
-    QVector<Bid> bidlist;
 
 
 

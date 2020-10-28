@@ -29,6 +29,7 @@ void AI::notifyMoveTurn()
     Card maker;
     maker=guessMove();
     //for now no slots or signals since no integration
+    cardRecovered = maker;
 }
 void AI::updateGameState(PlayerGameState gameState)
 {
@@ -36,13 +37,60 @@ void AI::updateGameState(PlayerGameState gameState)
 }
 void AI::notifyBidRejected(QString reason)
 {
-    //assuming rejects so redo bid move?
-
+    //assuming rejects so redo bid move
+    //quite hard to recover this state
+    //thus pick random number between 0 and 10 in the list of bid if possible
+    //pop the last bid from bid list
+    generatebidlist();
+    removebids();
+    //if I fail when I call a pass then I dunno what to do
+    //Is that possible?
+    if (bidMade.getCall()!=PASS)
+    {
+        for (int i = 0 ;i<bidlist.length();i++)
+        {
+            if (bidMade==bidlist.value(i))
+            {
+                bidlist.remove(i);
+            }
+        }
+    }
+    int seed = time(0);
+    int number;
+    if (bidlist.length()<=10)
+    {
+        number = random(seed) % bidlist.length();
+    }
+    else
+    {
+        number = random(seed) % 10;
+    }
+    Bid made;
+    made = bidlist.value(number);
+    //Call the signal here
+    bidRecovered = made;
 }
 void AI::notifyMoveRejected(QString reason)
 {
     //assuming rejects so redo move?
     //shouldn't ever happen if does spot
+    //When move is made that move is saved, initial hand is generated from gamestate thus that should still stay the same after
+    //this function is called. All that needs doing is removing card that caused the error from the hand and making
+    // a new suggested move
+        generateDeckOptions();
+        generateAvailableCards();
+    for (int i=0;i<canPlay.getCardCount();i++)
+    {
+        if (canPlay.getCard(i)==cardPlayed)
+        {
+            canPlay.removeCard(i);
+        }
+    }
+    int size = canPlay.getCardCount();
+    int seed = time(0);
+    int number = random(seed)%size;
+    cardRecovered = canPlay.getCard(number);
+    //put signal here
 }
 void AI::gameTerminated(QString reason)
 {
@@ -56,7 +104,7 @@ void AI::generatedeck()
     deck=CardSet();
     for ( int fooInt = CLUBS ; fooInt != NONE; fooInt++ )
     {
-        for (int holder = ACE; holder!= KING; holder++)
+        for (int holder = TWO; holder!= ACE; holder++)
         {
             CardSuit foo = static_cast<CardSuit>(fooInt);
             CardRank fool = static_cast<CardRank>(holder);
@@ -69,7 +117,7 @@ void AI::generatedeck()
     for ( int fooInt = CLUBS ; fooInt != NONE; fooInt++ )
     {
        CardSuit foo = static_cast<CardSuit>(fooInt);
-       Card dummy = Card(foo,KING);
+       Card dummy = Card(foo,ACE);
        deck.addCard(dummy);
     }
 
@@ -77,11 +125,13 @@ void AI::generatedeck()
 }
 void AI::generatebidlist()
 {
+    //Remember to always reset the bidlist upon new generation
     //does as the name implies. During initial main set prunes selection based upon what was played previously
     //this is used to try and find possible bids to be pulled from
-    for (int i=1 ; i<7 ; i++)
+    bidlist.clear();
+    for (int i=1 ; i<=7 ; i++)
     {
-        for ( int fooInt = CLUBS ; fooInt != NONE; fooInt++ )
+        for ( int fooInt = CLUBS ; fooInt < NONE; fooInt++ )
         {
             CardSuit foo = static_cast<CardSuit>(fooInt);
             Bid dummy = Bid(currentState.getPlayerTurn(),foo,i);
@@ -95,15 +145,17 @@ void AI::generatebidlist()
 void AI::removebids()
 {
     currentbid = *currentState.getCurrentBid();
+    label:
     for (int i=0;i<bidlist.size();i++)
     {
-        if ((bidlist[i].getTricksAbove()<=currentbid.getTricksAbove()) && (bidlist[i].getTrumpSuit()<= currentbid.getTrumpSuit() ))
+        if ((currentbid.getTricksAbove()*10+currentbid.getTrumpSuit())>=(bidlist.value(i).getTricksAbove()*10+bidlist.value(i).getTrumpSuit()))
         {
-            bidlist.erase(bidlist.begin()+i);
+            bidlist.remove(i);
+            goto label;
         }
     }
 }
-//removes impozsible cards from pool
+//removes impossible cards from pool
 void AI::removecards(CardSet handy)
 {
     for (int i = 0;i< handy.getCardCount();i++)
@@ -113,6 +165,49 @@ void AI::removecards(CardSet handy)
             if (handy.getCard(i)==deck.getCard(j))
             {
                 deck.removeCard(j);
+            }
+        }
+    }
+}
+
+//Generates all possible cards that might be part of opponents hand that can be played
+void AI::generateDeckOptions()
+{
+    generatedeck();
+    removecards(myhand);
+    if (dummyhand.getCardCount()!=0)
+    {
+        removecards(dummyhand);
+    }
+    if (currentState.getTricks().length()!=0)
+    {
+        for (int i=0;i<currentState.getTricks().length();i++)
+        {
+            if (currentState.getTricks()[i].getCardCount()!=0)
+                removecards(currentState.getTricks()[i]);
+        }
+    }
+    //first check if trump cards are still in circulation
+    int amount = 0;
+    if (trump!=NONE)
+    {
+        for (int i = 0;i<deck.getCardCount();i++)
+        {
+            if (deck.getCard(i).getSuit()!=trump)
+            {
+                amount++;
+            }
+        }
+    }
+    //remove all non trump suits if trump exists
+    // also only if a trump is in circulation do we care about this
+    if ((trump!=NONE) && (amount!=deck.getCardCount()))
+    {
+        for (int i = 0;i<deck.getCardCount();i++)
+        {
+            if (deck.getCard(i).getSuit()!=trump)
+            {
+                deck.removeCard(i);
             }
         }
     }
@@ -344,15 +439,40 @@ Card AI::guessMove()
                  }
                  else
                  {
-                     //I will win and let dummy toss lowest
-                     suggestion=canPlay.getCard(canPlay.getCardCount()-1);
+                     if (dummyPlay.getCardCount()==0)
+                     {
+                         //can't see dummy yet play lowest hope dummy can do it
+                         suggestion = canPlay.getCard(0);
+                     }
+                     else
+                     {//I will win and let dummy toss lowest
+                     suggestion=canPlay.getCard(canPlay.getCardCount()-1);}
 
                  }
          }
          case 1:
          {
-             //I am first defender no idea what is dummy yet try starve out cards? leave for second defender to win?
-             suggestion=canPlay.getCard(0);
+             //I am first defender check if dummy is visible
+            if (dummyPlay.getCardCount()==0)
+            {
+                //I can't see dummy so try to play low and see what happens
+                suggestion=canPlay.getCard(0);
+            }
+            else
+            {
+                //I can see the dummy if the dummy has a high card toss low
+                if (canPlay.getCard(canPlay.getCardCount()-1)<dummyPlay.getCard(dummyPlay.getCardCount()-1))
+                {
+                    suggestion=canPlay.getCard(0);
+
+                }
+                else
+                {
+                    //I have a high card not sure what my friend has. RNG will help at and so pick highest
+                    suggestion = canPlay.getCard(canPlay.getCardCount()-1);
+                }
+            }
+
 
          }
          case 2:
@@ -361,7 +481,7 @@ Card AI::guessMove()
              if (canPlay.getCard(canPlay.getCardCount()-1)<currentTricks.getCard(0))
              {
 
-                 //My first player played a high card high card so toss lowest
+                 //My first player played a high card so toss lowest
                  suggestion=canPlay.getCard(0);
 
              }
@@ -398,8 +518,80 @@ Card AI::guessMove()
          }
 
     }
-    cardPlayed=suggestion;
-   return suggestion;
+    generateDeckOptions();
+    //Check how many higher cards are in circulation than currently selected
+    int total = 0;
+    for (int i = 0;i<deck.getCardCount();i++)
+    {
+        if (suggestion<deck.getCard(i))
+        {
+            total++;
+        }
+    }
+    if (total>0)
+    {
+        //there are higher cards
+        //first find position of the card
+        int position = 0;
+        for (int i=0;i<canPlay.getCardCount();i++)
+        {
+            if (canPlay.getCard(i)==suggestion)
+            {
+                position=i;
+            }
+        }
+        if (position==canPlay.getCardCount()-1)
+        {
+            //playing best card, maybe not good idea so in interval [0,position)
+            //generate a number and play that 20% of the time
+            bool flag = false;
+            int seed = time(0);
+            flag = random(seed) % 100 < 20;
+            if (flag)
+            {
+                int seeder = time(0);
+                int newpos=random(seeder) % 100*position;
+                newpos = newpos/100;
+                suggestion = canPlay.getCard(newpos);
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+            else
+            {
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+        }
+        else
+        {
+            //Do the same for the top just a smaller chance of occuring
+            bool flag = false;
+            int seed = time(0);
+            flag = random(seed) % 100 < 10;
+            if (flag)
+            {
+                int newpos=random(time(0)) % 100*position;
+                newpos = newpos/100;
+                suggestion = canPlay.getCard(newpos);
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+            else
+            {
+                cardPlayed=suggestion;
+               return suggestion;
+            }
+
+        }
+
+    }
+    else
+    {
+        //playing highest card
+        cardPlayed=suggestion;
+       return suggestion;
+    }
+
 
 }
 Bid AI::guessBid()
@@ -598,10 +790,28 @@ Bid AI::guessBid()
     }
     if (suggestion.getTricksAbove()>0)
     {
+        //here the random number generator will be used to see if the AI will double or not
+        int total = highest+second;
+        //first just check if this isn't stupid
+        if (total>60)
+        {
+            bool bIsDouble = false;
+            //creates a unique seed based upon the highest and lowest values
+            int seed = highest << 16 | second;
+            //if the number generated is below 32 then call double
+            bIsDouble = random(seed) % 256 < 32;
+            if (bIsDouble)
+            {
+                suggestion.setCall(DOUBLE_BID);
+            }
+
+        }
+        bidMade = suggestion;
         return suggestion;
     }
     else
     {
+        bidMade = suggestion;
         return idea;
     }
 
@@ -632,4 +842,23 @@ Bid AI::getBidContract()
 Bid AI::getBidCurrent()
 {
     return currentbid;
+}
+
+CardSet AI::getDeck()
+{
+    return deck;
+}
+
+//To add some flair to the ai, uses the lehmer 32 random number generator to make it possible that the AI
+// might make a "mistake"
+uint32_t AI::random(uint32_t nSeed)
+{
+    nSeed += 0xe120fc15;
+    uint64_t tmp;
+    tmp = (uint64_t)nSeed * 0x4a39b70d;
+    uint32_t m1 = (tmp >> 32) ^ tmp;
+    tmp = (uint64_t)m1 * 0x12fad5c9;
+    uint32_t m2 = (tmp >> 32) ^ tmp;
+    return m2;
+
 }

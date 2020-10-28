@@ -7,6 +7,7 @@ BidCardsSelected::BidCardsSelected(BidCall calls,QWidget *parent) : QLabel(paren
 
 BidCardsSelected::BidCardsSelected(CardSuit suit,int bidAmount,QWidget *parent) : QLabel(parent)
 {
+    this->calls = BID;
     this->suit = suit;
     this->bidAmount = bidAmount;
 }
@@ -31,6 +32,7 @@ BidCall BidCardsSelected::getBidCall()
     return calls;
 }
 
+//Move the cards up and down
 void BidCardsSelected::enterEvent(QEvent *)
 {
     this->move(this->x(),this->y()-10);

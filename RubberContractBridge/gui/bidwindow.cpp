@@ -31,8 +31,10 @@ void BidWindow::setupWindow()
     this->setWindowTitle ("Rubber Contract Bridge Bid");
 }
 
+// This function is generic and is used in all windows.
 void BidWindow::staticGUIElements()
 {
+    // The Background as well as the CallBid cards are created here.
     QPixmap arrowPix(":/resources/guiResources/bid/arrows.png");
     ui->label->setPixmap(arrowPix);
     QPixmap XP(":/resources/guiResources/bid/X.png");
@@ -41,12 +43,15 @@ void BidWindow::staticGUIElements()
     BidCardsSelected *X = new BidCardsSelected(DOUBLE_BID,this);
     X->setPixmap(XP);
     X->setGeometry(1200,500,101,61);
+    connect(X,&BidCardsSelected::sendBidPressed,this,&BidWindow::bidPressed);
     BidCardsSelected *XX = new BidCardsSelected(REDOUBLE_BID,this);
     XX->setPixmap(XXP);
     XX->setGeometry(1350,500,101,61);
+    connect(XX,&BidCardsSelected::sendBidPressed,this,&BidWindow::bidPressed);
     BidCardsSelected *passB = new BidCardsSelected(PASS,this);
     passB->setPixmap(passP);
     passB->setGeometry(1275,400,101,61);
+    connect(passB,&BidCardsSelected::sendBidPressed,this,&BidWindow::bidPressed);
     ui->button_exit->setIcon(QIcon(":/resources/guiResources/buttons/exit_button.png"));
     ui->you->setText("NORTH");
     ui->right->setText("WEST");
@@ -54,19 +59,19 @@ void BidWindow::staticGUIElements()
     ui->top->setText("SOUTH");
 }
 
-
-
-
-
+// Close the game using the button.
 void BidWindow::on_button_exit_clicked()
 {
     this->close();
 }
 
+// The clientNetwork sends the new game state to the user, to
+// update the gui.
 void BidWindow::getUpdateGameState(PlayerGameState player)
 {
     this->player = player;
     ui->you->setText(name);
+    //Check if it is your turn
     if(name == player.getPlayerName(player.getPlayerTurn()))
     {
         canMakeMove = true;
@@ -78,9 +83,11 @@ void BidWindow::getUpdateGameState(PlayerGameState player)
 
 }
 
+// The bids are removed as the invalid bids fall away.
 void BidWindow::updateBidDeck()
 {
     int counter = 0;
+    // Remove the first lines, then remove the specified suits.
     if (player.getContractBid()->getTricksAbove() == 1)
     {
         for(int i = 0; i < player.getContractBid()->getTrumpSuit();i++)
@@ -107,17 +114,19 @@ void BidWindow::updateBidDeck()
     bidCards[(player.getContractBid()->getTricksAbove()-1)+player.getContractBid()->getTrumpSuit()*7]->setGeometry(10,10,61,101);
 }
 
+// The bid has been selected and will then be sent to the
+// clientNetwork.
 void BidWindow::bidPressed(BidCardsSelected *bidReceived)
 {
     if(canMakeMove && bidReceived->pos() != QPoint(10,10))
     {
-//            Bid bidMade(player.getPlayerTurn(),bidReceived->getBidCall());
-            Bid bidMade(player.getPlayerTurn(),bidReceived->getSuit(),bidReceived->getValue());
+        Bid bidMade(player.getPlayerTurn(),bidReceived->getSuit(),bidReceived->getValue());
         emit txBidSelected(bidMade);
     }
 }
 
-
+// The cards are created and displayed here.
+// The bidCards index is used to create the assets using code and not hard coded.
 void BidWindow::setupBidTable()
 {
     QString imageName = "background-image: url(:/resources/guiResources/bid/";

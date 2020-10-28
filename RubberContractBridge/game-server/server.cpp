@@ -7,13 +7,9 @@ Server::Server(QObject *parent) : QObject(parent)
 {
     // Initialise server network
     serverNetwork = new ServerNetwork(parent, "BOT");
-
-    // Initialise game server
-    gameServer = new GameServer();
-
-    // Initialise signal and slot connections
 }
 
+// Destructor
 Server::~Server()
 {
     delete serverNetwork;
@@ -26,17 +22,38 @@ const ServerNetwork& Server::getServerNetwork() const
     return *serverNetwork;
 }
 
-// Slot for when an event occurs in the game server
-void Server::gameEvent(GameEvent event)
+// Getter for server game state
+const ServerGameState& Server::getServerGameState() const
 {
-
+    return *gameServer->getState();
 }
 
+// Gettter for game server
+const GameServer& Server::getGameServer() const
+{
+    return *gameServer;
+}
+
+// Setter for the number of rubbers to be played during the game
+void Server::setMaxRubbers(qint32 maxRubbers)
+{
+    this->maxRubbers = maxRubbers;
+}
+
+// Getter for the number of rubbers to be played during the game
+qint32 Server::getMaxRubbers() const
+{
+    return maxRubbers;
+}
 
 // Slot for when the players to play the game are selected and the game is started in the server lobby
 // Player names are ordered NORTH, SOUTH, EAST, WEST in the playerNames vector
 void Server::playersSelected(QVector<QString> playerNames)
 {
+    // Initialise game server
+    delete gameServer;
+    gameServer = new GameServer();
+
     // Create players and add to game server
     for(qint8 i = 0; i < playerNames.length(); ++ i){
         // Get player name and position
@@ -68,21 +85,18 @@ void Server::playersSelected(QVector<QString> playerNames)
         // Create human player
         else{
             QTcpSocket* playerSocket = serverNetwork->getPlayerSoc(playerName);
-            player = new PlayerNetwork(nullptr, playerName, playerSocket);
+            player = new PlayerNetwork(this, playerName, playerSocket);
             player->setPosition(position);
         }
-
+        // Add player to match before match begins
         gameServer->addPlayer(player);
     }
 
-    //
-    gameServer->initializeGame();
-}
+    // Stop listening for incoming connections
+    serverNetwork->stopListening();
 
-// Slot for when a player disconnects from the server
-void Server::playerDisconnected()
-{
-
+    // Run the match for specified number of rubbers
+    gameServer->executeMatch(maxRubbers);
 }
 
 // Slot for when the server password is selected in the server login menu

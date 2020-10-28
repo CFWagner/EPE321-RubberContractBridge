@@ -23,8 +23,9 @@ PlayerGameState::PlayerGameState(GamePhase phase, const Bid* currentBid, const B
         this->contractBid = nullptr;
     else
         this->contractBid = new Bid(*contractBid);
+    this->rubberNumber = 1;
     this->gameNumber = gameNumber;
-    this->dealNumber =dealNumber;
+    this->dealNumber = dealNumber;
     this->trickNumber = trickNumber;
     this->tricks = tricks;
     this->tricksWon[NORTH] = tricksWon[NORTH];
@@ -58,6 +59,7 @@ PlayerGameState::PlayerGameState(const GameState &gameState, GameEvent gameEvent
         contractBid = nullptr;
     else
         contractBid = new Bid(*gameState.getContractBid());
+    rubberNumber = gameState.getRubberNumber();
     gameNumber = gameState.getGameNumber();
     dealNumber = gameState.getDealNumber();
     trickNumber = gameState.getTrickNumber();
@@ -113,6 +115,7 @@ void PlayerGameState::read(const QJsonObject &json)
 {
     // Read GameState non-list non-object attributes from JSON object
     phase = GamePhase(json["phase"].toInt());
+    rubberNumber = json["rubberNumber"].toInt();
     gameNumber = json["gameNumber"].toInt();
     dealNumber = json["dealNumber"].toInt();
     trickNumber = json["trickNumber"].toInt();
@@ -191,6 +194,7 @@ void PlayerGameState::write(QJsonObject &json) const
 {
     // Add GameState non-list non-object attributes to JSON object
     json["phase"] = phase;
+    json["rubberNumber"] = rubberNumber;
     json["gameNumber"] = gameNumber;
     json["dealNumber"] = dealNumber;
     json["trickNumber"] = trickNumber;
@@ -289,6 +293,7 @@ bool PlayerGameState::operator ==(const PlayerGameState& playerGameState) const
         return false;
 
     return phase == playerGameState.phase &&
+            rubberNumber == playerGameState.rubberNumber &&
             gameNumber == playerGameState.gameNumber &&
             dealNumber == playerGameState.dealNumber &&
             tricks == playerGameState.tricks &&

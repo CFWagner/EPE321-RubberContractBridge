@@ -183,6 +183,64 @@ void TestScore::testScore()
     score2.read(jsonScore);
     QCOMPARE(score1 == score2, true);
 
+    // Create new score instance for next rubber with back score
+    quint32 backScore[2] = {2990, 0};
+    score1 = Score(backScore);
+
+    // Test back score initialisation of score instance attributes and calculation methods
+    QCOMPARE(score1.getContractPoints(N_S).size(), 1);
+    QCOMPARE(score1.getContractPoints(N_S).last(), 0);
+    QCOMPARE(score1.getGamesWon(N_S), 0);
+    QCOMPARE(score1.getBackScore(N_S), 2990);
+    QCOMPARE(score1.getOvertricks(N_S), 0);
+    QCOMPARE(score1.getUndertricks(N_S), 0);
+    QCOMPARE(score1.getHonors(N_S), 0);
+    QCOMPARE(score1.getSlamBonuses(N_S), 0);
+    QCOMPARE(score1.getRubberBonuses(N_S), 0);
+    QCOMPARE(score1.getTeamVulnerable(N_S), false);
+    QCOMPARE(score1.getTotalScore(N_S), 2990);
+    QCOMPARE(score1.getContractPoints(E_W).size(), 1);
+    QCOMPARE(score1.getContractPoints(E_W).last(), 0);
+    QCOMPARE(score1.getGamesWon(E_W), 0);
+    QCOMPARE(score1.getBackScore(E_W), 0);
+    QCOMPARE(score1.getOvertricks(E_W), 0);
+    QCOMPARE(score1.getUndertricks(E_W), 0);
+    QCOMPARE(score1.getHonors(E_W), 0);
+    QCOMPARE(score1.getSlamBonuses(E_W), 0);
+    QCOMPARE(score1.getRubberBonuses(E_W), 0);
+    QCOMPARE(score1.getTeamVulnerable(E_W), false);
+    QCOMPARE(score1.getTotalScore(E_W), 0);
+    QCOMPARE(score1.isGameWinner(), false);
+    QCOMPARE(score1.isRubberWinner(), false);
+
+    // Test attributes after score update with 5 trump spades honors 1 odd trick and 2 overtricks doubled
+    contractBid = Bid(NORTH, DIAMONDS, 1);
+    contractBid.setCall(DOUBLE_BID);
+    score1.updateScore(contractBid, getEWSpades5HonorsHand(), 9);
+    QCOMPARE(score1.getContractPoints(N_S).size(), 1);
+    QCOMPARE(score1.getContractPoints(N_S).last(), 40);
+    QCOMPARE(score1.getGamesWon(N_S), 0);
+    QCOMPARE(score1.getBackScore(N_S), 2990);
+    QCOMPARE(score1.getOvertricks(N_S), 200);
+    QCOMPARE(score1.getUndertricks(N_S), 0);
+    QCOMPARE(score1.getHonors(N_S), 0);
+    QCOMPARE(score1.getSlamBonuses(N_S), 0);
+    QCOMPARE(score1.getRubberBonuses(N_S), 0);
+    QCOMPARE(score1.getTeamVulnerable(N_S), false);
+    QCOMPARE(score1.getTotalScore(N_S), 3280);
+    QCOMPARE(score1.getContractPoints(E_W).size(), 1);
+    QCOMPARE(score1.getContractPoints(E_W).last(), 0);
+    QCOMPARE(score1.getGamesWon(E_W), 0);
+    QCOMPARE(score1.getBackScore(E_W), 0);
+    QCOMPARE(score1.getOvertricks(E_W), 0);
+    QCOMPARE(score1.getUndertricks(E_W), 0);
+    QCOMPARE(score1.getHonors(E_W), 150);
+    QCOMPARE(score1.getSlamBonuses(E_W), 0);
+    QCOMPARE(score1.getRubberBonuses(E_W), 0);
+    QCOMPARE(score1.getTeamVulnerable(E_W), false);
+    QCOMPARE(score1.getTotalScore(E_W), 150);
+    QCOMPARE(score1.isGameWinner(), false);
+    QCOMPARE(score1.isRubberWinner(), false);
 
 }
 
@@ -426,7 +484,7 @@ QMap<PlayerPosition, CardSet> TestScore::getEWSpades5HonorsHand() const
     northCardSet.addCard(Card(SPADES, TEN));
     northCardSet.addCard(Card(SPADES, JACK));
     northCardSet.addCard(Card(HEARTS, QUEEN));
-    northCardSet.addCard(Card(SPADES, KING));
+    northCardSet.addCard(Card(HEARTS, JACK));
 
     eastCardSet.addCard(Card(HEARTS, ACE));
     eastCardSet.addCard(Card(HEARTS, TWO));
@@ -438,7 +496,7 @@ QMap<PlayerPosition, CardSet> TestScore::getEWSpades5HonorsHand() const
     eastCardSet.addCard(Card(HEARTS, EIGHT));
     eastCardSet.addCard(Card(HEARTS, NINE));
     eastCardSet.addCard(Card(HEARTS, TEN));
-    eastCardSet.addCard(Card(HEARTS, JACK));
+    eastCardSet.addCard(Card(SPADES, KING));
     eastCardSet.addCard(Card(SPADES, QUEEN));
     eastCardSet.addCard(Card(CLUBS, KING));
 

@@ -13,8 +13,20 @@ public:
     void setInitial4();
     void setInitial5();
     void setInitial6();
+    void setInitial7();
     PlayerGameState player1;
     AI playerAI;
+    float calculateSTD(float data[], int length);
+    uint32_t seed = 0;
+    uint32_t random();
+    float rangeGen(float min, float max);
+    float testGeneratorNoSeed();
+    float testGeneratorSeeded();
+    float generatesNormalDistribution();
+    float calculateMean(float data[], int length);
+    float UniformMean;
+    float SeedMean;
+    float NoSeedMean;
 private slots:
     void testHandGenerate();
     void testMoveGenerate();
@@ -25,6 +37,12 @@ private slots:
     void testMoveGanerate3();
     void testMoveGanerate4();
     void testMoveGanerate5();
+    void testDeckGeneration();
+    void testDeckRemoval();
+    void testingGenerator();
+    void testingRecovery();
+    void testingBidListGenerate();
+
 
 };
 

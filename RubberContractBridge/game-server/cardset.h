@@ -24,5 +24,4 @@ public:
 private:
     QVector<Card> cards;
 };
-
 #endif // CARDSET_H

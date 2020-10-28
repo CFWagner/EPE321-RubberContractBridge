@@ -5,6 +5,7 @@ ServerGameState::ServerGameState(QObject *parent) : QObject(parent)
 {
     // Initialise attributes
     phase = BIDDING;
+    rubberNumber = 1;
     gameNumber = 1;
     dealNumber = 0;
     trickNumber = 0;
@@ -33,8 +34,9 @@ ServerGameState::ServerGameState(QObject *parent) : QObject(parent)
 }
 
 // Starts the game by dealing all the cards to the players and selecting player for the first turn
-void ServerGameState::startGame()
+void ServerGameState::startMatch(qint32 maxRubbers)
 {
+    this->maxRubbers = maxRubbers;
     nextDeal();
     emit gameEvent(BID_START);
 }
@@ -87,6 +89,32 @@ void ServerGameState::nextTrick()
     tricks.append(CardSet());
 }
 
+// Prepare next game
+void ServerGameState::nextGame()
+{
+    score.nextGame();
+    dealNumber = 0;
+    gameNumber++;
+}
+
+// Prepare next rubber
+void ServerGameState::nextRubber()
+{
+    // Create new score instance for next rubber with back score
+    quint32 backScore[2] = {0, 0};
+    quint32 totalScoreNS = score.getTotalScore(N_S);
+    quint32 totalScoreEW = score.getTotalScore(E_W);
+    if(totalScoreNS > totalScoreEW)
+        backScore[N_S] = totalScoreNS - totalScoreEW;
+    else
+        backScore[E_W] = totalScoreEW - totalScoreNS;
+    score = Score(backScore);
+
+    // Update match counters
+    dealNumber = 0;
+    gameNumber = 1;
+    rubberNumber++;
+}
 
 // Update the game state based on the latest bid made
 // Does nothing if the bid is invalid. Bid validity must be checked seperately prior to
@@ -188,29 +216,26 @@ void ServerGameState::updatePlayState(const Card &card)
 
             // Check if a team has won a second game and therefore the rubber
             if(score.isRubberWinner()){
-                // Initialise next rubber
-                // TO DO: Add next rubber function
+                // Finalise rubber bonus and scores for current rubber
                 score.finaliseRubber();
 
-                // Create new score instance for next rubber with back score
-                quint32 backScore[2] = {0, 0};
-                quint32 totalScoreNS = score.getTotalScore(N_S);
-                quint32 totalScoreEW = score.getTotalScore(E_W);
-                if(totalScoreNS > totalScoreEW)
-                    backScore[N_S] = totalScoreNS - totalScoreEW;
-                else
-                    backScore[E_W] = totalScoreEW - totalScoreNS;
-                score = Score(backScore);
+                // Check if match rubbers are complete
+                if(rubberNumber == maxRubbers){
+                    // End match
+                    emit gameEvent(TRICK_END);
+                    emit gameEvent(PLAY_END);
+                    emit gameEvent(MATCH_END);
+                    return;
+                }else{
+                    // Initialise next rubber
+                    nextRubber();
+                }
 
-                gameNumber = 1;
             }
             // Check if a team has won a game
             else if(score.isGameWinner()){
                 // Intialise next game
-                // TO DO: Add next game function
-                score.nextGame();
-                dealNumber = 0;
-                gameNumber++;
+                nextGame();
             }
 
             // Initialise next deal

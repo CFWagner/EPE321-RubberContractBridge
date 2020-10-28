@@ -20,6 +20,7 @@ public:
     GamePhase getPhase() const;
     const Bid* getCurrentBid() const;
     const Bid* getContractBid() const;
+    qint32 getRubberNumber() const;
     qint8 getGameNumber() const;
     qint8 getDealNumber() const;
     qint8 getTrickNumber() const;
@@ -32,7 +33,7 @@ public:
     qint8 getTricksWon(PlayerPosition position) const;
     qint8 getTricksWon(Team team) const;
     bool getTeamVulnerable(Team team) const;
-    Score getScore() const;
+    const Score getScore() const;
 protected:
     GamePhase phase;
     // currentBid refers to the most recent valid bid made during the bidding phase
@@ -41,6 +42,7 @@ protected:
     // contractBid refers to the bid accepted as the contract for the game
     // nullptr if phase is BIDDING
     Bid* contractBid = nullptr;
+    qint8 rubberNumber;
     qint8 gameNumber;
     qint8 dealNumber; // Zero before first deal
     qint8 trickNumber; // Zero during BIDDING phase
@@ -58,5 +60,5 @@ protected:
     PlayerPosition declarer;
     Score score;
 };
-
+Q_DECLARE_METATYPE(GameState);
 #endif // GAMESTATE_H

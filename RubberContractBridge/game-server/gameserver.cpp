@@ -23,10 +23,12 @@ void GameServer::addPlayer(Player* player)
 }
 
 // Set up and start the bridge game
-void GameServer::initializeGame()
+void GameServer::executeMatch(qint32 maxRubbers)
 {
-    // TO DO : Randomly select dealer
     state = new ServerGameState();
+
+    if(maxRubbers <= 0)
+        return;
 
     // Connect game event signal and slot
     qRegisterMetaType<GameEvent>("GameEvent");
@@ -36,9 +38,20 @@ void GameServer::initializeGame()
     // TO DO: Consider waiting for ready message from players
     broadcastStateUpdate(INITIALIZE);
 
-    // Start game by sending first turn notification
-    state->startGame();
-    notifyNextPlayerTurn();
+    // Start match
+    state->startMatch(maxRubbers);
+
+    // Execute main game loop until match is complete
+    matchComplete = false;
+    while(!matchComplete){
+        turnComplete = false;
+
+        // Indicate to next player to take turn
+        notifyNextPlayerTurn();
+
+        // Wait until player completes turn
+        while(!turnComplete);
+    }
 }
 
 // Send game state updates due to the specified gameEvent tailored to each player
@@ -61,7 +74,7 @@ Player* GameServer::getPlayerInPosition(PlayerPosition position)
 }
 
 // Get the player instance whose turn it is to play
-Player* GameServer::notifyNextPlayerTurn()
+void GameServer::notifyNextPlayerTurn()
 {
     Player* playerTurn = getPlayerInPosition(state->getPlayerTurn());
     if(state->getPhase() == BIDDING)
@@ -88,6 +101,7 @@ void GameServer::gameEvent(GameEvent gameEvent)
     case INITIALIZE:
         break;
     case MATCH_END:
+        matchComplete = true;
         for(Player* player: players)
             player->gameTerminated("Match Completed");
         break;
@@ -100,7 +114,7 @@ void GameServer::bidSelected(Bid bid)
     // Check if bid is valid
     if(state->isBidValid(bid)){
         state->updateBidState(bid);
-        notifyNextPlayerTurn();
+        turnComplete = true;
     }
     else{
         Player* senderPlayer = (Player*) sender();
@@ -114,7 +128,7 @@ void GameServer::moveSelected(Card card)
     // Check if card is valid
     if(state->isCardValid(card)){
         state->updatePlayState(card);
-        notifyNextPlayerTurn();
+        turnComplete = true;
     }
     else{
         Player* senderPlayer = (Player*) sender();
@@ -128,4 +142,15 @@ void GameServer::messageGenerated(QString message)
     Player* senderPlayer = (Player*) sender();
     for(Player* player: players)
         player->message(senderPlayer->getPlayerName(), message);
+}
+
+// Getter for the server game state
+const ServerGameState* GameServer::getState() const
+{
+    return state;
+}
+
+const QVector<Player*> GameServer::getPlayers() const
+{
+    return players;
 }

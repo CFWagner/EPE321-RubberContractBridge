@@ -13,16 +13,11 @@ ServerNetwork::ServerNetwork(QObject *parent, QString nameOfAI) : QObject(parent
     clientSocTemp.clear();
     tcpServer = nullptr;
     bAllowNewClientConnection = true;
-
-    // Init unit test
-    bUnitTest.clear();
-    bUnitTest.fill(false,40);
-
-    //getPlayerSoc can use 0 - 9
-    // <open> can use 10 - 19
-    //connectClient can use 20 - 29
-    //validateClient can use 30 - 39
 }
+
+/**
+ * Destructor
+ */
 
 ServerNetwork::~ServerNetwork()
 {
@@ -35,7 +30,17 @@ ServerNetwork::~ServerNetwork()
     }
 }
 
-/*!
+/**
+ * Only used with unit tests.
+ * Emits a generalError signal.
+ */
+
+void ServerNetwork::forceError()
+{
+    emit generalError("Error occured.");
+}
+
+/**
  * \brief Return the socket that corresponds to the playerName.
  * Return a nullptr if playerName cannot be found.
  * Player is removed from the ServerNetwork class, signals connecting the clientSocekt with functions in ServerNetwork is disconnected.
@@ -72,7 +77,7 @@ QTcpSocket *ServerNetwork::getPlayerSoc(QString playerName)
     return tempSocket;
 }
 
-/*!
+/**
  * \brief Set the password of the server. It is the responsibility of the GUI, to validate the strength of the password.
  * No checking is done in the ServerNetwork class.
  * \param password: Validated password. (QString)
@@ -84,7 +89,7 @@ void ServerNetwork::setPassword(QString password)
     this->password = password;
 }
 
-/*!
+/**
  * Open a port on the given ip address.
  * Start listening for clients that want to connect.
  * The IP address can only be set once after the program has started.
@@ -97,16 +102,10 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
     // Use port 61074.
     // The IP address can only be set once after the program has started.
 
-    // Prepare bUnitTest
-    for (int i = 10; i <= 19; i++){
-        bUnitTest[i] = false;
-    }
-
     // Check if the server has been initialized.
     if (tcpServer != nullptr){
         emit connectionResult(3, ip, port, "");
         return;
-
     }
 
     // Test if ip address is valid.
@@ -119,19 +118,12 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
         return;
     }
 
-    // Disconnect the client
-    //    if (clientConnection != nullptr){
-    //        disconnect(clientConnection, &QIODevice::readyRead,0,0);
-    //        clientConnection->disconnectFromHost();
-    //        clientConnection = nullptr;
-    //    }
-
-    //    disconnect(tcpServer, &QTcpServer::newConnection, 0, 0);
-
-
+    // Create a new server socket.
     tcpServer = new QTcpServer(this);
 
+    // Try to connect to port and ip.
     if (!tcpServer->listen(ip, port)) {
+        // The connection was not successful.
         emit connectionResult(2, ip, port, tcpServer->errorString());
 
         // Set tcpServer to null, so that a new QTcpServer can be constructed on the second try.
@@ -142,29 +134,26 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
     }
 
     // The connection was successfull.
+
+    // Connect signal for handeling incomming connections (clients).
     connect(tcpServer, &QTcpServer::newConnection, this, &ServerNetwork::connectClient);
 
-    qInfo() << "The server is listening for clients on " << ip.toString() << " with port: " << tcpServer->serverPort();
+    qInfo() << "initServer: The server is listening for clients on " << ip.toString() << " with port: " << tcpServer->serverPort();
     emit connectionResult(0,ip,port,"");
-
 }
 
-/*!
+/**
  * \brief Stop listening for new client connections.
  * status = 4 will be returned to for any new client requesting login after stopListening has been called.
  */
+
 void ServerNetwork::stopListening()
 {
     bAllowNewClientConnection = false;
+    // Can disconnect from all players in the lobby?
 }
 
-QVector<bool> ServerNetwork::getUnitTest()
-{
-    emit generalError("bUnitTest was requested, but it isn't being used anymore.");
-    return bUnitTest;
-}
-
-/*!
+/**
  * Accept new client connections.
  * Add client to clientSocTemp.
  * Make signal slot connections.
@@ -174,14 +163,15 @@ void ServerNetwork::connectClient()
 {
     QTcpSocket* clientConnection = tcpServer->nextPendingConnection();
 
-    qInfo() << "Client trying to connect: " << clientConnection;
+    qInfo() << "connectClient: Client trying to connect: " << clientConnection;
 
-
+    // Check that clientConnection is not a nullprt. (Check for errors.)
     if (!clientConnection) {
         emit generalError("Got invalid pending connection! Ignoring the connection.");
         return;
     }
 
+    // Make signal slot connections
     connect(clientConnection, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
     connect(clientConnection, &QAbstractSocket::disconnected,this, &ServerNetwork::disconnectClient);
     connect(clientConnection, &QAbstractSocket::disconnected,clientConnection, &QObject::deleteLater);
@@ -189,10 +179,10 @@ void ServerNetwork::connectClient()
     // Add to temp list.
     clientSocTemp.append(clientConnection);
 
-    qInfo() << "client added to clientSocTemp";
+    qInfo() << "connectClient: Client added to clientSocTemp";
 }
 
-/*!
+/**
  * Validate the password and username.
  * If valid, add username and client socket.
  * Signal the GUI that a client has logged in.
@@ -201,7 +191,8 @@ void ServerNetwork::connectClient()
 
 void ServerNetwork::validateClient()
 {
-    qInfo() << "Incomming connection.";
+    qInfo() << "validateClient: Incomming connection.";
+
     // If avlidateRes is empty at the end of this function,
     // no errors occured and the login request has been accepted.
     QString validateRes = "";
@@ -225,7 +216,7 @@ void ServerNetwork::validateClient()
         emit generalError("Duplicate clients existed and was removed. The error will be ignored.");
     }
 
-    qInfo() << "Sender object safely converted.";
+    qInfo() << "validateClient: Sender object safely converted.";
 
     // Read data from the socket
     in.setDevice(tempSocket);
@@ -241,20 +232,19 @@ void ServerNetwork::validateClient()
         // Read error occured: this should not happen.
         // If this occurs, the connection to the client must be terminated.
         emit generalError("Datastream read error occured. Client forcefully removed.");
-        qWarning() << "Datastream error occured.";
+        qWarning() << "validateClient: Datastream error occured.";
         tempSocket->abort();
         return;
     }
 
     // Validate the QJsonObject
-    // ID should be 0
+    // ID should be 0 (First transmission to Client.)
     // It should contain a Type field, with valid information in the string part.
     if (rxObj.contains("Type") && rxObj["Type"].isString() && rxObj.contains("ID") && rxObj["ID"].isDouble()){
         // QJsonObject received contained the expected data.
         // Test if ID number is larger than prevID
         if (rxObj["ID"].toInt() <= -1) {
             emit generalError("Outdated data was received. The data will be ignored. Client forcefully removed.");
-//            validateRes.append("The login request was too old and thus not accepted.");
             tempSocket->abort();
             return;
         }
@@ -267,12 +257,13 @@ void ServerNetwork::validateClient()
     } else {
         // QJsonObject received had errors
         emit generalError("Data received from server has been incorrectly formatted. Client forcefully removed.");
-        qWarning() << "Data received from client has been incorrectly formatted.";
+        qWarning() << "validateClient: Data received from client has been incorrectly formatted.";
         tempSocket->abort();
         return;
     }
 
-    // Read the data. (Password and username.)
+    // Read the data. (Password and username.) and validate it.
+    // Empty QString means that the validation was successful.
     validateRes.append(validateLogin(rxObj["Alias"].toString(), rxObj["Password"].toString()));
 
     // Create QJsonObject
@@ -310,14 +301,12 @@ void ServerNetwork::validateClient()
     out << txObj;
     int tempVal = tempSocket->write(block);
 
-    qInfo() << "Number of bytes expected to be sent to the client: " << block.size();
-    qInfo() << "Number of bytes sent to client: " << tempVal;
+    qInfo() << "validateClient: Number of bytes expected to be sent to the client: " << block.size();
+    qInfo() << "validateClient: Number of bytes sent to client: " << tempVal;
 
-    if (tempVal == -1) {
-        // An error occured when writing the data block
-        emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
-    } else if (tempVal < block.size()) {
-        // The block written was too small (did not contain enough bytes).
+    if (tempVal == -1 || tempVal < block.size()) {
+        // An error occured when writing the data block.
+        // OR The block written was too small (did not contain enough bytes).
         emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
     }
 
@@ -325,16 +314,17 @@ void ServerNetwork::validateClient()
     if (!validateRes.isEmpty()){
         // Prevent the client from logging in again. Client should create a new connection to try again.
         disconnect(tempSocket, &QIODevice::readyRead,this, &ServerNetwork::validateClient);
+
         // It is the client's responsibility to disconnect from the server.
-        // tempSocket->disconnectFromHost();
     }
 }
 
-/*!
+/**
  * \brief Handel the process when a client disconnects.
  * When a client disconnects, check if the client logged in.
  * If logged in, remove username and client socket.
  * Signal the GUI to also remove the client.
+ * GUI will not be signaled after stopListening has been called.
  */
 
 void ServerNetwork::disconnectClient()
@@ -343,8 +333,8 @@ void ServerNetwork::disconnectClient()
     // If logged in, remove username and client socket.
     // Signal the GUI to also remove the client.
 
-    qInfo() << "Socket disconnected (Server side)";
-    qInfo() << "Before disconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
+    qInfo() << "disconnectClient: Socket disconnected (Server side)";
+    qInfo() << "disconnectClient: Before disconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
 
     // Get the sender's QTcpSocket
     QObject* obj = sender();
@@ -354,29 +344,26 @@ void ServerNetwork::disconnectClient()
         // The client was not logged in
         // Remove from clientSocTemp
         clientSocTemp.removeAll(tempSocket);
-        qInfo() << "Disconnect: Removed from clientSocTemp";
+        qInfo() << "disconnectClient: Removed from clientSocTemp";
     }
 
     if (clientSoc.contains(tempSocket)){
         // The client was logged in
         // Remove from clientSoc and playerNames
         // Inform the serverGUI that the player disconnected.
-        // TODO: This signal emit can cause problems if all emitted when disconnecting, so check this out.
         // Add description in header files.
         QString tempPlayerName = playerNames.at(clientSoc.indexOf(tempSocket));
         playerNames.removeAll(tempPlayerName);
         clientSoc.removeAll(tempSocket);
 
-        qInfo() << "Disconnect: Removed from clientSoc. The player's name is: " + tempPlayerName;
+        qInfo() << "disconnectClient: Removed from clientSoc. The player's name is: " + tempPlayerName;
 
-        emit playerDisconnected(tempPlayerName);
+        // Only emit this before the game has started
+        if (bAllowNewClientConnection) emit playerDisconnected(tempPlayerName);
     }
-
-    qInfo() << "After dissconnection: Temp:" << clientSocTemp << clientSoc << playerNames;
-
 }
 
-/*!
+/**
  * Validate the password and playerName.
  * If both are valid, return an empty string.
  * Else return the reason for faliure.

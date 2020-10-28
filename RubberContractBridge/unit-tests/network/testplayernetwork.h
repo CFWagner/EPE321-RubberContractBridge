@@ -33,10 +33,11 @@ signals:
 
 private:
     void addManyClients(int numberOfClients);
-    void addPlayerNetwork(QString playerName);
+    void addPlayerNetwork(QString playerName, QTcpSocket** returnPlayerSocket = nullptr);
     void checkAllCientSignals();
     void checkAllPlayerSignals();
     void checkAllServerSignals();
+    void disconnectClientFromServerAfterGameStarted();
     PlayerGameState generatePlayerGameState();
     Bid generateBid();
     Card generateCard();

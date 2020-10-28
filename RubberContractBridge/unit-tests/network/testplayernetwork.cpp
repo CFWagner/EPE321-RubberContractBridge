@@ -1,10 +1,12 @@
 #include "testplayernetwork.h"
 
-// TODO: Test gameTerminated signal here.
+/**
+ * Constructor
+ * @param parent
+ */
 
 testPlayerNetwork::testPlayerNetwork(QObject *parent) : QObject(parent)
 {
-
     // Start a server and verify that it is working
     passwordServer = "abcdef1234$#^";
     port = 61076;
@@ -54,8 +56,7 @@ void testPlayerNetwork::addClients()
     addManyClients(4);
     addManyClients(2);
 
-    // TODO: login to the server and get tcpsockets, so that players can be initialised.
-    // Do first test on notification_bid.
+    // Do not change the number or order of the addPlayerNetwork calls, since it will break all following tests.
     for (int i = 0; i < 4; i++){
         addPlayerNetwork(playerNames[i]);
     }
@@ -694,7 +695,7 @@ void testPlayerNetwork::addManyClients(int numberOfClients)
  * @param playerName is the name of the Player that should be added. This name must be in the playerNames vecotor.
  */
 
-void testPlayerNetwork::addPlayerNetwork(QString playerName)
+void testPlayerNetwork::addPlayerNetwork(QString playerName, QTcpSocket** returnPlayerSocket)
 {
     QVERIFY(playerNames.contains(playerName));
     int j = playerNames.indexOf(playerName);
@@ -715,6 +716,12 @@ void testPlayerNetwork::addPlayerNetwork(QString playerName)
     // Get the client socket and remove it from the server
     QTcpSocket* tempSoc = testServerNetA.getPlayerSoc(playerName);
     QVERIFY(tempSoc != nullptr);
+
+    // Since QVERIFY does not allow a non-void function, return the playerSocket by storing it in the variable refenced,
+    // unless the default nullptr is given.
+    if (returnPlayerSocket != nullptr){
+        *returnPlayerSocket = tempSoc;
+    }
 
     testPlayerNet.append(new PlayerNetwork(this, playerName, tempSoc));
 
@@ -798,6 +805,39 @@ void testPlayerNetwork::checkAllServerSignals()
     QCOMPARE(spyServer->count(), 0);
     QCOMPARE(spyServerError->count(), 0);
     QCOMPARE(spyServerPlayerJoined->count(), 0);
+}
+
+/**
+ * Start a game and then disconnect the client (from the server side).
+ * Then test if the correct client emits gameTerminated.
+ */
+
+void testPlayerNetwork::disconnectClientFromServerAfterGameStarted()
+{
+    int k = 4;
+
+    // Reference to Player's QTcpSocket
+    QTcpSocket** testPlayerSocket = new QTcpSocket*;
+
+    // Add a 5th player and get the PlayerSocket
+    addPlayerNetwork(playerNames[k], testPlayerSocket);
+
+    // Emulate server disconnection by aborting the QTcpSocket of the player.
+    (*testPlayerSocket)->abort();
+
+    QVERIFY(spyClientGameTerminated[k]->wait(100));
+    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
+    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), "Client lost connection to the server.");
+    spyClientGameTerminated[k]->clear();
+
+    // None of the other Clients were disconnected.
+    // The serverDisconnected signal (of the player that was aborted above) should not have been emitted.
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // Free up the memory
+    delete testPlayerSocket;
 }
 
 /**

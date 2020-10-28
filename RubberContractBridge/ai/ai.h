@@ -11,7 +11,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <QObject>
-
+#include <math.h>
+#include <iostream>
 class AI : public Player
 {
     Q_OBJECT

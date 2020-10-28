@@ -1,6 +1,5 @@
 #include "ai.h"
-#include <math.h>
-#include <iostream>
+
 //TLDR add edge statement to check if ai is very first round opening
 //the generate card function will be archaic, might use it in the future to improve selection but for demo only consider dummy hand and my hand
 //Further my AI is greedy so will only look in current position best move np heuristics nor probability (yet????)

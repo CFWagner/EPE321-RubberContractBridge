@@ -83,7 +83,7 @@ void Score::updateScore(const Bid &contractBid, QMap<PlayerPosition, CardSet> pl
 
         // Update overtrick points
         qint8 overTricks = declarerTricksWon - (contractBid.getTricksAbove() + 6);
-        overtricks[biddingTeam] += overTricks * trickPoints;
+        overtricks[biddingTeam] += overTricks * overtrickPoints;
 
         // Apply slam bonuses
         if(declarerTricksWon == 12){

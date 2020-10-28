@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
     TestServerGameState testServerGameState;
     QTest::qExec(&testServerGameState);
 
-//    TestGameServer testGameServer;
-//    QTest::qExec(&testGameServer);
+    TestGameServer testGameServer;
+    QTest::qExec(&testGameServer);
 
     TestServer testServer;
     QTest::qExec(&testServer);

@@ -10,7 +10,6 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
     // Init internal variables
     gameStarted = false;
     playerName = "";
-    keepAlive = nullptr;
     tcpSoc = nullptr;
     tempPlayerName = "";
     tempPassword = "";

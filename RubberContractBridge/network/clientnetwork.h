@@ -73,7 +73,6 @@ private:
     QString tempPassword;
     bool bLoggedIn;
     QTcpSocket* tcpSoc;
-    QTimer* keepAlive;
     bool gameStarted;
     QDataStream in;
     qint64 idCounter;

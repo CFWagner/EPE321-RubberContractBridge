@@ -50,8 +50,6 @@ private:
     void internalClientDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
 
     QTcpSocket* clientSoc;
-    QTimer* keepAlive;
-    bool aliveFlag;
     QDataStream in;
     qint64 idCounter;
     qint64 prevID;

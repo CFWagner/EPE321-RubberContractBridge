@@ -23,9 +23,8 @@ void GameServer::addPlayer(Player* player)
 }
 
 // Set up and start the bridge game
-void GameServer::initializeGame()
+void GameServer::executeMatch(qint32 maxRubbers)
 {
-    // TO DO : Randomly select dealer
     state = new ServerGameState();
 
     // Connect game event signal and slot
@@ -36,16 +35,19 @@ void GameServer::initializeGame()
     // TO DO: Consider waiting for ready message from players
     broadcastStateUpdate(INITIALIZE);
 
-    // Start game by sending first turn notification
-    state->startGame();
-    while(true){
-        bidReceived = false;
-        moveReceived = false;
+    // Start match
+    state->startMatch(maxRubbers);
 
+    // Execute main game loop until match is complete
+    matchComplete = false;
+    while(!matchComplete){
+        turnComplete = false;
+
+        // Indicate to next player to take turn
         notifyNextPlayerTurn();
 
         // Wait until player completes turn
-        while(!bidReceived && !moveReceived);
+        while(!turnComplete);
     }
 }
 
@@ -96,6 +98,7 @@ void GameServer::gameEvent(GameEvent gameEvent)
     case INITIALIZE:
         break;
     case MATCH_END:
+        matchComplete = true;
         for(Player* player: players)
             player->gameTerminated("Match Completed");
         break;
@@ -108,7 +111,7 @@ void GameServer::bidSelected(Bid bid)
     // Check if bid is valid
     if(state->isBidValid(bid)){
         state->updateBidState(bid);
-        bidReceived = true;
+        turnComplete = true;
     }
     else{
         Player* senderPlayer = (Player*) sender();
@@ -122,7 +125,7 @@ void GameServer::moveSelected(Card card)
     // Check if card is valid
     if(state->isCardValid(card)){
         state->updatePlayState(card);
-        moveReceived = true;
+        turnComplete = true;
     }
     else{
         Player* senderPlayer = (Player*) sender();
@@ -136,4 +139,10 @@ void GameServer::messageGenerated(QString message)
     Player* senderPlayer = (Player*) sender();
     for(Player* player: players)
         player->message(senderPlayer->getPlayerName(), message);
+}
+
+// Getter for the server game state
+const ServerGameState* GameServer::getState() const
+{
+    return state;
 }

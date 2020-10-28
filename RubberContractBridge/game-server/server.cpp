@@ -76,7 +76,7 @@ void Server::playersSelected(QVector<QString> playerNames)
     }
 
     //
-    gameServer->initializeGame();
+    gameServer->executeMatch(5);
 }
 
 // Slot for when a player disconnects from the server

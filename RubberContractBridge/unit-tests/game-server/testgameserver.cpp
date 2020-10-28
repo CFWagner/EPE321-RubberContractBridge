@@ -21,14 +21,44 @@ void TestGameServer::testGameServer()
     player4->setPosition(WEST);
 
     // Instantiate GameServer
-    GameServer gameServer;
+    GameServer gameServer1;
 
     // Add players to game server
-    gameServer.addPlayer(player1);
-    gameServer.addPlayer(player2);
-    gameServer.addPlayer(player3);
-    gameServer.addPlayer(player4);
+    gameServer1.addPlayer(player1);
+    gameServer1.addPlayer(player2);
+    gameServer1.addPlayer(player3);
+    gameServer1.addPlayer(player4);
 
     // Start game with game server
-    gameServer.initializeGame();
+    qint8 maxRubbers = 1;
+    gameServer1.executeMatch(maxRubbers);
+    QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
+
+    // Create players
+    player1 = new PlayerStub();
+    player2 = new PlayerStub();
+    player3 = new PlayerStub();
+    player4 = new PlayerStub();
+    player1->setPlayerName("Player 1");
+    player2->setPlayerName("Player 2");
+    player3->setPlayerName("Player 3");
+    player4->setPlayerName("Player 4");
+    player1->setPosition(NORTH);
+    player2->setPosition(EAST);
+    player3->setPosition(SOUTH);
+    player4->setPosition(WEST);
+
+    // Instantiate GameServer
+    GameServer gameServer2;
+
+    // Add players to game server
+    gameServer2.addPlayer(player1);
+    gameServer2.addPlayer(player2);
+    gameServer2.addPlayer(player3);
+    gameServer2.addPlayer(player4);
+
+    // Start game with game server
+    maxRubbers = 100;
+    gameServer1.executeMatch(maxRubbers);
+    QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 }

@@ -15,6 +15,7 @@ GameState::GameState(const GameState &gameState)
         contractBid = nullptr;
     else
         contractBid = new Bid(*gameState.getContractBid());
+    this->rubberNumber = gameState.rubberNumber;
     this->gameNumber = gameState.gameNumber;
     this->dealNumber = gameState.dealNumber;
     this->trickNumber = gameState.trickNumber;
@@ -42,6 +43,7 @@ GameState& GameState::operator = (const GameState &gameState)
         contractBid = nullptr;
     else
         contractBid = new Bid(*gameState.getContractBid());
+    this->rubberNumber = gameState.rubberNumber;
     this->gameNumber = gameState.gameNumber;
     this->dealNumber = gameState.dealNumber;
     this->trickNumber = gameState.trickNumber;
@@ -82,6 +84,12 @@ const Bid* GameState::getContractBid() const
 {
     return contractBid;
 }
+
+// Getter for the current rubber number
+qint32 GameState::getRubberNumber() const
+{
+    return rubberNumber;
+};
 
 // Getter for the current game number
 qint8 GameState::getGameNumber() const
@@ -178,7 +186,7 @@ bool GameState::getTeamVulnerable(Team team) const
 }
 
 // Getter for the score for the current match
-Score GameState::getScore() const
+const Score GameState::getScore() const
 {
     return score;
 }

@@ -8,10 +8,21 @@ bridgeWindow::bridgeWindow(QWidget *parent) :
     ui->setupUi(this);
     setupWindow();
     staticGUIElements();
+    for (int i = 0; i < 13;++i)
+    {
+        cardsInHand[i] = nullptr;
+    }
 }
 
 bridgeWindow::~bridgeWindow()
 {
+    for (int i = 0; i < 13;++i)
+    {
+        if(cardsInHand[i])
+        {
+            delete cardsInHand[i];
+        }
+    }
     delete ui;
 }
 
@@ -116,6 +127,8 @@ void bridgeWindow::setupHand()
         {
             cardName+= "spades.png)";
         }
+        if (cardsInHand[i])
+            delete cardsInHand[i];
         cardMine = new PlayCardSelected(this);
         cardsInHand[i] = cardMine;
         cardsInHand[i] ->setStyleSheet(imageName+cardName);

@@ -1,9 +1,20 @@
 #include "testlogger.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 testLogger::testLogger(QObject *parent) : QObject(parent)
 {
-
+    // Empty
 }
+
+/**
+ * Test getters and setters of the Logger class.
+ * Test the log enable and disable functions.
+ * Test the isLogEnabled functions.
+ */
 
 void testLogger::testLogEnabled()
 {
@@ -17,6 +28,12 @@ void testLogger::testLogEnabled()
     testLog.enableLog();
     QCOMPARE(testLog.isLogEnabled(), true);
 }
+
+/**
+ * Test the logger class' signal and slot.
+ * Informally verify that the output printed to the terminal is
+ * as shown at the end of this function.
+ */
 
 void testLogger::testLog()
 {
@@ -54,6 +71,21 @@ void testLogger::testLog()
 
     emit emitLog(context,msg);
 
-    QCOMPARE(spy.count(), 0); // make sure the signal was emitted exactly one time
+    QCOMPARE(spy.count(), 0); // Make sure the signal was emitted exactly one time
 
+    // Enable the log again
+    testLog.enableLog();
+
+    for (int i = 1; i < 5; i++) emit emitLog("Func " + QString::number(i), "Context " + QString::number(i*2));
+
+    // Informally verify that the following was printed to the command line.
+    // The date and time should be the current data and time.
+    // The current data and time in this case was: 2020/10/28 02:45 (yyyy/mm/dd hh:mm)
+    /*
+    2020/10/28 02:45 {Input at context}: Input at message
+    2020/10/28 02:45 {Func 1}: Context 2
+    2020/10/28 02:45 {Func 2}: Context 4
+    2020/10/28 02:45 {Func 3}: Context 6
+    2020/10/28 02:45 {Func 4}: Context 8
+    */
 }

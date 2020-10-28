@@ -1,5 +1,10 @@
 #include "servernetwork.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 ServerNetwork::ServerNetwork(QObject *parent, QString nameOfAI) : QObject(parent)
 {
     // Init all variables
@@ -232,7 +237,7 @@ void ServerNetwork::validateClient()
         // Read error occured: this should not happen.
         // If this occurs, the connection to the client must be terminated.
         emit generalError("Datastream read error occured. Client forcefully removed.");
-        qWarning() << "validateClient: Datastream error occured.";
+        qInfo() << "validateClient: Datastream error occured.";
         tempSocket->abort();
         return;
     }
@@ -257,7 +262,7 @@ void ServerNetwork::validateClient()
     } else {
         // QJsonObject received had errors
         emit generalError("Data received from server has been incorrectly formatted. Client forcefully removed.");
-        qWarning() << "validateClient: Data received from client has been incorrectly formatted.";
+        qInfo() << "validateClient: Data received from client has been incorrectly formatted.";
         tempSocket->abort();
         return;
     }

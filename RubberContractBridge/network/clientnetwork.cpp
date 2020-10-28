@@ -1,5 +1,10 @@
 #include "clientnetwork.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
 {
     // Init internal variables
@@ -148,7 +153,7 @@ void ClientNetwork::rxAll()
 
     if (!in.commitTransaction()){
         emit generalError("Datastream read error occured. It is suggested to restart the game.");
-        qWarning() << "rxAll: Datastream error occured.";
+        qInfo() << "rxAll: Datastream error occured.";
         return;
     }
 
@@ -165,7 +170,7 @@ void ClientNetwork::rxAll()
     } else {
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "rxAll: Data received from server has been incorrectly formatted.";
+        qInfo() << "rxAll: Data received from server has been incorrectly formatted.";
         return;
     }
 
@@ -224,7 +229,7 @@ void ClientNetwork::internalServerDisconnected()
     // TODO: Return player name. Look at disconnection and when game has been started. (Setting the bool for that. - Not in this function.)
 
     if (gameStarted){
-        qWarning() << "internalServerDisconnected: Client: " + playerName + " emitted gameTerminated.";
+        qInfo() << "internalServerDisconnected: Client: " + playerName + " emitted gameTerminated.";
 
         // Let the GUI know that connection to the server has been lost.
         emit gameTerminated("Client lost connection to the server.");
@@ -234,7 +239,7 @@ void ClientNetwork::internalServerDisconnected()
 
     } else {
         // The game has not yet been started.
-        qWarning() << "internalServerDisconnected: Client: " + playerName + " emitted serverDisconnected.";
+        qInfo() << "internalServerDisconnected: Client: " + playerName + " emitted serverDisconnected.";
         emit serverDisconnected();
     }
 
@@ -389,7 +394,7 @@ void ClientNetwork::rxNotifyBidRejected(QJsonObject reasonObj)
     if (!reasonObj.contains("BidRejectReason") || !reasonObj["BidRejectReason"].isString()){
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "rxNotifyBidRejected: Data received from server has been incorrectly formatted.";
+        qInfo() << "rxNotifyBidRejected: Data received from server has been incorrectly formatted.";
         return;
     }
 
@@ -407,7 +412,7 @@ void ClientNetwork::rxNotifyMoveRejected(QJsonObject reasonObj)
     if (!reasonObj.contains("MoveRejectReason") || !reasonObj["MoveRejectReason"].isString()){
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "rxNotifyMoveRejected: Data received from server has been incorrectly formatted.";
+        qInfo() << "rxNotifyMoveRejected: Data received from server has been incorrectly formatted.";
         return;
     }
 
@@ -465,7 +470,7 @@ void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
     if (!gsObj.contains("PlayerGameState") || !gsObj["PlayerGameState"].isObject()){
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "rxUpdateGameState: Data received from server has been incorrectly formatted.";
+        qInfo() << "rxUpdateGameState: Data received from server has been incorrectly formatted.";
         return;
     }
 
@@ -490,7 +495,7 @@ void ClientNetwork::rxMessage(QJsonObject msgObj)
     if (!msgObj.contains("MsgSource") || !msgObj["MsgSource"].isString() || !msgObj.contains("MsgMessage") || !msgObj["MsgMessage"].isString()){
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "rxMessage: Data received from server has been incorrectly formatted.";
+        qInfo() << "rxMessage: Data received from server has been incorrectly formatted.";
         return;
     }
 
@@ -508,7 +513,7 @@ void ClientNetwork::rxGameTerminated(QJsonObject reasonObj)
     if (!reasonObj.contains("TerminationReason") || !reasonObj["TerminationReason"].isString()){
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "rxGameTerminated: Data received from server has been incorrectly formatted.";
+        qInfo() << "rxGameTerminated: Data received from server has been incorrectly formatted.";
         return;
     }
 

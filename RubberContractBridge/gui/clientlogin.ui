@@ -41,7 +41,7 @@ font-weight: bold;</string>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="userNameLine">
+       <widget class="QLineEdit" name="usernameLine">
         <property name="styleSheet">
          <string notr="true">color: rgb(0, 0, 0)</string>
         </property>
@@ -59,7 +59,7 @@ font-weight: bold;</string>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="passwordLines">
+       <widget class="QLineEdit" name="passwordLine">
         <property name="styleSheet">
          <string notr="true">color:rgb(0, 0, 0)</string>
         </property>

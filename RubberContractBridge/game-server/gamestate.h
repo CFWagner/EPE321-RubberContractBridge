@@ -60,5 +60,5 @@ protected:
     PlayerPosition declarer;
     Score score;
 };
-
+Q_DECLARE_METATYPE(GameState);
 #endif // GAMESTATE_H

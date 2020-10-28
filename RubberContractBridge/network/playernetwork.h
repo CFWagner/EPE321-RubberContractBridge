@@ -20,7 +20,6 @@ class PlayerNetwork : public Player
     Q_OBJECT
 public:
     explicit PlayerNetwork(QObject *parent = nullptr, QString playerName = QString("Player"), QTcpSocket* clientSoc = nullptr);
-    ~PlayerNetwork();
 
     void notifyBidTurn();
     void notifyMoveTurn();
@@ -30,6 +29,7 @@ public:
     void notifyMoveRejected(QString reason);
     void message(QString source, QString msg);
     void gameTerminated(QString reason);
+    // Reason will probably be displaye to the end user.
 
 private slots:
     void rxAll();
@@ -37,10 +37,13 @@ private slots:
 
 signals:
     void generalError(QString errorMsg); // All errors. (Should be displayed to the administrator.)
+    // No generalError given when client unexpectedly disconnects, rather clientDisconnected is emmited.
     void bidSelected(Bid bid);
     void moveSelected(Card card);
     void messageGenerated(QString msg);
     void clientDisconnected();
+    // This will be emited when the client disconnects (including when the client is destructed.)
+    // This will probably be emitted after gameTerminated() was send. (Untested.)
 
 private:
     void txAll(QJsonObject data);

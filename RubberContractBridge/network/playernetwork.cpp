@@ -23,20 +23,6 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
 }
 
 /**
- * Destructor
- */
-
-PlayerNetwork::~PlayerNetwork()
-{
-    if (clientSoc != nullptr){
-        clientSoc->abort();
-        clientSoc->deleteLater();
-        qInfo() << "Inside";
-    }
-    qInfo() << "Destruct Player";
-}
-
-/**
  * Send notification to the client that it is their turn to bid.
  */
 
@@ -201,7 +187,14 @@ void PlayerNetwork::socketError(QAbstractSocket::SocketError socError)
 {
     qInfo() << "socketError: A socket error occured in PlayerNetwork: " << socError;
 
-    emit generalError("The following error occurred: " + clientSoc->errorString() + " Restart the game server.");
+    if (socError != QAbstractSocket::RemoteHostClosedError){
+        // Since serverDisconnected is emited when socError == QAbstractSocket::RemoteHostClosedError,
+        // don't emit a generalError.
+        emit generalError("The following error occurred: " + clientSoc->errorString() + " Restart the game server.");
+    }
+
+    // Ensure that the socket has been disconnected.
+    clientSoc->abort();
 }
 
 /*!
@@ -329,5 +322,7 @@ void PlayerNetwork::internalClientDisconnected()
     // Ensure that the client is actually disconnected
     emit clientDisconnected();
     clientSoc->abort();
-    clientSoc->deleteLater();
+
+    // Prevent the socket from being aborted or deleted again
+    clientSoc = nullptr;
 }

@@ -17,7 +17,7 @@ class ServerNetwork : public QObject
 {
     Q_OBJECT
 public:
-    // The server should not be destructed before the game have finished.
+    // The server should not be destructed before the game has finished.
     explicit ServerNetwork(QObject *parent = nullptr, QString nameOfAI = QString("AI"));
     ~ServerNetwork();
     void forceError(); // Only used in unit tests. Will emit a generalError signal.
@@ -25,6 +25,7 @@ public:
     QTcpSocket* getPlayerSoc(QString playerName);
     void setPassword(QString password); // Call before calling initServer.
     void initServer(QHostAddress ip, quint16 port);
+    // Once connected to a port, the port is only relesed after the application has been terminated.
     void stopListening(); // Call this just before the game starts and after getting all the Player sockets.
 
 private slots:
@@ -42,14 +43,15 @@ signals:
     // errorMsg is empty except when status = 2, then the actual error will be displayed. (It might not be a port error,
     // but that is the most likely error to have occured. If status = 2 and errorMsg = "The bound address is already in use", then it is
     // definitively the port that is already in use.)
-    // GUI is responsible for creating the messages regarding connection status. (General Info and Warning signals will not be used for this.)
-    // Once connected to a port, the port is only relesed after the application has been terminated.
+    // GUI is responsible for creating the messages regarding connection status. (generalError signals will not be used for this.)
 
     void generalError(QString errorMsg);
     // All errors. (Should be displayed to the administrator.)
+    // No generalError emited when a client unexpectedly disconnects.
 
     void playerJoined(QString playerName);
     void playerDisconnected(QString playerName);
+    // After stopListening called, playerDisconnected will not be emited again.
 
 private:
     QString validateLogin(QString playerName, QString password);

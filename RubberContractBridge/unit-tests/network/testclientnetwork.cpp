@@ -754,6 +754,7 @@ void testClientNetwork::getPlayers()
     QVERIFY(spyServerPlayerDisconnected->wait(100));
 
     QVERIFY2(spyServerPlayerDisconnected->count() == 1,"Player should have disconnected from testServerNet1.");
+    QCOMPARE(spyServerError->count(), 0); // No generalError given when client unexpectedly disconnects.
 
 
     spyServerPlayerJoined->clear();
@@ -852,7 +853,6 @@ void testClientNetwork::getPlayers()
 
     QVERIFY(spyServerPlayerJoined->count() == 0);
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
-
 }
 
 void testClientNetwork::cleanupTestCase()

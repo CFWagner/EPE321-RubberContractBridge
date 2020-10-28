@@ -38,9 +38,13 @@ signals:
     // status = 1 :connection was not successful, since the IP address or/and port are invalid. (See note regarding errorMsg.)
     // status = 3 :already connected, old connection was kept. (Nothing was changed.)
     // errorMsg is empty except when status = 1, then the actual error will be displayed.
-    // GUI is responsible for creating the messages regarding connection status. (genearlWarning signals will not be used for this.)
+    // GUI is responsible for creating the messages regarding connection status. (generalError signals will not be used for this.)
 
-    void generalError(QString errorMsg); // All errors, except serverNotFound(). (Should be displayed to the player.)
+    void generalError(QString errorMsg); // All errors. (Should be displayed to the player.)
+    // When HostNotFoundError or ConnectionRefusedError occurs (basically when connecting to the host was unsuccessful),
+    // the connectionResult(1,errorMsg) is emited instead.
+    // generalError not emited when server unexpectedly disconnects, rather serverDisconnected or gameTerminated is emited.
+
     void notifyBidTurn();
     void notifyMoveTurn();
     void notifyBidRejected(QString reason);
@@ -50,8 +54,11 @@ signals:
     void messageReceived(QString source, QString msg);
     void serverDisconnected();
     // Only used before a game has been started, all terminations during a game will happen through gameTerminated().
+    // When the game is started and this client has not been added to the game, the server will disconnect the client.
+    // The ClientNetwork will then emit serverDisconnected. The client should then be terminated.
 
-    void gameTerminated(QString reason); // This can be emmited anytime after a game has been started.
+    void gameTerminated(QString reason);
+    // This can be emmited anytime after a game has been started.
     // If client lost connection to the server while in a game, the reason given with gameTerminated will be: "Client lost connection to the server."
     // If another reason was given, it meant that the server terminated the game.
     // The Client (and probably the server) must be RESTARTED, before attempting to connect again.

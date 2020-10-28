@@ -66,7 +66,7 @@ void testPlayerNetwork::addClients()
     int k = 4;
 
     // Reference to Player's QTcpSocket
-    testPlayerSocket = new QTcpSocket*; // Memory freed in disconnectClientFromServerAfterGameStarted
+    testPlayerSocket = new QTcpSocket*;
 
     // Add a 5th player and get the PlayerSocket
     addPlayerNetwork(playerNames[k], testPlayerSocket);
@@ -142,9 +142,6 @@ void testPlayerNetwork::disconnectClientFromServerAfterGameStarted()
     checkAllCientSignals();
     checkAllPlayerSignals();
     checkAllServerSignals();
-
-    // Free up the memory TODO remove this
-//    delete testPlayerSocket;
 }
 
 /**
@@ -655,45 +652,46 @@ void testPlayerNetwork::testErrors()
 
 void testPlayerNetwork::cleanupTestCase()
 {
-    // TODO: use another order and test if all deletelater things works
-    qInfo() << "cleanupTestCase: 1";
     // Ensure that all QSignalSpy objects are deleted.
-       spyServer->deleteLater();
-       spyServerPlayerJoined->deleteLater();
-       spyServerError->deleteLater();
-       spyServerPlayerDisconnected->deleteLater();
-qInfo() << "cleanupTestCase: 2";
-       for (int i = 0; i < testClientNet.count(); i++){
-           spyClientConnectResult[i]->deleteLater();
-           spyClientError[i]->deleteLater();
-           spyClientLoginResult[i]->deleteLater();
-           spyClientServerDisconnected[i]->deleteLater();
-           spyClientGameTerminated[i]->deleteLater();
 
-           spyClientNotifyBidTurn[i]->deleteLater();
-           spyClientNotifyMoveTurn[i]->deleteLater();
-           spyClientNotifyBidRejected[i]->deleteLater();
-           spyClientNotifyMoveRejected[i]->deleteLater();
-           spyClientUpdateGameState[i]->deleteLater();
-           spyClientMessageReceived[i]->deleteLater();
+    spyServer->deleteLater();
+    spyServerPlayerJoined->deleteLater();
+    spyServerError->deleteLater();
+    spyServerPlayerDisconnected->deleteLater();
 
-           testClientNet[i]->deleteLater();
-       }
-       qInfo() << spyPlayerBidSelected[0]->wait(1000);
-qInfo() << "cleanupTestCase: 3";
-       for (int i = 0; i < testPlayerNet.count()-2; i++){
-           qInfo() << "i = " << i;
-           spyPlayerGeneralError[i]->deleteLater();
-           spyPlayerBidSelected[i]->deleteLater();
-           spyPlayerMoveSelected[i]->deleteLater();
-           spyPlayerMessageGenerated[i]->deleteLater();
-           spyPlayerClientDisconnected[i]->deleteLater();
+    for (int i = 0; i < testClientNet.count(); i++){
+       spyClientConnectResult[i]->deleteLater();
+       spyClientError[i]->deleteLater();
+       spyClientLoginResult[i]->deleteLater();
+       spyClientServerDisconnected[i]->deleteLater();
+       spyClientGameTerminated[i]->deleteLater();
 
-           testPlayerNet[i]->deleteLater();
-       }
-qInfo() << "cleanupTestCase: 4";
-       // delete memory allocated
-//       delete testPlayerSocket;
+       spyClientNotifyBidTurn[i]->deleteLater();
+       spyClientNotifyMoveTurn[i]->deleteLater();
+       spyClientNotifyBidRejected[i]->deleteLater();
+       spyClientNotifyMoveRejected[i]->deleteLater();
+       spyClientUpdateGameState[i]->deleteLater();
+       spyClientMessageReceived[i]->deleteLater();
+
+       testClientNet[i]->deleteLater();
+    }
+
+    // Test player signals when client unexpectedly disconnects
+    QVERIFY(!spyPlayerGeneralError[0]->wait(100)); // No general error present
+    QCOMPARE(spyPlayerClientDisconnected[0]->count(), 1); // Client disconnected error present
+
+    for (int i = 0; i < testPlayerNet.count(); i++){
+       spyPlayerGeneralError[i]->deleteLater();
+       spyPlayerBidSelected[i]->deleteLater();
+       spyPlayerMoveSelected[i]->deleteLater();
+       spyPlayerMessageGenerated[i]->deleteLater();
+       spyPlayerClientDisconnected[i]->deleteLater();
+
+       testPlayerNet[i]->deleteLater();
+    }
+
+   // delete memory allocated
+   delete testPlayerSocket;
 }
 
 /**

@@ -1,9 +1,19 @@
 #include "bidcardsselected.h"
 
+BidCardsSelected::BidCardsSelected(BidCall calls,QWidget *parent) : QLabel(parent)
+{
+    this->calls = calls;
+}
+
 BidCardsSelected::BidCardsSelected(CardSuit suit,int bidAmount,QWidget *parent) : QLabel(parent)
 {
     this->suit = suit;
     this->bidAmount = bidAmount;
+}
+
+BidCardsSelected::~BidCardsSelected()
+{
+    delete this;
 }
 
 CardSuit BidCardsSelected::getSuit()
@@ -14,6 +24,11 @@ CardSuit BidCardsSelected::getSuit()
 int BidCardsSelected::getValue()
 {
     return bidAmount;
+}
+
+BidCall BidCardsSelected::getBidCall()
+{
+    return calls;
 }
 
 void BidCardsSelected::enterEvent(QEvent *)
@@ -28,4 +43,5 @@ void BidCardsSelected::leaveEvent(QEvent *)
 
 void BidCardsSelected::mousePressEvent(QMouseEvent *)
 {
+    emit sendBidPressed(this);
 }

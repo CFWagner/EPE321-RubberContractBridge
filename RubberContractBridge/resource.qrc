@@ -117,5 +117,8 @@
         <file>guiResources/bid/spade_6.png</file>
         <file>guiResources/bid/spade_7.png</file>
         <file>guiResources/bid/arrows.png</file>
+        <file>guiResources/bid/PASS.png</file>
+        <file>guiResources/bid/X.png</file>
+        <file>guiResources/bid/XX.png</file>
     </qresource>
 </RCC>

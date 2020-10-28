@@ -47,5 +47,4 @@ private:
     quint32 redoubleBonuses[2] = {0, 0};
     quint32 rubberBonuses[2] = {0, 0};
 };
-Q_DECLARE_METATYPE(Score);
 #endif // SCORE_H

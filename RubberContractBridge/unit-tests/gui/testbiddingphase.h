@@ -24,6 +24,12 @@ private:
     BidWindow *testBidS;
     BidWindow *testBidE;
     BidWindow *testBidW;
+    QSignalSpy *sendGS;
+    QSignalSpy *receiveBidN;
+    QSignalSpy *receiveBidS;
+    QSignalSpy *receiveBidE;
+    QSignalSpy *receiveBidW;
+    Bid *bidR;
 };
 
 #endif // TESTBIDDINGPHASE_H

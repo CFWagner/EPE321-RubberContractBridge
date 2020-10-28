@@ -14,7 +14,7 @@ testServerLobby::~testServerLobby()
 void testServerLobby::testSerLob()
 {
     testSLob = new ServerLobby();
-    createServer = new Server();
+    //createServer = new Server();
     while (!testSLob->isVisible()) {
         QTest::qWait(200); // Wait till the window is visable.
     }
@@ -28,7 +28,7 @@ void testServerLobby::testSerLob()
     QVERIFY(startGame->isValid());
     QVERIFY(addPlayerP->isValid());
     QVERIFY(removePlayerP->isValid());
-    connect(testSLob,&ServerLobby::playersSelected,createServer,&Server::playersSelected);
+    //connect(testSLob,&ServerLobby::playersSelected,createServer,&Server::playersSelected);
     connect(this,&testServerLobby::playerJoined,testSLob,&ServerLobby::addPlayer);
     connect(this,&testServerLobby::playerDisconnected,testSLob,&ServerLobby::removePlayer);
 

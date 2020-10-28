@@ -24,6 +24,4 @@ private:
 };
 Q_DECLARE_METATYPE(Card);
 
-Q_DECLARE_METATYPE(Card);
-
 #endif // CARD_H

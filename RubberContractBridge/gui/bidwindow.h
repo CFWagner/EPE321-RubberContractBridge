@@ -24,14 +24,20 @@ public:
     void setupWindow();
     void staticGUIElements();
     void setupBidTable();
+    void setName(QString);
     QVector<BidCardsSelected> getBidArray();
+    void updateBidDeck();
 public slots:
     void getUpdateGameState(PlayerGameState player);
+    void bidPressed(BidCardsSelected *);
 private slots:
     void on_button_exit_clicked();
+signals:
+    void txBidSelected(Bid);
 private:
     Ui::BidWindow *ui;
     BidCardsSelected *bidCard;
+    BidCardsSelected *passBid;
     BidCardsSelected *bidCards[35];
     CardSuit suit;
     int bidAmount;
@@ -39,7 +45,9 @@ private:
 
     //Game state
     PlayerGameState player;
-
+    QString name;
+    bool canMakeMove = false;
+    Bid bidMade;
 };
 
 #endif // BIDWINDOW_H

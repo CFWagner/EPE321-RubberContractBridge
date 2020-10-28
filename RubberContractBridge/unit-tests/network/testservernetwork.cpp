@@ -1,9 +1,19 @@
 #include "testservernetwork.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 testServerNetwork::testServerNetwork(QObject *parent) : QObject(parent)
 {
-
+    // Nothing needed here.
 }
+
+/**
+ * Test connection to ports (listening) of the server.
+ * 2 ServerNetworks used.
+ */
 
 void testServerNetwork::initServer1()
 {
@@ -68,6 +78,10 @@ void testServerNetwork::initServer1()
 
 }
 
+/**
+ * Test error handeling of the NetworkServer.
+ */
+
 void testServerNetwork::initServer2()
 {
     // Test invalid IP adress
@@ -86,10 +100,10 @@ void testServerNetwork::initServer2()
     QSignalSpy spy2(&testServerNet1, SIGNAL(generalError(QString)));
     QVERIFY(spy2.isValid());
 
-    testServerNet1.getUnitTest();
+    testServerNet1.forceError();
 
     QList<QVariant> arguments2 = spy2.takeFirst();
-    QCOMPARE(arguments2.at(0), "bUnitTest was requested, but it isn't being used anymore.");
+    QCOMPARE(arguments2.at(0), "Error occured.");
 
     // Server should be able to connect to port.
     testServerNet1.initServer(ip,port);

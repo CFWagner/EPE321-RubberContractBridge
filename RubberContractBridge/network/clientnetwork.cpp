@@ -13,15 +13,6 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
     idCounter = 0;
     prevID = -1; // First ID received from server is 0. prevID should be smaller, thus -1.
 
-    // Init unit test
-    bUnitTest.clear();
-    bUnitTest.fill(false,40);
-
-    //socketError can use 0 - 4
-    //txRequestLogin can use 5 - 9
-    //socketConnected can use 10 - 19
-    //rxAll can use 20 - 29
-
     // Prepare the tcpSoc and datastream
     tcpSoc = new QTcpSocket(this);
 
@@ -35,14 +26,14 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
     connect(tcpSoc, &QAbstractSocket::errorOccurred, this, &ClientNetwork::socketError);
     // Sucsessfully connected
     connect(tcpSoc, &QAbstractSocket::connected, this, &ClientNetwork::socketConnected);
-    // If the server disconnects the client
-//    connect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
 }
+/**
+ * Destructor
+ */
 
 ClientNetwork::~ClientNetwork()
 {
     if (tcpSoc != nullptr){
-//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
         tcpSoc->abort();
         tcpSoc->deleteLater();
     }
@@ -56,15 +47,8 @@ ClientNetwork::~ClientNetwork()
 void ClientNetwork::abort()
 {
     if (tcpSoc != nullptr){
-//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
         tcpSoc->abort();
     }
-}
-
-QVector<bool> ClientNetwork::getUnitTest()
-{
-    emit generalError("bUnitTest was requested, but it isn't being used anymore.");
-    return bUnitTest;
 }
 
 /**
@@ -88,15 +72,8 @@ void ClientNetwork::txRequestLogin(QHostAddress serverIP, quint16 port, QString 
     tempPlayerName = playerName;
     tempPassword = password;
 
-    // Prevent the function from
-//    disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
-
     // If connection has already been made, abort it.
     tcpSoc->abort();
-
-    // If the server disconnects the client
-//    connect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
-
     tcpSoc->connectToHost(serverIP, port);
 
     // socketConnected or socketError will be signaled next, depending on connectToHost()'s outcome.
@@ -255,14 +232,10 @@ void ClientNetwork::internalServerDisconnected()
         // Update relevant variables (Not complete list, since Client should be restarted.)
         gameStarted = false;
 
-        // Prevent the function to call itself.
-//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
-
     } else {
         // The game has not yet been started.
         qWarning() << "internalServerDisconnected: Client: " + playerName + " emitted serverDisconnected.";
         emit serverDisconnected();
-
     }
 
     // Reset variables
@@ -338,9 +311,6 @@ void ClientNetwork::socketError(QAbstractSocket::SocketError socError)
         emit connectionResult(1, "The following error occurred: " + tcpSoc->errorString());
     }
 
-    // Prevent class from emmitting 2 signals.
-//    disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
-
     tcpSoc->abort();
 }
 
@@ -380,14 +350,12 @@ void ClientNetwork::txAll(QJsonObject data)
     out << data;
     int tempVal = tcpSoc->write(block);
 
-    qInfo() << "Number of bytes expected to be sent to the server: " << block.size();
-    qInfo() << "Number of bytes sent to server: " << tempVal;
+    qInfo() << "txAll: Number of bytes expected to be sent to the server: " << block.size();
+    qInfo() << "txAll: Number of bytes sent to server: " << tempVal;
 
-    if (tempVal == -1) {
-        // An error occured when writing the data block
-        emit generalError("An error occured with sending data to the server. It is suggested to restart the game.");
-    } else if (tempVal < block.size()) {
-        // The block written was too small (did not contain enough bytes).
+    if (tempVal == -1 || tempVal < block.size()) {
+        // An error occured when writing the data block.
+        // OR The block written was too small (did not contain enough bytes).
         emit generalError("An error occured with sending data to the server. It is suggested to restart the game.");
     }
 }
@@ -474,11 +442,9 @@ void ClientNetwork::rxLoginResult(QJsonObject resObj)
 
     // If login was unsuccessful, disconnect from the host.
     if (!bLoggedIn){
-        // Prevent the class from emitting 2 signals.
-//        disconnect(tcpSoc, &QAbstractSocket::disconnected, this, &ClientNetwork::internalServerDisconnected);
         tcpSoc->abort();
-        qInfo() << "Login was unseccessfull and client is aborting connection with host.";
-    }else{
+        qInfo() << "rxLoginResult: Login was unseccessfull and client is aborting connection with host.";
+    } else {
         // If login was successful, set the playerName chosen.
         this->playerName = tempPlayerName;
     }

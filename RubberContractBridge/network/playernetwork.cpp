@@ -2,10 +2,9 @@
 
 PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *clientSoc)
 {
-    // Once ingerited, init the playerName.
     PlayerNetwork::playerName = playerName;
     PlayerNetwork::clientSoc = clientSoc;
-    idCounter = 1; // One message has been sent by the
+    idCounter = 1; // One message has been sent by the Client
     prevID = 0; // The first message has been received and the ID was 0, thus prevID is 0.
 
     in.setDevice(PlayerNetwork::clientSoc);
@@ -16,11 +15,6 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
     connect(PlayerNetwork::clientSoc, &QAbstractSocket::disconnected,this, &PlayerNetwork::internalClientDisconnected);
     // Connection errors
     connect(PlayerNetwork::clientSoc, &QAbstractSocket::errorOccurred, this, &PlayerNetwork::socketError);
-
-    // Init unit test
-    bUnitTest.clear();
-    bUnitTest.fill(false,40);
-
 }
 
 /**
@@ -134,11 +128,6 @@ void PlayerNetwork::gameTerminated(QString reason)
     txAll(txObj);
 }
 
-QVector<bool> PlayerNetwork::getUnitTest() const
-{
-    return bUnitTest;
-}
-
 /**
  * All received data goes through this.
  * The function calls the relevant rx functions, depending on the "Type" received.
@@ -153,7 +142,7 @@ void PlayerNetwork::rxAll()
 
     if (!in.commitTransaction()){
         emit generalError("Datastream read error occured. It is suggested to restart the game.");
-        qWarning() << "Datastream error occured.";
+        qWarning() << "rxAll: Datastream error occured.";
         return;
     }
 
@@ -170,7 +159,7 @@ void PlayerNetwork::rxAll()
     } else {
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "Data received from server has been incorrectly formatted.";
+        qWarning() << "rxAll: Data received from server has been incorrectly formatted.";
         return;
     }
 
@@ -195,7 +184,6 @@ void PlayerNetwork::rxAll()
 
     // Default
     emit generalError("An incorrect 'Type' has been received. The data will be ignored.");
-    return;
 }
 
 /*!
@@ -204,11 +192,9 @@ void PlayerNetwork::rxAll()
  */
 void PlayerNetwork::socketError(QAbstractSocket::SocketError socError)
 {
-    qInfo() << "A socket error occured in PlayerNetwork: " << socError;
+    qInfo() << "socketError: A socket error occured in PlayerNetwork: " << socError;
 
     emit generalError("The following error occurred: " + clientSoc->errorString() + " Restart the game server.");
-
-//    clientSoc->abort();
 }
 
 /*!
@@ -247,14 +233,12 @@ void PlayerNetwork::txAll(QJsonObject data)
     out << data;
     int tempVal = clientSoc->write(block);
 
-    qInfo() << "Number of bytes expected to be sent to the client: " << block.size();
-    qInfo() << "Number of bytes sent to client: " << tempVal;
+    qInfo() << "txAll: Number of bytes expected to be sent to the client: " << block.size();
+    qInfo() << "txAll: Number of bytes sent to client: " << tempVal;
 
-    if (tempVal == -1) {
-        // An error occured when writing the data block
-        emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
-    } else if (tempVal < block.size()) {
-        // The block written was too small (did not contain enough bytes).
+    if (tempVal == -1 || tempVal < block.size()) {
+        // An error occured when writing the data block.
+        // OR The block written was too small (did not contain enough bytes).
         emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
     }
 }

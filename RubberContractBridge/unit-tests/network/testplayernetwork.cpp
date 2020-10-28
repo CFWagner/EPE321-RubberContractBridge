@@ -1,8 +1,12 @@
 #include "testplayernetwork.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 testPlayerNetwork::testPlayerNetwork(QObject *parent) : QObject(parent)
 {
-
     // Start a server and verify that it is working
     passwordServer = "abcdef1234$#^";
     port = 61076;

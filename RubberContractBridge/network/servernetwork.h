@@ -17,16 +17,15 @@ class ServerNetwork : public QObject
 {
     Q_OBJECT
 public:
+    // The server should not be destructed before the game have finished.
     explicit ServerNetwork(QObject *parent = nullptr, QString nameOfAI = QString("AI"));
     ~ServerNetwork();
+    void forceError(); // Only used in unit tests. Will emit a generalError signal.
 
     QTcpSocket* getPlayerSoc(QString playerName);
     void setPassword(QString password); // Call before calling initServer.
     void initServer(QHostAddress ip, quint16 port);
     void stopListening(); // Call this just before the game starts and after getting all the Player sockets.
-
-    // Unit test data
-    QVector<bool> getUnitTest();
 
 private slots:
     void connectClient();
@@ -44,6 +43,7 @@ signals:
     // but that is the most likely error to have occured. If status = 2 and errorMsg = "The bound address is already in use", then it is
     // definitively the port that is already in use.)
     // GUI is responsible for creating the messages regarding connection status. (General Info and Warning signals will not be used for this.)
+    // Once connected to a port, the port is only relesed after the application has been terminated.
 
     void generalError(QString errorMsg);
     // All errors. (Should be displayed to the administrator.)
@@ -62,10 +62,6 @@ private:
     QTcpServer* tcpServer;
     QDataStream in;
     bool bAllowNewClientConnection;
-
-    // Unit testing datastructures
-    QVector<bool> bUnitTest;
-
 };
 
 #endif // SERVERNETWORK_H

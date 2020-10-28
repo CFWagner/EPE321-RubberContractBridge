@@ -1,5 +1,10 @@
 #include "testclientnetwork.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 testClientNetwork::testClientNetwork(QObject *parent) : QObject(parent)
 {
     // Start a server and verify that it is working
@@ -39,12 +44,6 @@ void testClientNetwork::verifyServerWorking()
 
     // Were any generalError's emited from testServerNet1?
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
-
-    // Test the generalError signal
-    testServerNet1.getUnitTest();
-    QVERIFY2(spyServerError->count() == 1,"General errors occured in the testServerNet1.");
-    QList<QVariant> arguments2 = spyServerError->takeFirst();
-    QCOMPARE(arguments2.at(0), "bUnitTest was requested, but it isn't being used anymore.");
 }
 
 /*!
@@ -180,8 +179,8 @@ void testClientNetwork::wrongServerDetails()
     QVERIFY(spyServerPlayerJoined->count() == 1);
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
-    // Try to connect again after already being connected
 
+    // Try to connect again after already being connected
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
@@ -200,7 +199,7 @@ void testClientNetwork::wrongServerDetails()
 
     testClient.txRequestLogin(ip,port,playerName,passwordServer);
 
-//    QVERIFY(spyClientConnectResult.wait(100));
+    // QVERIFY(spyClientConnectResult.wait(100));
 
     // No warnings should be issused by either the server or the client
     // Proof that data sent in QJsonObject format is working.
@@ -448,11 +447,10 @@ void testClientNetwork::wrongServerDetails()
     spyClientLoginResult11.clear();
     spyClientConnectResult11.clear();
 
+    // Delete all ClietnNetowrk Objects
     for (int i = 0; i < 8; i++){
         arrTestClientNet.at(i)->deleteLater();
     }
-
-
 }
 
 /*!
@@ -749,7 +747,9 @@ void testClientNetwork::getPlayers()
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
 
-    // Forecfully disconnect the client
+    // Forecfully disconnect the client from the server.
+    // Server should emit playerDisconnected signal when player is in the lobby.
+    // testClient4 is in the lobby.
     testClient4.abort();
     QVERIFY(spyServerPlayerDisconnected->wait(100));
 
@@ -863,7 +863,7 @@ void testClientNetwork::cleanupTestCase()
     spyServerPlayerJoined->deleteLater();
     spyServerError->deleteLater();
     spyServerPlayerDisconnected->deleteLater();
-//    testServerNet1.deleteLater();  // Gives a memory leak if executed.
+    // testServerNet1.deleteLater();  // Gives a memory leak if executed.
 
     qInfo() << "testClientNetwork cleaded up";
 }

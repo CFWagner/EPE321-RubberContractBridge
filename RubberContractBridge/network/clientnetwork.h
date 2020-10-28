@@ -20,9 +20,6 @@ public:
     ~ClientNetwork();
     void abort(); // Only used for testing.
 
-    // Unit test data
-    QVector<bool> getUnitTest();
-
 public slots:
     void txRequestLogin(QHostAddress serverIP, quint16 port, QString playerName, QString password);
     void txBidSelected(Bid bid);
@@ -41,7 +38,7 @@ signals:
     // status = 1 :connection was not successful, since the IP address or/and port are invalid. (See note regarding errorMsg.)
     // status = 3 :already connected, old connection was kept. (Nothing was changed.)
     // errorMsg is empty except when status = 1, then the actual error will be displayed.
-    // GUI is responsible for creating the messages regarding connection status. (genearl Info and warning signals will not be used for this.)
+    // GUI is responsible for creating the messages regarding connection status. (genearlWarning signals will not be used for this.)
 
     void generalError(QString errorMsg); // All errors, except serverNotFound(). (Should be displayed to the player.)
     void notifyBidTurn();
@@ -55,14 +52,10 @@ signals:
     // Only used before a game has been started, all terminations during a game will happen through gameTerminated().
 
     void gameTerminated(QString reason); // This can be emmited anytime after a game has been started.
-    // If client lost connection to the server while in a game, the reason given with gameTerminated will be: "Client lost connection to the server.")
-    // When received it means that the connection to the server has been lost or the server terminated the game.
+    // If client lost connection to the server while in a game, the reason given with gameTerminated will be: "Client lost connection to the server."
+    // If another reason was given, it meant that the server terminated the game.
     // The Client (and probably the server) must be RESTARTED, before attempting to connect again.
     // The GUI is responsible for ensuring that the client is RESTARTED. (Do not go back to login page.)
-    // Note that the client will not be informed if an unexpected disconnection between the client and server occurs, before a game has started.
-    // The Server's GUI will be informed if an unexpected disconnection occurs, before a game has started.
-    // (playerDisconnected signal from the ServerNetwork.)
-    // This is acceptable, since only players selected on the server side will be joined.
 
 private:
     void txAll(QJsonObject data);
@@ -85,10 +78,6 @@ private:
     QDataStream in;
     qint64 idCounter;
     qint64 prevID;
-
-    // Unit testing datastructures
-    QVector<bool> bUnitTest;
-
 };
 
 #endif // CLIENTNETWORK_H

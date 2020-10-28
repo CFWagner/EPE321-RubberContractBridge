@@ -27,6 +27,9 @@ void GameServer::executeMatch(qint32 maxRubbers)
 {
     state = new ServerGameState();
 
+    if(maxRubbers <= 0)
+        return;
+
     // Connect game event signal and slot
     qRegisterMetaType<GameEvent>("GameEvent");
     connect(state, SIGNAL(gameEvent(GameEvent)), this, SLOT(gameEvent(GameEvent)));
@@ -145,4 +148,9 @@ void GameServer::messageGenerated(QString message)
 const ServerGameState* GameServer::getState() const
 {
     return state;
+}
+
+const QVector<Player*> GameServer::getPlayers() const
+{
+    return players;
 }

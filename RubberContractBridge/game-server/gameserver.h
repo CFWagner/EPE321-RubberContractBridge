@@ -17,6 +17,7 @@ public:
     void addPlayer(Player* player);
     void executeMatch(qint32 maxRubbers);
     const ServerGameState* getState() const;
+    const QVector<Player*> getPlayers() const;
 public slots:
     void gameEvent(GameEvent gameEvent);
     void bidSelected(Bid bid);

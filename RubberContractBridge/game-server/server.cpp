@@ -28,12 +28,23 @@ const ServerGameState& Server::getServerGameState() const
     return *gameServer->getState();
 }
 
+// Gettter for game server
+const GameServer& Server::getGameServer() const
+{
+    return *gameServer;
+}
+
 // Setter for the number of rubbers to be played during the game
 void Server::setMaxRubbers(qint32 maxRubbers)
 {
     this->maxRubbers = maxRubbers;
 }
 
+// Getter for the number of rubbers to be played during the game
+qint32 Server::getMaxRubbers() const
+{
+    return maxRubbers;
+}
 
 // Slot for when the players to play the game are selected and the game is started in the server lobby
 // Player names are ordered NORTH, SOUTH, EAST, WEST in the playerNames vector
@@ -74,7 +85,7 @@ void Server::playersSelected(QVector<QString> playerNames)
         // Create human player
         else{
             QTcpSocket* playerSocket = serverNetwork->getPlayerSoc(playerName);
-            player = new PlayerNetwork(nullptr, playerName, playerSocket);
+            player = new PlayerNetwork(this, playerName, playerSocket);
             player->setPosition(position);
         }
         // Add player to match before match begins
@@ -86,12 +97,6 @@ void Server::playersSelected(QVector<QString> playerNames)
 
     // Run the match for specified number of rubbers
     gameServer->executeMatch(maxRubbers);
-}
-
-// Slot for when a player disconnects from the server
-void Server::playerDisconnected()
-{
-
 }
 
 // Slot for when the server password is selected in the server login menu

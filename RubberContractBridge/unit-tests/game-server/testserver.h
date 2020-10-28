@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtTest/QtTest>
 #include <QSignalSpy>
-#include "game-server/gameserver.h"
+#include "game-server/server.h"
 
 class TestServer : public QObject
 {

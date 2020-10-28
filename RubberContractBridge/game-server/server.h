@@ -15,15 +15,17 @@ public:
     explicit Server(QObject *parent = nullptr);
     ~Server();
     const ServerNetwork& getServerNetwork() const;
+    const ServerGameState& getServerGameState() const;
+    void setMaxRubbers(qint32 maxRubbers);
 public slots:
-    void gameEvent(GameEvent event);
     void playersSelected(QVector<QString> playerNames);
     void playerDisconnected();
     void serverPassword(QString passwordSent);
     void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
 private:
-    ServerNetwork* serverNetwork;
-    GameServer* gameServer;
+    qint32 maxRubbers;
+    ServerNetwork* serverNetwork = nullptr;
+    GameServer* gameServer = nullptr;
 };
 
 #endif // SERVER_H

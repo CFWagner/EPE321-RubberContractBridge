@@ -1,0 +1,10 @@
+#include "testserver.h"
+
+TestServer::TestServer(QObject *parent) : QObject(parent) {}
+
+// Test for correct construction and operation of Server instance
+void TestServer::testServer()
+{
+    // Instantiate Server
+    Server server
+}

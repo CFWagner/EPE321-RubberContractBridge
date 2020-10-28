@@ -10,13 +10,6 @@
 #include "unit-tests/game-server/testserver.h"
 #include "unit-tests/game-server/testservergamestate.h"
 
-#include "unit-tests/gui/testentrywindow.h"
-#include "unit-tests/gui/testserverlogin.h"
-#include "unit-tests/gui/testserverlobby.h"
-#include "unit-tests/gui/testclientlogin.h"
-#include "unit-tests/gui/testbiddingphase.h"
-//Unit tests
-
 int main(int argc, char *argv[])
 {
     TestBid testBid;

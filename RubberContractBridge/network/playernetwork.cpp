@@ -31,7 +31,9 @@ PlayerNetwork::~PlayerNetwork()
     if (clientSoc != nullptr){
         clientSoc->abort();
         clientSoc->deleteLater();
+        qInfo() << "Inside";
     }
+    qInfo() << "Destruct Player";
 }
 
 /**

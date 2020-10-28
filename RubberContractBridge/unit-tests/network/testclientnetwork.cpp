@@ -773,51 +773,8 @@ void testClientNetwork::getPlayers()
     spyClientConnectResult4.clear();
     spyClientServerDisconnected4.clear();
 
-
-    // Stop listening
-    testServerNet1.stopListening();
-
-    // Try to connect another client
-    // Start a clientNetwork
-    QString playerName3 = "Player 30"; // Do not change this name, since it is used in following tests.
-
-    ClientNetwork testClient3;
-
-    // Connect QSpySignal to all relevant signals from the class.
-    QSignalSpy spyClientConnectResult3(&testClient3,SIGNAL(connectionResult(int, QString)));
-    QSignalSpy spyClientError3(&testClient3,SIGNAL(generalError(QString)));
-    QSignalSpy spyClientLoginResult3(&testClient3,SIGNAL(loginResult(bool, QString)));
-    QSignalSpy spyClientServerDisconnected3(&testClient3,SIGNAL(serverDisconnected()));
-
-    // ------ Third player should no be able to connect ---------
-
-    // Do something that can result in problems.
-    // (Log into the server.)
-    // Remember to monitor both the client and the server.
-    testClient3.txRequestLogin(ip,port,playerName3,passwordServer);
-
-    QVERIFY(spyClientLoginResult3.wait(100));
-
-    // No warnings should be issused by either the server or the client
-    // Proof that data sent in QJsonObject format is working.
-    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
-    QVERIFY2(spyClientError3.count() == 0,"General errors occured in the testClient.");
-    QVERIFY2(spyClientServerDisconnected3.count() == 0,"Server unexpectedly disconnected.");
-
-    QCOMPARE(spyClientLoginResult3.count(), 1);
-
-    argumentsC = spyClientConnectResult3.takeFirst();
-    // The connection should be sucsessfull.
-    QCOMPARE(argumentsC.at(0), 0);
-
-    argumentsC = spyClientLoginResult3.takeFirst();
-    QCOMPARE(argumentsC.at(0), false);
-    QCOMPARE(argumentsC.at(1), "The game is in progress and no more players are allowed on this server.");
-
-    QVERIFY(spyServerPlayerJoined->count() == 0);
-    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
-
     // Tests getPlayerSockets
+    QString playerName3 = "Player 30"; // Do not change this name, since it is used in following tests.
 
     // Try to get an invalid player name.
     // nullptr should be returned
@@ -854,6 +811,48 @@ void testClientNetwork::getPlayers()
     getPlayerSocket1->abort();
     QVERIFY(spyClientServerDisconnected1.wait(100));
     QVERIFY2(spyClientServerDisconnected1.count() == 1,"Server unexpectedly disconnected.");
+
+    // Stop listening
+    testServerNet1.stopListening();
+
+    // Try to connect another client
+    // Start a clientNetwork
+    ClientNetwork testClient3;
+
+    // Connect QSpySignal to all relevant signals from the class.
+    QSignalSpy spyClientConnectResult3(&testClient3,SIGNAL(connectionResult(int, QString)));
+    QSignalSpy spyClientError3(&testClient3,SIGNAL(generalError(QString)));
+    QSignalSpy spyClientLoginResult3(&testClient3,SIGNAL(loginResult(bool, QString)));
+    QSignalSpy spyClientServerDisconnected3(&testClient3,SIGNAL(serverDisconnected()));
+
+    // ------ Third player should no be able to connect ---------
+
+    // Do something that can result in problems.
+    // (Log into the server.)
+    // Remember to monitor both the client and the server.
+    testClient3.txRequestLogin(ip,port,playerName3,passwordServer);
+
+    QVERIFY(spyClientLoginResult3.wait(100));
+
+    // No warnings should be issused by either the server or the client
+    // Proof that data sent in QJsonObject format is working.
+    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
+    QVERIFY2(spyClientError3.count() == 0,"General errors occured in the testClient.");
+    QVERIFY2(spyClientServerDisconnected3.count() == 0,"Server unexpectedly disconnected.");
+
+    QCOMPARE(spyClientLoginResult3.count(), 1);
+
+    argumentsC = spyClientConnectResult3.takeFirst();
+    // The connection should be sucsessfull.
+    QCOMPARE(argumentsC.at(0), 0);
+
+    argumentsC = spyClientLoginResult3.takeFirst();
+    QCOMPARE(argumentsC.at(0), false);
+    QCOMPARE(argumentsC.at(1), "The game is in progress and no more players are allowed on this server.");
+
+    QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
+
 }
 
 void testClientNetwork::cleanupTestCase()

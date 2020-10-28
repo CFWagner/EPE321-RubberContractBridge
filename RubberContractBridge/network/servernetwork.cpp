@@ -148,14 +148,29 @@ void ServerNetwork::initServer(QHostAddress ip, quint16 port)
 }
 
 /**
- * \brief Stop listening for new client connections.
+ * \brief Stop listening for new client connections. (From this point forward it is assumed that the game has started.)
+ * This should be called after all needed sockets was taken form the NetworkServer and before the game is started.
  * status = 4 will be returned to for any new client requesting login after stopListening has been called.
  */
 
 void ServerNetwork::stopListening()
 {
+    // Stop allowing new clients to join
     bAllowNewClientConnection = false;
-    // Can disconnect from all players in the lobby?
+
+    // Disconnect from all players in the lobby
+    while (!clientSoc.isEmpty()){
+        // Take the first socket and playerName in the list
+        QTcpSocket* tempRemoveSoc = clientSoc.takeFirst();
+        QString tempPlayerName = playerNames.takeFirst();
+
+        // Disconnect the client from the server
+        tempRemoveSoc->disconnectFromHost();
+
+        qInfo() << "stopListening: Removed from clientSoc. The player's name is: " + tempPlayerName;
+
+        // Do not inform the serverGUI that the player was disconnected, since game already started.
+    }
 }
 
 /**

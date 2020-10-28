@@ -52,20 +52,286 @@ void testPlayerNetwork::verifyServerWorking()
 
 void testPlayerNetwork::addClients()
 {
-    // Add
-    addManyClients(4);
-    addManyClients(2);
+    // Add Clients - Comment on what tests the clients are used for.
+    addManyClients(4); // General tests
+    addManyClients(1); // disconnectClientFromServerAfterGameStarted tests
+    addManyClients(2); // testStopListening
 
     // Do not change the number or order of the addPlayerNetwork calls, since it will break all following tests.
     for (int i = 0; i < 4; i++){
         addPlayerNetwork(playerNames[i]);
     }
 
+    // Get the socket used in disconnectClientFromServerAfterGameStarted
+    int k = 4;
+
+    // Reference to Player's QTcpSocket
+    testPlayerSocket = new QTcpSocket*; // Memory freed in disconnectClientFromServerAfterGameStarted
+
+    // Add a 5th player and get the PlayerSocket
+    addPlayerNetwork(playerNames[k], testPlayerSocket);
+}
+
+/**
+ * Test that all players still in the lobby is disconnected after stopListening is called.
+ */
+
+void testPlayerNetwork::testStopListeningClientDisconnection()
+{
     // The server should stop listening for new logon attempts
     testServerNetA.stopListening();
 
     // Calling the following function should make the test fail
     // addManyClients(1);
+
+    // Detect the serverDisconnected signals emitted form the clients that was still in the lobby
+    // Wait long enought for both clients to be disconnected.
+    // spyClientServerDisconnected[4] should emmited. Thus it will wait full 100ms.
+    QVERIFY(!spyClientServerDisconnected[4]->wait(100));
+
+    // The following clients were still in the lobby and should be disconnected
+    for (int k = 5; k < 7; k++){
+        QCOMPARE(spyClientServerDisconnected[k]->count(), 1);
+        spyClientServerDisconnected[k]->clear();
+    }
+
+    // No other errors should have occured
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+}
+
+/**
+ * Start a game and then disconnect the client (from the server side).
+ * Then test if the correct client emits gameTerminated.
+ */
+
+void testPlayerNetwork::disconnectClientFromServerAfterGameStarted()
+{
+    int k = 4;
+
+    // Start the game by sending a PlayerGameState
+    // updateGameState
+    // Create Player game state
+    PlayerGameState originalPlayerGameState = generatePlayerGameState();
+
+    testPlayerNet[k]->updateGameState(originalPlayerGameState);
+    QVERIFY(spyClientUpdateGameState[k]->wait(100));
+    QCOMPARE(spyClientUpdateGameState[k]->count(), 1);
+    QCOMPARE(qvariant_cast<PlayerGameState>(spyClientUpdateGameState[k]->at(0).at(0)), originalPlayerGameState);
+    spyClientUpdateGameState[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // Emulate server disconnection by aborting the QTcpSocket of the player.
+    (*testPlayerSocket)->abort();
+
+    QVERIFY(spyClientGameTerminated[k]->wait(100));
+    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
+    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), "Client lost connection to the server.");
+    spyClientGameTerminated[k]->clear();
+
+    // On the player side check the clientDisconnected signal
+    QCOMPARE(spyPlayerClientDisconnected[k]->count(), 1);
+    spyPlayerClientDisconnected[k]->clear();
+
+    // None of the other Clients were disconnected.
+    // The serverDisconnected signal (of the player that was aborted above) should not have been emitted.
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // Free up the memory TODO remove this
+//    delete testPlayerSocket;
+}
+
+/**
+ * Test that all transmit functions and receive signals are operating correctly.
+ * This is communication from PlayerNetwork to ClientNetwork.
+ */
+
+void testPlayerNetwork::testCommunicationsToClient()
+{
+    int k = 0;
+    // PlayerNetwork to ClientNetwork
+
+    // notifyBidTurn
+    k = 0;
+    testPlayerNet[k]->notifyBidTurn();
+    QVERIFY(spyClientNotifyBidTurn[k]->wait(100));
+    QCOMPARE(spyClientNotifyBidTurn[k]->count(), 1);
+    spyClientNotifyBidTurn[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // notifyMoveTurn
+    k = 0;
+    testPlayerNet[k]->notifyMoveTurn();
+    QVERIFY(spyClientNotifyMoveTurn[k]->wait(100));
+    QCOMPARE(spyClientNotifyMoveTurn[k]->count(), 1);
+    spyClientNotifyMoveTurn[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // notifyBidRejected
+    k = 0;
+    QString rejectReason = "The bid was rejected because of this very long and ambigious reason. "
+                           "But just to use !@#$%^&*() and \"n\" and a \nnew line we should add 10X+9Y=5Z";
+    testPlayerNet[k]->notifyBidRejected(rejectReason);
+    QVERIFY(spyClientNotifyBidRejected[k]->wait(100));
+    QCOMPARE(spyClientNotifyBidRejected[k]->count(), 1);
+    QCOMPARE(spyClientNotifyBidRejected[k]->at(0).at(0).toString(), rejectReason);
+    spyClientNotifyBidRejected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // notifyMoveRejected
+    k = 0;
+
+    // Make reject reason unique by adding text
+    rejectReason += "Extra text";
+
+    testPlayerNet[k]->notifyMoveRejected(rejectReason);
+    QVERIFY(spyClientNotifyMoveRejected[k]->wait(100));
+    QCOMPARE(spyClientNotifyMoveRejected[k]->count(), 1);
+    QCOMPARE(spyClientNotifyMoveRejected[k]->at(0).at(0).toString(), rejectReason);
+    spyClientNotifyMoveRejected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // updateGameState
+    k = 0;
+
+    // Create Player game state
+    PlayerGameState originalPlayerGameState = generatePlayerGameState();
+
+    testPlayerNet[k]->updateGameState(originalPlayerGameState);
+    QVERIFY(spyClientUpdateGameState[k]->wait(100));
+    QCOMPARE(spyClientUpdateGameState[k]->count(), 1);
+    QCOMPARE(qvariant_cast<PlayerGameState>(spyClientUpdateGameState[k]->at(0).at(0)), originalPlayerGameState);
+    spyClientUpdateGameState[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // message
+    k = 0;
+
+    // Make reject reason unique by adding text
+    QString sourceName = playerNames[1];
+    QString messageContent = "This is a message sent from me.";
+
+    testPlayerNet[k]->message(sourceName, messageContent);
+    QVERIFY(spyClientMessageReceived[k]->wait(100));
+    QCOMPARE(spyClientMessageReceived[k]->count(), 1);
+    QCOMPARE(spyClientMessageReceived[k]->at(0).at(0).toString(), sourceName);
+    QCOMPARE(spyClientMessageReceived[k]->at(0).at(1).toString(), messageContent);
+    spyClientMessageReceived[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // gameTerminated
+    k = 0;
+    QString terminationReason = "The game 123 was terminated for no apparent reason. "
+                                "Just kidding, nothing was terminated, since this is just a test. "
+                                "How fast can I type very long reasons out?";
+
+    testPlayerNet[k]->gameTerminated(terminationReason);
+    QVERIFY(spyClientGameTerminated[k]->wait(100));
+    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
+    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), terminationReason);
+    spyClientGameTerminated[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+}
+
+/**
+ * Test that all transmit functions and receive signals are operating correctly.
+ * This is communication from ClientNetwork to PlayerNetwork.
+ */
+
+void testPlayerNetwork::testCommunicationsFromClient()
+{
+    int k = 0;
+    // ClientNetwork to PlayerNetwork
+
+    // txBidSelected
+    k = 0;
+
+    // Create Bid
+    Bid originalBid = generateBid();
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+    emit emitTxBidSelected(originalBid);
+    disconnect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
+
+    // Validate response
+    QVERIFY(spyPlayerBidSelected[k]->wait(100));
+    QCOMPARE(spyPlayerBidSelected[k]->count(), 1);
+    QCOMPARE(qvariant_cast<Bid>(spyPlayerBidSelected[k]->at(0).at(0)), originalBid);
+    spyPlayerBidSelected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // txMoveSelected
+    k = 0;
+
+    // Create Card
+    Card originalCard = generateCard();
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
+    emit emitTxMoveSelected(originalCard);
+    disconnect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
+
+    // Validate response
+    QVERIFY(spyPlayerMoveSelected[k]->wait(100));
+    QCOMPARE(spyPlayerMoveSelected[k]->count(), 1);
+    QCOMPARE(qvariant_cast<Card>(spyPlayerMoveSelected[k]->at(0).at(0)), originalCard);
+    spyPlayerMoveSelected[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
+
+    // txMessage
+    k = 0;
+
+    // Make reject reason unique by adding text
+    QString messageContent = "This is a message sent from " + playerNames[k];
+
+    // Connect signal
+    connect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+    emit emitTxMessage(messageContent);
+    disconnect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
+
+    // Validate response
+    QVERIFY(spyPlayerMessageGenerated[k]->wait(100));
+    QCOMPARE(spyPlayerMessageGenerated[k]->count(), 1);
+    QCOMPARE(spyPlayerMessageGenerated[k]->at(0).at(0).toString(), messageContent);
+    spyPlayerMessageGenerated[k]->clear();
+
+    checkAllCientSignals();
+    checkAllPlayerSignals();
+    checkAllServerSignals();
 }
 
 /**
@@ -275,193 +541,6 @@ void testPlayerNetwork::testRepetitiveCommunication()
 }
 
 /**
- * Test that all transmit functions and receive signals are operating correctly.
- * This is communication from PlayerNetwork to ClientNetwork.
- */
-
-void testPlayerNetwork::testCommunicationsToClient()
-{
-    int k = 0;
-    // PlayerNetwork to ClientNetwork
-
-    // notifyBidTurn
-    k = 0;
-    testPlayerNet[k]->notifyBidTurn();
-    QVERIFY(spyClientNotifyBidTurn[k]->wait(100));
-    QCOMPARE(spyClientNotifyBidTurn[k]->count(), 1);
-    spyClientNotifyBidTurn[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // notifyMoveTurn
-    k = 0;
-    testPlayerNet[k]->notifyMoveTurn();
-    QVERIFY(spyClientNotifyMoveTurn[k]->wait(100));
-    QCOMPARE(spyClientNotifyMoveTurn[k]->count(), 1);
-    spyClientNotifyMoveTurn[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // notifyBidRejected
-    k = 0;
-    QString rejectReason = "The bid was rejected because of this very long and ambigious reason. "
-                           "But just to use !@#$%^&*() and \"n\" and a \nnew line we should add 10X+9Y=5Z";
-    testPlayerNet[k]->notifyBidRejected(rejectReason);
-    QVERIFY(spyClientNotifyBidRejected[k]->wait(100));
-    QCOMPARE(spyClientNotifyBidRejected[k]->count(), 1);
-    QCOMPARE(spyClientNotifyBidRejected[k]->at(0).at(0).toString(), rejectReason);
-    spyClientNotifyBidRejected[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // notifyMoveRejected
-    k = 0;
-
-    // Make reject reason unique by adding text
-    rejectReason += "Extra text";
-
-    testPlayerNet[k]->notifyMoveRejected(rejectReason);
-    QVERIFY(spyClientNotifyMoveRejected[k]->wait(100));
-    QCOMPARE(spyClientNotifyMoveRejected[k]->count(), 1);
-    QCOMPARE(spyClientNotifyMoveRejected[k]->at(0).at(0).toString(), rejectReason);
-    spyClientNotifyMoveRejected[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // updateGameState
-    k = 0;
-
-    // Create Player game state
-    PlayerGameState originalPlayerGameState = generatePlayerGameState();
-
-    testPlayerNet[k]->updateGameState(originalPlayerGameState);
-    QVERIFY(spyClientUpdateGameState[k]->wait(100));
-    QCOMPARE(spyClientUpdateGameState[k]->count(), 1);
-    QCOMPARE(qvariant_cast<PlayerGameState>(spyClientUpdateGameState[k]->at(0).at(0)), originalPlayerGameState);
-    spyClientUpdateGameState[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // message
-    k = 0;
-
-    // Make reject reason unique by adding text
-    QString sourceName = playerNames[1];
-    QString messageContent = "This is a message sent from me.";
-
-    testPlayerNet[k]->message(sourceName, messageContent);
-    QVERIFY(spyClientMessageReceived[k]->wait(100));
-    QCOMPARE(spyClientMessageReceived[k]->count(), 1);
-    QCOMPARE(spyClientMessageReceived[k]->at(0).at(0).toString(), sourceName);
-    QCOMPARE(spyClientMessageReceived[k]->at(0).at(1).toString(), messageContent);
-    spyClientMessageReceived[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // gameTerminated
-    k = 0;
-    QString terminationReason = "The game 123 was terminated for no apparent reason. "
-                                "Just kidding, nothing was terminated, since this is just a test. "
-                                "How fast can I type very long reasons out?";
-
-    testPlayerNet[k]->gameTerminated(terminationReason);
-    QVERIFY(spyClientGameTerminated[k]->wait(100));
-    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
-    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), terminationReason);
-    spyClientGameTerminated[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-}
-
-/**
- * Test that all transmit functions and receive signals are operating correctly.
- * This is communication from ClientNetwork to PlayerNetwork.
- */
-
-void testPlayerNetwork::testCommunicationsFromClient()
-{
-    int k = 0;
-    // ClientNetwork to PlayerNetwork
-
-    // txBidSelected
-    k = 0;
-
-    // Create Bid
-    Bid originalBid = generateBid();
-
-    // Connect signal
-    connect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
-    emit emitTxBidSelected(originalBid);
-    disconnect(this, &testPlayerNetwork::emitTxBidSelected, testClientNet[k], &ClientNetwork::txBidSelected);
-
-    // Validate response
-    QVERIFY(spyPlayerBidSelected[k]->wait(100));
-    QCOMPARE(spyPlayerBidSelected[k]->count(), 1);
-    QCOMPARE(qvariant_cast<Bid>(spyPlayerBidSelected[k]->at(0).at(0)), originalBid);
-    spyPlayerBidSelected[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // txMoveSelected
-    k = 0;
-
-    // Create Card
-    Card originalCard = generateCard();
-
-    // Connect signal
-    connect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
-    emit emitTxMoveSelected(originalCard);
-    disconnect(this, &testPlayerNetwork::emitTxMoveSelected, testClientNet[k], &ClientNetwork::txMoveSelected);
-
-    // Validate response
-    QVERIFY(spyPlayerMoveSelected[k]->wait(100));
-    QCOMPARE(spyPlayerMoveSelected[k]->count(), 1);
-    QCOMPARE(qvariant_cast<Card>(spyPlayerMoveSelected[k]->at(0).at(0)), originalCard);
-    spyPlayerMoveSelected[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // txMessage
-    k = 0;
-
-    // Make reject reason unique by adding text
-    QString messageContent = "This is a message sent from " + playerNames[k];
-
-    // Connect signal
-    connect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
-    emit emitTxMessage(messageContent);
-    disconnect(this, &testPlayerNetwork::emitTxMessage, testClientNet[k], &ClientNetwork::txMessage);
-
-    // Validate response
-    QVERIFY(spyPlayerMessageGenerated[k]->wait(100));
-    QCOMPARE(spyPlayerMessageGenerated[k]->count(), 1);
-    QCOMPARE(spyPlayerMessageGenerated[k]->at(0).at(0).toString(), messageContent);
-    spyPlayerMessageGenerated[k]->clear();
-
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-}
-
-/**
  * Force a situation where a datastream error will occur.
  * Then test if the correct signals was transmitted.
  * Check if data can successfully be transmitted after a datastream error occured.
@@ -570,14 +649,20 @@ void testPlayerNetwork::testErrors()
     checkAllServerSignals();
 }
 
+/**
+ * Delete all memory allocated
+ */
+
 void testPlayerNetwork::cleanupTestCase()
 {
+    // TODO: use another order and test if all deletelater things works
+    qInfo() << "cleanupTestCase: 1";
     // Ensure that all QSignalSpy objects are deleted.
        spyServer->deleteLater();
        spyServerPlayerJoined->deleteLater();
        spyServerError->deleteLater();
        spyServerPlayerDisconnected->deleteLater();
-
+qInfo() << "cleanupTestCase: 2";
        for (int i = 0; i < testClientNet.count(); i++){
            spyClientConnectResult[i]->deleteLater();
            spyClientError[i]->deleteLater();
@@ -594,8 +679,10 @@ void testPlayerNetwork::cleanupTestCase()
 
            testClientNet[i]->deleteLater();
        }
-
-       for (int i = 0; i < testPlayerNet.count(); i++){
+       qInfo() << spyPlayerBidSelected[0]->wait(1000);
+qInfo() << "cleanupTestCase: 3";
+       for (int i = 0; i < testPlayerNet.count()-2; i++){
+           qInfo() << "i = " << i;
            spyPlayerGeneralError[i]->deleteLater();
            spyPlayerBidSelected[i]->deleteLater();
            spyPlayerMoveSelected[i]->deleteLater();
@@ -604,6 +691,9 @@ void testPlayerNetwork::cleanupTestCase()
 
            testPlayerNet[i]->deleteLater();
        }
+qInfo() << "cleanupTestCase: 4";
+       // delete memory allocated
+//       delete testPlayerSocket;
 }
 
 /**
@@ -805,39 +895,6 @@ void testPlayerNetwork::checkAllServerSignals()
     QCOMPARE(spyServer->count(), 0);
     QCOMPARE(spyServerError->count(), 0);
     QCOMPARE(spyServerPlayerJoined->count(), 0);
-}
-
-/**
- * Start a game and then disconnect the client (from the server side).
- * Then test if the correct client emits gameTerminated.
- */
-
-void testPlayerNetwork::disconnectClientFromServerAfterGameStarted()
-{
-    int k = 4;
-
-    // Reference to Player's QTcpSocket
-    QTcpSocket** testPlayerSocket = new QTcpSocket*;
-
-    // Add a 5th player and get the PlayerSocket
-    addPlayerNetwork(playerNames[k], testPlayerSocket);
-
-    // Emulate server disconnection by aborting the QTcpSocket of the player.
-    (*testPlayerSocket)->abort();
-
-    QVERIFY(spyClientGameTerminated[k]->wait(100));
-    QCOMPARE(spyClientGameTerminated[k]->count(), 1);
-    QCOMPARE(spyClientGameTerminated[k]->at(0).at(0).toString(), "Client lost connection to the server.");
-    spyClientGameTerminated[k]->clear();
-
-    // None of the other Clients were disconnected.
-    // The serverDisconnected signal (of the player that was aborted above) should not have been emitted.
-    checkAllCientSignals();
-    checkAllPlayerSignals();
-    checkAllServerSignals();
-
-    // Free up the memory
-    delete testPlayerSocket;
 }
 
 /**

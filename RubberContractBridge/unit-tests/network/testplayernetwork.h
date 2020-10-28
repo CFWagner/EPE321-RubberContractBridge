@@ -18,6 +18,8 @@ private slots:
     // All private slots should be run in the following order, since they depend on each other.
     void verifyServerWorking();
     void addClients();
+    void testStopListeningClientDisconnection();
+    void disconnectClientFromServerAfterGameStarted();
     void testCommunicationsToClient();
     void testCommunicationsFromClient();
     void testRepetitiveCommunication();
@@ -37,7 +39,7 @@ private:
     void checkAllCientSignals();
     void checkAllPlayerSignals();
     void checkAllServerSignals();
-    void disconnectClientFromServerAfterGameStarted();
+
     PlayerGameState generatePlayerGameState();
     Bid generateBid();
     Card generateCard();
@@ -46,6 +48,7 @@ private:
     quint16 port;
     QHostAddress ip;
     QString playerName;
+    QTcpSocket** testPlayerSocket;
 
     QVector<QString> playerNames;
 

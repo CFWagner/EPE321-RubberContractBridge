@@ -10,16 +10,16 @@ int main(int argc, char *argv[])
     // QApplication is nescessary so that QSignalSpy.wait() can be used in the tests.
     QApplication rcbApplication(argc, argv);
 
-    // Test the Logger class
-    testLogger testLog;
-    QTest::qExec(&testLog);
+//    // Test the Logger class
+//    testLogger testLog;
+//    QTest::qExec(&testLog);
 
-    // Test the Network classes
-    testServerNetwork testServerNet;
-    QTest::qExec(&testServerNet);
+//    // Test the Network classes
+//    testServerNetwork testServerNet;
+//    QTest::qExec(&testServerNet);
 
-    testClientNetwork testClientNet;
-    QTest::qExec(&testClientNet);
+//    testClientNetwork testClientNet;
+//    QTest::qExec(&testClientNet);
 
     testPlayerNetwork testPlayerNet;
     QTest::qExec(&testPlayerNet);

@@ -32,6 +32,7 @@ BidCall BidCardsSelected::getBidCall()
     return calls;
 }
 
+//Move the cards up and down
 void BidCardsSelected::enterEvent(QEvent *)
 {
     this->move(this->x(),this->y()-10);

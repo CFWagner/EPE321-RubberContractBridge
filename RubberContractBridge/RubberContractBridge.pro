@@ -23,9 +23,11 @@ SOURCES += \
     game-server/servergamestate.cpp \
     gui/bidcardsselected.cpp \
     gui/bidwindow.cpp \
+    gui/bridgewindow.cpp \
     gui/clientlogin.cpp \
     gui/entrywindow.cpp \
     gui/hover.cpp \
+    gui/playcardselected.cpp \
     gui/serverlobby.cpp \
     gui/serverlogin.cpp \
     logger/logger.cpp \
@@ -44,6 +46,7 @@ SOURCES += \
     unit-tests/game-server/testserver.cpp \
     unit-tests/game-server/testservergamestate.cpp \
     unit-tests/gui/testbiddingphase.cpp \
+    unit-tests/gui/testbridgewindow.cpp \
     unit-tests/gui/testclientlogin.cpp \
     unit-tests/gui/testentrywindow.cpp \
     unit-tests/gui/testserverlobby.cpp \
@@ -75,9 +78,11 @@ HEADERS += \
     game-server/servergamestate.h \
     gui/bidcardsselected.h \
     gui/bidwindow.h \
+    gui/bridgewindow.h \
     gui/clientlogin.h \
     gui/entrywindow.h \
     gui/hover.h \
+    gui/playcardselected.h \
     gui/serverlobby.h \
     gui/serverlogin.h \
     logger/logger.h \
@@ -95,6 +100,7 @@ HEADERS += \
     unit-tests/game-server/testserver.h \
     unit-tests/game-server/testservergamestate.h \
     unit-tests/gui/testbiddingphase.h \
+    unit-tests/gui/testbridgewindow.h \
     unit-tests/gui/testclientlogin.h \
     unit-tests/gui/testentrywindow.h \
     unit-tests/gui/testserverlobby.h \
@@ -111,6 +117,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 FORMS += \
     gui/bidwindow.ui \
+    gui/bridgewindow.ui \
     gui/clientlogin.ui \
     gui/entrywindow.ui \
     gui/serverlobby.ui \

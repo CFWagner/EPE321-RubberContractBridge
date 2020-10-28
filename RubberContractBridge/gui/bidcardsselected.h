@@ -25,6 +25,7 @@ public:
 signals:
     void sendBidPressed(BidCardsSelected *);
 private:
+
     CardSuit suit;
     int bidAmount;
     QWidget *parent;

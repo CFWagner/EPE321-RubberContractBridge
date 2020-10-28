@@ -7,6 +7,7 @@ BidCardsSelected::BidCardsSelected(BidCall calls,QWidget *parent) : QLabel(paren
 
 BidCardsSelected::BidCardsSelected(CardSuit suit,int bidAmount,QWidget *parent) : QLabel(parent)
 {
+    this->calls = BID;
     this->suit = suit;
     this->bidAmount = bidAmount;
 }

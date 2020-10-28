@@ -13,7 +13,7 @@ class BidCardsSelected : public QLabel
 {
     Q_OBJECT
 public:
-    explicit BidCardsSelected(BidCall,QWidget *parent = nullptr);
+    explicit BidCardsSelected(BidCall calls,QWidget *parent = nullptr);
     explicit BidCardsSelected(CardSuit suit,int bidAmount, QWidget *parent = nullptr);
     ~BidCardsSelected();
     CardSuit getSuit();

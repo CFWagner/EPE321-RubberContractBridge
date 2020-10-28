@@ -154,10 +154,10 @@ void TestPlayerGameState::testPlayerGameState()
     QCOMPARE(playerState3.getDeclarer(), declarer);
     QCOMPARE(playerState3.getTeamVulnerable(N_S), false);
     QCOMPARE(playerState3.getTeamVulnerable(E_W), false);
-    QCOMPARE(playerState.getTricksWon(NORTH), tricksWon[NORTH]);
-    QCOMPARE(playerState.getTricksWon(EAST), tricksWon[EAST]);
-    QCOMPARE(playerState.getTricksWon(SOUTH), tricksWon[SOUTH]);
-    QCOMPARE(playerState.getTricksWon(WEST), tricksWon[WEST]);
+    QCOMPARE(playerState3.getTricksWon(NORTH), tricksWon[NORTH]);
+    QCOMPARE(playerState3.getTricksWon(EAST), tricksWon[EAST]);
+    QCOMPARE(playerState3.getTricksWon(SOUTH), tricksWon[SOUTH]);
+    QCOMPARE(playerState3.getTricksWon(WEST), tricksWon[WEST]);
     QCOMPARE(playerState3.getEvent(), gameEvent);
 
     // Compare list based attributes

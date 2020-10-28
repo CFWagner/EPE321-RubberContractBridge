@@ -1,28 +1,35 @@
 #include "logger.h"
 
+/**
+ * Constructor, logging is enabled by default.
+ * @param parent
+ */
+
 Logger::Logger(QObject *parent) : QObject(parent)
 {
     // Initialize
     enableLogging = true;
 }
 
-/*!
+/**
  * \brief Enable the logging functionality.
  */
+
 void Logger::enableLog()
 {
     enableLogging = true;
 }
 
-/*!
+/**
  * \brief Disable the logging functionality.
  */
+
 void Logger::disableLog()
 {
     enableLogging = false;
 }
 
-/*!
+/**
  * \brief Return a boolean. True if logging is enabled.
  */
 
@@ -30,11 +37,12 @@ bool Logger::isLogEnabled() const
 {
     return enableLogging;
 }
-/*!
+/**
  * \brief Log the data sent to this slot. The time and date is also displayed.
  * \param context QString containing an indication from where the log function was signaled. E.g. AI or GameServer
  * \param msg QString contaiing the message that should be logged.
  */
+
 void Logger::log(QString context, QString msg)
 {
     // Show that a log was signal was emitted
@@ -54,5 +62,6 @@ void Logger::log(QString context, QString msg)
         //Transmit a signal with the logging data.
         emit sendLog(context,msg);
     }
-    // If not enabled, do noting
+
+    // If not enabled, do nothing
 }

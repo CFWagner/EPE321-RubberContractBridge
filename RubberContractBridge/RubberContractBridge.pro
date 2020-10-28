@@ -32,11 +32,14 @@ SOURCES += \
     network/playernetwork.cpp \
     network/clientnetwork.cpp \
     unit-tests/ai/testai.cpp \
+    unit-tests/game-server/stubs/playerstub.cpp \
     unit-tests/game-server/testbid.cpp \
     unit-tests/game-server/testcard.cpp \
     unit-tests/game-server/testcardset.cpp \
+    unit-tests/game-server/testgameserver.cpp \
     unit-tests/game-server/testplayergamestate.cpp \
     unit-tests/game-server/testscore.cpp \
+    unit-tests/game-server/testserver.cpp \
     unit-tests/game-server/testservergamestate.cpp \
     unit-tests/gui/testentrywindow.cpp \
     unit-tests/gui/testserverlobby.cpp \
@@ -76,11 +79,14 @@ HEADERS += \
     network/playernetwork.h \
     network/clientnetwork.h \
     unit-tests/ai/testai.h \
+    unit-tests/game-server/stubs/playerstub.h \
     unit-tests/game-server/testbid.h \
     unit-tests/game-server/testcard.h \
     unit-tests/game-server/testcardset.h \
+    unit-tests/game-server/testgameserver.h \
     unit-tests/game-server/testplayergamestate.h \
     unit-tests/game-server/testscore.h \
+    unit-tests/game-server/testserver.h \
     unit-tests/game-server/testservergamestate.h \
     unit-tests/gui/testentrywindow.h \
     unit-tests/gui/testserverlobby.h \

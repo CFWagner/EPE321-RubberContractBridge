@@ -20,7 +20,6 @@ class PlayerNetwork : public Player
     Q_OBJECT
 public:
     explicit PlayerNetwork(QObject *parent = nullptr, QString playerName = QString("Player"), QTcpSocket* clientSoc = nullptr);
-    ~PlayerNetwork();
 
     void notifyBidTurn();
     void notifyMoveTurn();
@@ -30,41 +29,33 @@ public:
     void notifyMoveRejected(QString reason);
     void message(QString source, QString msg);
     void gameTerminated(QString reason);
-
-    // Unit test data
-    QVector<bool> getUnitTest() const;
+    // Reason will probably be displaye to the end user.
 
 private slots:
     void rxAll();
     void socketError(QAbstractSocket::SocketError socError);
-//    void pingClient();
 
 signals:
-//    void generalInfo(QString infoMsg); // All information. (Should be displayed to the administrator.)
     void generalError(QString errorMsg); // All errors. (Should be displayed to the administrator.)
+    // No generalError given when client unexpectedly disconnects, rather clientDisconnected is emmited.
     void bidSelected(Bid bid);
     void moveSelected(Card card);
     void messageGenerated(QString msg);
     void clientDisconnected();
+    // This will be emited when the client disconnects (including when the client is destructed.)
+    // This will probably be emitted after gameTerminated() was send. (Untested.)
 
 private:
     void txAll(QJsonObject data);
     void rxBidSelected(QJsonObject bidObj);
     void rxMoveSelected(QJsonObject moveObj);
     void rxMessage(QJsonObject msgObj);
-//    void rxPingReturn();
     void internalClientDisconnected(); //Notice the name change between this and the signal's name in the Group design doc.
 
     QTcpSocket* clientSoc;
-    QTimer* keepAlive;
-    bool aliveFlag;
     QDataStream in;
-//    QDataStream out;
     qint64 idCounter;
     qint64 prevID;
-
-    // Unit testing datastructures
-    QVector<bool> bUnitTest;
 };
 
 #endif // PLAYERNETWORK_H

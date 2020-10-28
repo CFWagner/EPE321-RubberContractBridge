@@ -1,5 +1,10 @@
 #include "testclientnetwork.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 testClientNetwork::testClientNetwork(QObject *parent) : QObject(parent)
 {
     // Start a server and verify that it is working
@@ -16,16 +21,10 @@ testClientNetwork::testClientNetwork(QObject *parent) : QObject(parent)
     spyServerPlayerDisconnected = new QSignalSpy(&testServerNet1, SIGNAL(playerDisconnected(QString)));
 }
 
-testClientNetwork::~testClientNetwork()
-{
-    // Ensure that all QSignalSpy objects are deleted.
-//    spyServer->deleteLater();
-//    spyServerPlayerJoined->deleteLater();
-//    spyServerError->deleteLater();
-//    spyServerPlayerDisconnected->deleteLater();
-//    testServerNet1.deleteLater();
-    qInfo() << "Executed testClientNetwork destructor.";
-}
+/**
+ * Startup the server that will be used for all the tests
+ * and validate that the server is working.
+ */
 
 void testClientNetwork::verifyServerWorking()
 {
@@ -45,12 +44,6 @@ void testClientNetwork::verifyServerWorking()
 
     // Were any generalError's emited from testServerNet1?
     QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet1.");
-
-    // Test the generalError signal
-    testServerNet1.getUnitTest();
-    QVERIFY2(spyServerError->count() == 1,"General errors occured in the testServerNet1.");
-    QList<QVariant> arguments2 = spyServerError->takeFirst();
-    QCOMPARE(arguments2.at(0), "bUnitTest was requested, but it isn't being used anymore.");
 }
 
 /*!
@@ -186,8 +179,8 @@ void testClientNetwork::wrongServerDetails()
     QVERIFY(spyServerPlayerJoined->count() == 1);
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
-    // Try to connect again after already being connected
 
+    // Try to connect again after already being connected
 
     spyServerPlayerJoined->clear();
     spyServer->clear();
@@ -206,7 +199,7 @@ void testClientNetwork::wrongServerDetails()
 
     testClient.txRequestLogin(ip,port,playerName,passwordServer);
 
-//    QVERIFY(spyClientConnectResult.wait(100));
+    // QVERIFY(spyClientConnectResult.wait(100));
 
     // No warnings should be issused by either the server or the client
     // Proof that data sent in QJsonObject format is working.
@@ -454,11 +447,10 @@ void testClientNetwork::wrongServerDetails()
     spyClientLoginResult11.clear();
     spyClientConnectResult11.clear();
 
+    // Delete all ClietnNetowrk Objects
     for (int i = 0; i < 8; i++){
         arrTestClientNet.at(i)->deleteLater();
     }
-
-
 }
 
 /*!
@@ -755,11 +747,14 @@ void testClientNetwork::getPlayers()
     QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 
 
-    // Forecfully disconnect the client
+    // Forecfully disconnect the client from the server.
+    // Server should emit playerDisconnected signal when player is in the lobby.
+    // testClient4 is in the lobby.
     testClient4.abort();
     QVERIFY(spyServerPlayerDisconnected->wait(100));
 
     QVERIFY2(spyServerPlayerDisconnected->count() == 1,"Player should have disconnected from testServerNet1.");
+    QCOMPARE(spyServerError->count(), 0); // No generalError given when client unexpectedly disconnects.
 
 
     spyServerPlayerJoined->clear();
@@ -779,51 +774,8 @@ void testClientNetwork::getPlayers()
     spyClientConnectResult4.clear();
     spyClientServerDisconnected4.clear();
 
-
-    // Stop listening
-    testServerNet1.stopListening();
-
-    // Try to connect another client
-    // Start a clientNetwork
-    QString playerName3 = "Player 30"; // Do not change this name, since it is used in following tests.
-
-    ClientNetwork testClient3;
-
-    // Connect QSpySignal to all relevant signals from the class.
-    QSignalSpy spyClientConnectResult3(&testClient3,SIGNAL(connectionResult(int, QString)));
-    QSignalSpy spyClientError3(&testClient3,SIGNAL(generalError(QString)));
-    QSignalSpy spyClientLoginResult3(&testClient3,SIGNAL(loginResult(bool, QString)));
-    QSignalSpy spyClientServerDisconnected3(&testClient3,SIGNAL(serverDisconnected()));
-
-    // ------ Third player should no be able to connect ---------
-
-    // Do something that can result in problems.
-    // (Log into the server.)
-    // Remember to monitor both the client and the server.
-    testClient3.txRequestLogin(ip,port,playerName3,passwordServer);
-
-    QVERIFY(spyClientLoginResult3.wait(100));
-
-    // No warnings should be issused by either the server or the client
-    // Proof that data sent in QJsonObject format is working.
-    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
-    QVERIFY2(spyClientError3.count() == 0,"General errors occured in the testClient.");
-    QVERIFY2(spyClientServerDisconnected3.count() == 0,"Server unexpectedly disconnected.");
-
-    QCOMPARE(spyClientLoginResult3.count(), 1);
-
-    argumentsC = spyClientConnectResult3.takeFirst();
-    // The connection should be sucsessfull.
-    QCOMPARE(argumentsC.at(0), 0);
-
-    argumentsC = spyClientLoginResult3.takeFirst();
-    QCOMPARE(argumentsC.at(0), false);
-    QCOMPARE(argumentsC.at(1), "The game is in progress and no more players are allowed on this server.");
-
-    QVERIFY(spyServerPlayerJoined->count() == 0);
-    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
-
     // Tests getPlayerSockets
+    QString playerName3 = "Player 30"; // Do not change this name, since it is used in following tests.
 
     // Try to get an invalid player name.
     // nullptr should be returned
@@ -861,11 +813,46 @@ void testClientNetwork::getPlayers()
     QVERIFY(spyClientServerDisconnected1.wait(100));
     QVERIFY2(spyClientServerDisconnected1.count() == 1,"Server unexpectedly disconnected.");
 
+    // Stop listening
+    testServerNet1.stopListening();
 
-    // TODO: start a game and then disconnect the client (from the server side).
-    // Then test if the correct client emits gameTerminated.
-    // Repeat for the other client.
+    // Try to connect another client
+    // Start a clientNetwork
+    ClientNetwork testClient3;
 
+    // Connect QSpySignal to all relevant signals from the class.
+    QSignalSpy spyClientConnectResult3(&testClient3,SIGNAL(connectionResult(int, QString)));
+    QSignalSpy spyClientError3(&testClient3,SIGNAL(generalError(QString)));
+    QSignalSpy spyClientLoginResult3(&testClient3,SIGNAL(loginResult(bool, QString)));
+    QSignalSpy spyClientServerDisconnected3(&testClient3,SIGNAL(serverDisconnected()));
+
+    // ------ Third player should no be able to connect ---------
+
+    // Do something that can result in problems.
+    // (Log into the server.)
+    // Remember to monitor both the client and the server.
+    testClient3.txRequestLogin(ip,port,playerName3,passwordServer);
+
+    QVERIFY(spyClientLoginResult3.wait(100));
+
+    // No warnings should be issused by either the server or the client
+    // Proof that data sent in QJsonObject format is working.
+    QVERIFY2(spyServerError->count() == 0,"General errors occured in the testServerNet.");
+    QVERIFY2(spyClientError3.count() == 0,"General errors occured in the testClient.");
+    QVERIFY2(spyClientServerDisconnected3.count() == 0,"Server unexpectedly disconnected.");
+
+    QCOMPARE(spyClientLoginResult3.count(), 1);
+
+    argumentsC = spyClientConnectResult3.takeFirst();
+    // The connection should be sucsessfull.
+    QCOMPARE(argumentsC.at(0), 0);
+
+    argumentsC = spyClientLoginResult3.takeFirst();
+    QCOMPARE(argumentsC.at(0), false);
+    QCOMPARE(argumentsC.at(1), "The game is in progress and no more players are allowed on this server.");
+
+    QVERIFY(spyServerPlayerJoined->count() == 0);
+    QVERIFY2(spyServerPlayerDisconnected->count() == 0,"Player should not have disconnected from testServerNet1.");
 }
 
 void testClientNetwork::cleanupTestCase()
@@ -875,14 +862,7 @@ void testClientNetwork::cleanupTestCase()
     spyServerPlayerJoined->deleteLater();
     spyServerError->deleteLater();
     spyServerPlayerDisconnected->deleteLater();
-//    testServerNet1.deleteLater();  // Gives a memory leak if executed.
+    // testServerNet1.deleteLater();  // Gives a memory leak if executed.
 
-    qInfo() << "Deleted the spyServerError";
-}
-
-
-
-void testClientNetwork::testFunc()
-{
-
+    qInfo() << "testClientNetwork cleaded up";
 }

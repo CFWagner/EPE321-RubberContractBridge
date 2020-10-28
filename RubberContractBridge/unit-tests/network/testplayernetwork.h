@@ -13,25 +13,42 @@ class testPlayerNetwork : public QObject
     Q_OBJECT
 public:
     explicit testPlayerNetwork(QObject *parent = nullptr);
-    ~testPlayerNetwork();
 
 private slots:
     // All private slots should be run in the following order, since they depend on each other.
     void verifyServerWorking();
     void addClients();
-    void addPlayers();
+    void testStopListeningClientDisconnection();
+    void disconnectClientFromServerAfterGameStarted();
+    void testCommunicationsToClient();
+    void testCommunicationsFromClient();
+    void testRepetitiveCommunication();
+    void testErrors();
+    void cleanupTestCase();
 
 signals:
-
+    // Signals to connect to NetworkPlayer class
+    void emitTxRequestLogin(QHostAddress serverIP, quint16 port, QString playerName, QString password);
+    void emitTxBidSelected(Bid bid);
+    void emitTxMoveSelected(Card card);
+    void emitTxMessage(QString msg);
 
 private:
     void addManyClients(int numberOfClients);
-    void addPlayerNetwork(QString playerName);
+    void addPlayerNetwork(QString playerName, QTcpSocket** returnPlayerSocket = nullptr);
+    void checkAllCientSignals();
+    void checkAllPlayerSignals();
+    void checkAllServerSignals();
+
+    PlayerGameState generatePlayerGameState();
+    Bid generateBid();
+    Card generateCard();
 
     QString passwordServer;
     quint16 port;
     QHostAddress ip;
     QString playerName;
+    QTcpSocket** testPlayerSocket;
 
     QVector<QString> playerNames;
 

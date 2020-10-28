@@ -1,11 +1,15 @@
 #include "playernetwork.h"
 
+/**
+ * Constructor
+ * @param parent
+ */
+
 PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *clientSoc)
 {
-    // Once ingerited, init the playerName.
     PlayerNetwork::playerName = playerName;
     PlayerNetwork::clientSoc = clientSoc;
-    idCounter = 1; // One message has been sent by the
+    idCounter = 1; // One message has been sent by the Client
     prevID = 0; // The first message has been received and the ID was 0, thus prevID is 0.
 
     in.setDevice(PlayerNetwork::clientSoc);
@@ -16,23 +20,6 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
     connect(PlayerNetwork::clientSoc, &QAbstractSocket::disconnected,this, &PlayerNetwork::internalClientDisconnected);
     // Connection errors
     connect(PlayerNetwork::clientSoc, &QAbstractSocket::errorOccurred, this, &PlayerNetwork::socketError);
-
-    // Init unit test
-    bUnitTest.clear();
-    bUnitTest.fill(false,40);
-
-}
-
-/**
- * Destructor
- */
-
-PlayerNetwork::~PlayerNetwork()
-{
-    if (clientSoc != nullptr){
-        clientSoc->abort();
-        clientSoc->deleteLater();
-    }
 }
 
 /**
@@ -53,7 +40,10 @@ void PlayerNetwork::notifyBidTurn()
 
 void PlayerNetwork::notifyMoveTurn()
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "NOTIFY_MOVE_TURN";
+    txAll(txObj);
 }
 
 /**
@@ -62,7 +52,15 @@ void PlayerNetwork::notifyMoveTurn()
 
 void PlayerNetwork::updateGameState(PlayerGameState gameState)
 {
+    // Create the QJsonObject for the PlayerGameState
+    QJsonObject jsonPlayerState;
+    gameState.write(jsonPlayerState);
 
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "UPDATE_GAME_STATE";
+    txObj["PlayerGameState"] = jsonPlayerState;
+    txAll(txObj);
 }
 
 /**
@@ -72,7 +70,11 @@ void PlayerNetwork::updateGameState(PlayerGameState gameState)
 
 void PlayerNetwork::notifyBidRejected(QString reason)
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "NOTIFY_BID_REJECTED";
+    txObj["BidRejectReason"] = reason;
+    txAll(txObj);
 }
 
 /**
@@ -82,7 +84,11 @@ void PlayerNetwork::notifyBidRejected(QString reason)
 
 void PlayerNetwork::notifyMoveRejected(QString reason)
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "NOTIFY_MOVE_REJECTED";
+    txObj["MoveRejectReason"] = reason;
+    txAll(txObj);
 }
 
 /**
@@ -93,7 +99,12 @@ void PlayerNetwork::notifyMoveRejected(QString reason)
 
 void PlayerNetwork::message(QString source, QString msg)
 {
-
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "MESSAGE";
+    txObj["MsgSource"] = source;
+    txObj["MsgMessage"] = msg;
+    txAll(txObj);
 }
 
 /**
@@ -103,12 +114,11 @@ void PlayerNetwork::message(QString source, QString msg)
 
 void PlayerNetwork::gameTerminated(QString reason)
 {
-
-}
-
-QVector<bool> PlayerNetwork::getUnitTest() const
-{
-    return bUnitTest;
+    // Create QJsonObject
+    QJsonObject txObj;
+    txObj["Type"] = "GAME_TERMINATED";
+    txObj["TerminationReason"] = reason;
+    txAll(txObj);
 }
 
 /**
@@ -125,7 +135,7 @@ void PlayerNetwork::rxAll()
 
     if (!in.commitTransaction()){
         emit generalError("Datastream read error occured. It is suggested to restart the game.");
-        qWarning() << "Datastream error occured.";
+        qInfo() << "rxAll: Datastream error occured.";
         return;
     }
 
@@ -142,7 +152,7 @@ void PlayerNetwork::rxAll()
     } else {
         // QJsonObject received had errors (received data will be ignored).
         emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
-        qWarning() << "Data received from server has been incorrectly formatted.";
+        qInfo() << "rxAll: Data received from server has been incorrectly formatted.";
         return;
     }
 
@@ -167,7 +177,6 @@ void PlayerNetwork::rxAll()
 
     // Default
     emit generalError("An incorrect 'Type' has been received. The data will be ignored.");
-    return;
 }
 
 /*!
@@ -176,11 +185,16 @@ void PlayerNetwork::rxAll()
  */
 void PlayerNetwork::socketError(QAbstractSocket::SocketError socError)
 {
-    qInfo() << "A socket error occured in PlayerNetwork: " << socError;
+    qInfo() << "socketError: A socket error occured in PlayerNetwork: " << socError;
 
-    emit generalError("The following error occurred: " + clientSoc->errorString() + " Restart the game server.");
+    if (socError != QAbstractSocket::RemoteHostClosedError){
+        // Since serverDisconnected is emited when socError == QAbstractSocket::RemoteHostClosedError,
+        // don't emit a generalError.
+        emit generalError("The following error occurred: " + clientSoc->errorString() + " Restart the game server.");
+    }
 
-//    clientSoc->abort();
+    // Ensure that the socket has been disconnected.
+    clientSoc->abort();
 }
 
 /*!
@@ -219,31 +233,82 @@ void PlayerNetwork::txAll(QJsonObject data)
     out << data;
     int tempVal = clientSoc->write(block);
 
-    qInfo() << "Number of bytes expected to be sent to the client: " << block.size();
-    qInfo() << "Number of bytes sent to client: " << tempVal;
+    qInfo() << "txAll: Number of bytes expected to be sent to the client: " << block.size();
+    qInfo() << "txAll: Number of bytes sent to client: " << tempVal;
 
-    if (tempVal == -1) {
-        // An error occured when writing the data block
-        emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
-    } else if (tempVal < block.size()) {
-        // The block written was too small (did not contain enough bytes).
+    if (tempVal == -1 || tempVal < block.size()) {
+        // An error occured when writing the data block.
+        // OR The block written was too small (did not contain enough bytes).
         emit generalError("An error occured with sending data to the client. It is suggested to restart the game.");
     }
 }
 
+/**
+ * Send bid made by the client to the server.
+ * @param bidObj QJsonObject with "Type" = "BID_SEND".
+ */
+
 void PlayerNetwork::rxBidSelected(QJsonObject bidObj)
 {
+    // Validate the QJsonObject
+    if (!bidObj.contains("Bid") || !bidObj["Bid"].isObject()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qInfo() << "rxBidSelected: Data received from server has been incorrectly formatted.";
+        return;
+    }
 
+    // Get the QJsonObject that contains the Bid data
+    QJsonObject jsonBid = bidObj["Bid"].toObject();
+
+    // Convert to QJsonOnject to Bid
+    Bid rxBid;
+    rxBid.read(jsonBid);
+
+    emit bidSelected(rxBid);
 }
+
+/**
+ * Send move selected by the client to the server.
+ * @param moveObj QJsonObject with "Type" = "MOVE_SEND".
+ */
 
 void PlayerNetwork::rxMoveSelected(QJsonObject moveObj)
 {
+    // Validate the QJsonObject
+    if (!moveObj.contains("Card") || !moveObj["Card"].isObject()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qInfo() << "rxMoveSelected: Data received from server has been incorrectly formatted.";
+        return;
+    }
 
+    // Get the QJsonObject that contains the Card data
+    QJsonObject jsonCard = moveObj["Card"].toObject();
+
+    // Convert to QJsonOnject to Card
+    Card rxCard;
+    rxCard.read(jsonCard);
+
+    emit moveSelected(rxCard);
 }
+
+/**
+ * Broadcasted chat message received from the client.
+ * \param msgObj QJsonObject with "Type" = "MESSAGE".
+ */
 
 void PlayerNetwork::rxMessage(QJsonObject msgObj)
 {
+    // Validate the QJsonObject
+    if (!msgObj.contains("Message") || !msgObj["Message"].isString()){
+        // QJsonObject received had errors (received data will be ignored).
+        emit generalError("Data received from server has been incorrectly formatted. It is suggested to restart the game.");
+        qInfo() << "rxMessage: Data received from server has been incorrectly formatted.";
+        return;
+    }
 
+    emit messageGenerated(msgObj["Message"].toString());
 }
 
 /**
@@ -257,5 +322,7 @@ void PlayerNetwork::internalClientDisconnected()
     // Ensure that the client is actually disconnected
     emit clientDisconnected();
     clientSoc->abort();
-    clientSoc->deleteLater();
+
+    // Prevent the socket from being aborted or deleted again
+    clientSoc = nullptr;
 }

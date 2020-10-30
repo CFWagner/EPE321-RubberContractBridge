@@ -3,6 +3,7 @@
 
 #include "gameserver.h"
 #include "network/servernetwork.h"
+#include "gui/serverlogin.h"
 #include <QHostAddress>
 #include <QObject>
 
@@ -27,6 +28,7 @@ private:
     qint32 maxRubbers;
     ServerNetwork* serverNetwork = nullptr;
     GameServer* gameServer = nullptr;
+    ServerLogin *serverLoginWindow = nullptr;
 };
 
 #endif // SERVER_H

@@ -29,6 +29,12 @@ void Hover::enterEvent(QEvent *)
         this->setPixmap(pix);
         break;
     }
+    case 4:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/login_green.png");
+        this->setPixmap(pix);
+        break;
+    }
     default:
         break;
     }
@@ -56,6 +62,12 @@ void Hover::leaveEvent(QEvent *)
         this->setPixmap(pix);
         break;
     }
+    case 4:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/login_grey.png");
+        this->setPixmap(pix);
+        break;
+    }
     default:
         break;
     }
@@ -78,6 +90,11 @@ void Hover::mousePressEvent(QMouseEvent *)
     case 3:
     {
         emit attemptConnect();
+        break;
+    }
+    case 4:
+    {
+        emit attemptUserLogin();
         break;
     }
     default:

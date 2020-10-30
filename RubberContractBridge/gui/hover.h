@@ -20,7 +20,7 @@ signals:
     void serverSelected();
     void gotoClientLogin();
     void attemptConnect();
-
+    void attemptUserLogin();
 private:
     int pageID;
     int elementID;

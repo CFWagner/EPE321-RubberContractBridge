@@ -100,7 +100,7 @@ void ServerLogin::connectionResult(int status, QHostAddress ip, quint16 port, QS
     }
     case 1:
     {
-        msg = "IP address: " + ip.toString() +" is invalid";
+        msg = "IP address: " + ip.toString() +" or " + port +" is invalid";
         QMessageBox::warning(this,"Server setup failure",msg);
         break;
     }

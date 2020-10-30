@@ -21,6 +21,7 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
+    gui/clientlogin.cpp \
     gui/entrywindow.cpp \
     gui/hover.cpp \
     gui/serverlogin.cpp \
@@ -64,6 +65,7 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
+    gui/clientlogin.h \
     gui/entrywindow.h \
     gui/hover.h \
     gui/serverlogin.h \
@@ -92,6 +94,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 FORMS += \
+    gui/clientlogin.ui \
     gui/entrywindow.ui \
     gui/serverlogin.ui
 

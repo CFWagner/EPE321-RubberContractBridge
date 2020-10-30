@@ -35,6 +35,24 @@ void Hover::enterEvent(QEvent *)
         this->setPixmap(pix);
         break;
     }
+    case 5:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/add_green.png");
+        this->setPixmap(pix);
+        break;
+    }
+    case 6:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/clear_green.png");
+        this->setPixmap(pix);
+        break;
+    }
+    case 7:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/start_green.png");
+        this->setPixmap(pix);
+        break;
+    }
     default:
         break;
     }
@@ -68,6 +86,24 @@ void Hover::leaveEvent(QEvent *)
         this->setPixmap(pix);
         break;
     }
+    case 5:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/add_grey.png");
+        this->setPixmap(pix);
+        break;
+    }
+    case 6:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/clear_grey.png");
+        this->setPixmap(pix);
+        break;
+    }
+    case 7:
+    {
+        QPixmap pix(":/resources/guiResources/buttons/start_grey.png");
+        this->setPixmap(pix);
+        break;
+    }
     default:
         break;
     }
@@ -95,6 +131,21 @@ void Hover::mousePressEvent(QMouseEvent *)
     case 4:
     {
         emit attemptUserLogin();
+        break;
+    }
+    case 5:
+    {
+        emit addPlayersLobby();
+        break;
+    }
+    case 6:
+    {
+        emit clearPlayersLobby();
+        break;
+    }
+    case 7:
+    {
+        emit startGameB();
         break;
     }
     default:

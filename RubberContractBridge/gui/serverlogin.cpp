@@ -95,7 +95,10 @@ void ServerLogin::connectionResult(int status, QHostAddress ip, quint16 port, QS
     {
     case 0:
     {
-        //this->close();
+        qDebug () << "here";
+        emit createLobby();
+
+        this->close();
         break;
     }
     case 1:

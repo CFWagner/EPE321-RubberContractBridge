@@ -24,6 +24,7 @@ SOURCES += \
     gui/clientlogin.cpp \
     gui/entrywindow.cpp \
     gui/hover.cpp \
+    gui/serverlobby.cpp \
     gui/serverlogin.cpp \
     logger/logger.cpp \
     main.cpp \
@@ -68,6 +69,7 @@ HEADERS += \
     gui/clientlogin.h \
     gui/entrywindow.h \
     gui/hover.h \
+    gui/serverlobby.h \
     gui/serverlogin.h \
     logger/logger.h \
     network/servernetwork.h \
@@ -96,6 +98,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 FORMS += \
     gui/clientlogin.ui \
     gui/entrywindow.ui \
+    gui/serverlobby.ui \
     gui/serverlogin.ui
 
 DISTFILES += \

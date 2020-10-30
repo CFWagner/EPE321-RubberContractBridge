@@ -56,6 +56,9 @@ void ClientLogin::attemptLoginButton()
         password = ui->passwordLine->text();
         ipAddress = QHostAddress(ui->ipAddressLine->text());
         portID = ui->portLine->text().toUShort();
+        ipAddress = QHostAddress::LocalHost;
+        portID = 61074;
+        password = "12345@@@@";
         emit connectToServer(ipAddress,portID,username,password);
     }
 }

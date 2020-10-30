@@ -481,6 +481,7 @@ void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
     playerState.read(jsonPlayerState);
 
     emit updateGameState(playerState);
+    qDebug() << playerState.getEvent();
 }
 
 /**

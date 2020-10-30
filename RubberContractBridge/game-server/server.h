@@ -4,6 +4,7 @@
 #include "gameserver.h"
 #include "network/servernetwork.h"
 #include "gui/serverlogin.h"
+#include "gui/serverlobby.h"
 #include <QHostAddress>
 #include <QObject>
 
@@ -24,11 +25,13 @@ public slots:
     void playersSelected(QVector<QString> playerNames);
     void serverPassword(QString passwordSent);
     void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
+    void createLobby();
 private:
-    qint32 maxRubbers;
+    qint32 maxRubbers = 5;
     ServerNetwork* serverNetwork = nullptr;
     GameServer* gameServer = nullptr;
     ServerLogin *serverLoginWindow = nullptr;
+    ServerLobby *serverLobby = nullptr;
 };
 
 #endif // SERVER_H

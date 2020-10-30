@@ -33,6 +33,7 @@ public slots:
 signals:
     void serverPassword (QString password);
     void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
+    void createLobby();
 
 private:
     Ui::ServerLogin *ui;
@@ -40,6 +41,7 @@ private:
     QString password ="";
     quint16 portID = 61074;
     QHostAddress ipAddress = QHostAddress::LocalHost;
+
 };
 
 #endif // SERVERLOGIN_H

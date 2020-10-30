@@ -2,7 +2,6 @@
 #define SERVERLOGIN_H
 
 #include "hover.h"
-#include "serverlobby.h"
 #include <QHostAddress>
 #include <QWidget>
 #include <QObject>
@@ -22,26 +21,23 @@ public:
     void setupWindow();
     void staticGUIElements();
     bool checkValidPassword();
-    ServerLobby *serverLob;
 
 public slots:
-    // The server attempts to create the server given the details provided.
     void tryConnect();
-    // Display any errors when sending the password and IPAddress
     void connectionResult(int status, QHostAddress ip, quint16 port, QString errorMsg);
     void generalError(QString errorMsg);
-    QString getPassword();
-    QHostAddress getIPAddress();
-    quint16 getPort();
+    //    QString getPassword();
+    //    QHostAddress getIPAddress();
+    //    quint16 getPort();
+
 signals:
-    // Send the password and IPAddress to the server.
     void serverPassword (QString password);
-    void serverIPAddressPort (QHostAddress ipAddress,quint16 portID);
+    void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
 
 private:
     Ui::ServerLogin *ui;
     int pageID = 1;
-    QString password;
+    QString password ="";
     quint16 portID = 61074;
     QHostAddress ipAddress = QHostAddress::LocalHost;
 };

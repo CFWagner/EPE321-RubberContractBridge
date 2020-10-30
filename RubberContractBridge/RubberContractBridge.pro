@@ -21,14 +21,8 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
-    gui/bidcardsselected.cpp \
-    gui/bidwindow.cpp \
-    gui/bridgewindow.cpp \
-    gui/clientlogin.cpp \
     gui/entrywindow.cpp \
     gui/hover.cpp \
-    gui/playcardselected.cpp \
-    gui/serverlobby.cpp \
     gui/serverlogin.cpp \
     logger/logger.cpp \
     main.cpp \
@@ -45,12 +39,6 @@ SOURCES += \
     unit-tests/game-server/testscore.cpp \
     unit-tests/game-server/testserver.cpp \
     unit-tests/game-server/testservergamestate.cpp \
-    unit-tests/gui/testbiddingphase.cpp \
-    unit-tests/gui/testbridgewindow.cpp \
-    unit-tests/gui/testclientlogin.cpp \
-    unit-tests/gui/testentrywindow.cpp \
-    unit-tests/gui/testserverlobby.cpp \
-    unit-tests/gui/testserverlogin.cpp \
     unit-tests/logger/testlogger.cpp \
     unit-tests/network/testclientnetwork.cpp \
     unit-tests/network/testplayernetwork.cpp \
@@ -76,14 +64,8 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
-    gui/bidcardsselected.h \
-    gui/bidwindow.h \
-    gui/bridgewindow.h \
-    gui/clientlogin.h \
     gui/entrywindow.h \
     gui/hover.h \
-    gui/playcardselected.h \
-    gui/serverlobby.h \
     gui/serverlogin.h \
     logger/logger.h \
     network/servernetwork.h \
@@ -99,12 +81,6 @@ HEADERS += \
     unit-tests/game-server/testscore.h \
     unit-tests/game-server/testserver.h \
     unit-tests/game-server/testservergamestate.h \
-    unit-tests/gui/testbiddingphase.h \
-    unit-tests/gui/testbridgewindow.h \
-    unit-tests/gui/testclientlogin.h \
-    unit-tests/gui/testentrywindow.h \
-    unit-tests/gui/testserverlobby.h \
-    unit-tests/gui/testserverlogin.h \
     unit-tests/logger/testlogger.h \
     unit-tests/network/testclientnetwork.h \
     unit-tests/network/testplayernetwork.h \
@@ -116,11 +92,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 FORMS += \
-    gui/bidwindow.ui \
-    gui/bridgewindow.ui \
-    gui/clientlogin.ui \
     gui/entrywindow.ui \
-    gui/serverlobby.ui \
     gui/serverlogin.ui
 
 DISTFILES += \

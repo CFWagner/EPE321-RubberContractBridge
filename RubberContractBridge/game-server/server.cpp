@@ -7,6 +7,12 @@ Server::Server(QObject *parent) : QObject(parent)
 {
     // Initialise server network
     serverNetwork = new ServerNetwork(parent, "BOT");
+    serverLoginWindow = new ServerLogin();
+    connect(serverLoginWindow,&ServerLogin::serverPassword,this,&Server::serverPassword);
+    connect(serverLoginWindow,&ServerLogin::serverIPAddressPort,this,&Server::serverIPAddressPort);
+    connect(serverNetwork,&ServerNetwork::connectionResult,serverLoginWindow,&ServerLogin::connectionResult);
+    connect(serverNetwork,&ServerNetwork::generalError,serverLoginWindow,&ServerLogin::generalError);
+
 }
 
 // Destructor

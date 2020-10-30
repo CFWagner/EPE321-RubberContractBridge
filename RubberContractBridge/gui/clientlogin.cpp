@@ -9,6 +9,7 @@ ClientLogin::ClientLogin(QWidget *parent) : QWidget(parent), ui(new Ui::ClientLo
     connect(networkConnection,&ClientNetwork::loginResult, this,&ClientLogin::loginStatus);
     connect(networkConnection,&ClientNetwork::serverDisconnected, this,&ClientLogin::serverDisconnected);
     connect(networkConnection,&ClientNetwork::generalError, this,&ClientLogin::generalError);
+    connect(networkConnection,&ClientNetwork::updateGameState, this,&ClientLogin::updateGameState);
     connect(this,&ClientLogin::connectToServer, networkConnection,&ClientNetwork::txRequestLogin);
     setupWindow();
     staticGUIElements();
@@ -19,6 +20,8 @@ ClientLogin::~ClientLogin()
 {
     if(networkConnection != nullptr)
         delete networkConnection;
+    if(playerWindow != nullptr)
+        delete playerWindow;
     delete ui;
 }
 
@@ -56,9 +59,6 @@ void ClientLogin::attemptLoginButton()
         password = ui->passwordLine->text();
         ipAddress = QHostAddress(ui->ipAddressLine->text());
         portID = ui->portLine->text().toUShort();
-        ipAddress = QHostAddress::LocalHost;
-        portID = 61074;
-        password = "12345@@@@";
         emit connectToServer(ipAddress,portID,username,password);
     }
 }
@@ -78,8 +78,7 @@ void ClientLogin::connectionResult(int status, QString errorMsg)
     {
     case 0:
     {
-        //this->close();
-        qDebug() << status;
+        qDebug () <<"A";
         break;
     }
     case 1:
@@ -108,6 +107,11 @@ void ClientLogin::serverDisconnected()
 void ClientLogin::generalError(QString errorMsg)
 {
     QMessageBox::warning(this,"Error message",errorMsg);
+}
+
+void ClientLogin::updateGameState(PlayerGameState player)
+{
+    qDebug() << player.getEvent();
 }
 
 void ClientLogin::on_infoButton_clicked()

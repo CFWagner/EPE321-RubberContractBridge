@@ -60,6 +60,7 @@ void PlayerNetwork::updateGameState(PlayerGameState gameState)
     QJsonObject txObj;
     txObj["Type"] = "UPDATE_GAME_STATE";
     txObj["PlayerGameState"] = jsonPlayerState;
+    qDebug() << gameState.getEvent();
     txAll(txObj);
 }
 
@@ -231,6 +232,7 @@ void PlayerNetwork::txAll(QJsonObject data)
 
     // Send the login request to the server
     out << data;
+    qDebug() << "HEREE";
     int tempVal = clientSoc->write(block);
 
     qInfo() << "txAll: Number of bytes expected to be sent to the client: " << block.size();

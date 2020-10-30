@@ -99,11 +99,9 @@ void Server::playersSelected(QVector<QString> playerNames)
 
     // Stop listening for incoming connections
     serverNetwork->stopListening();
-    qDebug() << "STOP";
 
     // Run the match for specified number of rubbers
     gameServer->executeMatch(maxRubbers);
-    qDebug() << "STOP1";
 }
 
 // Slot for when the server password is selected in the server login menu

@@ -23,6 +23,7 @@ SOURCES += \
     game-server/servergamestate.cpp \
     gui/clientlogin.cpp \
     gui/entrywindow.cpp \
+    gui/gamewindow.cpp \
     gui/hover.cpp \
     gui/serverlobby.cpp \
     gui/serverlogin.cpp \
@@ -68,6 +69,7 @@ HEADERS += \
     game-server/servergamestate.h \
     gui/clientlogin.h \
     gui/entrywindow.h \
+    gui/gamewindow.h \
     gui/hover.h \
     gui/serverlobby.h \
     gui/serverlogin.h \
@@ -98,6 +100,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 FORMS += \
     gui/clientlogin.ui \
     gui/entrywindow.ui \
+    gui/gamewindow.ui \
     gui/serverlobby.ui \
     gui/serverlogin.ui
 

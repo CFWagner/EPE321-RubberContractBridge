@@ -129,7 +129,6 @@ void ServerLobby::startGameB()
         playerNames[1] = ui->south->text();
         playerNames[2] = ui->east->text();
         playerNames[3] = ui->west->text();
-        this->hide();
         emit playersSelected(playerNames);
     }
 }

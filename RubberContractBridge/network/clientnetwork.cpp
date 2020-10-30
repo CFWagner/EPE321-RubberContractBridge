@@ -145,6 +145,7 @@ void ClientNetwork::txMessage(QString msg)
 
 void ClientNetwork::rxAll()
 {
+    qDebug() << "FOUND IT 1";
     in.startTransaction();
 
     QJsonObject rxObj;
@@ -479,9 +480,8 @@ void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
     // Convert to QJsonOnject to PlayerGameState
     PlayerGameState playerState;
     playerState.read(jsonPlayerState);
-
+    qDebug() << "FOUND IT";
     emit updateGameState(playerState);
-    qDebug() << playerState.getEvent();
 }
 
 /**

@@ -50,10 +50,7 @@ void GameServer::executeMatch(qint32 maxRubbers)
         notifyNextPlayerTurn();
 
         // Wait until player completes turn
-        while(!turnComplete)
-        {
-            qDebug() << "loop";
-        }
+        while(!turnComplete);
     }
 }
 

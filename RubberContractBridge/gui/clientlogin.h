@@ -1,8 +1,10 @@
 #ifndef CLIENTLOGIN_H
 #define CLIENTLOGIN_H
 
+#include "game-server/playergamestate.h"
 #include "network/clientnetwork.h"
 #include "hover.h"
+#include "gui/gamewindow.h"
 #include <QHostAddress>
 #include <QWidget>
 #include <QObject>
@@ -25,6 +27,7 @@ public slots:
     void connectionResult(int status, QString errorMsg);
     void serverDisconnected();
     void generalError(QString errorMsg);
+    void updateGameState(PlayerGameState player);
 
 signals:
     void connectToServer(QHostAddress serverIP, quint16 port, QString playerName, QString password);
@@ -41,6 +44,7 @@ private:
     int pageID = 3;
     bool loginSuccessful = false;
     ClientNetwork *networkConnection = nullptr;
+    GameWindow *playerWindow = nullptr;
 };
 
 #endif // CLIENTLOGIN_H

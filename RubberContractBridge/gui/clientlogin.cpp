@@ -67,13 +67,17 @@ void ClientLogin::attemptLoginButton()
 
         if (ui->ipAddressLine->text() == ""){
             ipAddress = QHostAddress::LocalHost;
-        }else{
+        }
+        else
+        {
             ipAddress = QHostAddress(ui->ipAddressLine->text());
         }
 
         if (ui->portLine->text() == ""){
             portID = 61074;
-        }else{
+        }
+        else
+        {
             portID = ui->portLine->text().toUShort();
         }
 
@@ -87,6 +91,14 @@ void ClientLogin::loginStatus(bool loginSuccessful, QString reason)
     {
         QMessageBox::warning(this,"Login status",reason);
     }
+    else
+    {
+        QPixmap createPixel(":/resources/guiResources/background/waitScreen.png");
+        QLabel *waitLabel = new QLabel(this);
+        waitLabel->setPixmap(createPixel);
+        waitLabel->setGeometry(0,0,415,520);
+        waitLabel->show();
+    }
 }
 
 void ClientLogin::connectionResult(int status, QString errorMsg)
@@ -96,7 +108,6 @@ void ClientLogin::connectionResult(int status, QString errorMsg)
     {
     case 0:
     {
-        qDebug () <<"A";
         break;
     }
     case 1:
@@ -119,7 +130,8 @@ void ClientLogin::connectionResult(int status, QString errorMsg)
 
 void ClientLogin::serverDisconnected()
 {
-    QMessageBox::warning(this,"Game started","Game has started");
+    QMessageBox::warning(this,"Game started","You have not been picked and the game has started without you.");
+    this->close();
 }
 
 void ClientLogin::generalError(QString errorMsg)
@@ -129,7 +141,17 @@ void ClientLogin::generalError(QString errorMsg)
 
 void ClientLogin::updateGameState(PlayerGameState player)
 {
-    qDebug() << player.getEvent();
+    if(player.getEvent() == INITIALIZE)
+    {
+        playerWindow = new GameWindow(networkConnection);
+        disconnect(networkConnection,&ClientNetwork::connectionResult, this,&ClientLogin::connectionResult);
+        disconnect(networkConnection,&ClientNetwork::loginResult, this,&ClientLogin::loginStatus);
+        disconnect(networkConnection,&ClientNetwork::serverDisconnected, this,&ClientLogin::serverDisconnected);
+        disconnect(networkConnection,&ClientNetwork::generalError, this,&ClientLogin::generalError);
+        disconnect(networkConnection,&ClientNetwork::updateGameState, this,&ClientLogin::updateGameState);
+        disconnect(this,&ClientLogin::connectToServer, networkConnection,&ClientNetwork::txRequestLogin);
+        this->close();
+    }
 }
 
 void ClientLogin::on_infoButton_clicked()

@@ -5,6 +5,7 @@
 #include "game-server/server.h"
 #include "gui/clientlogin.h"
 #include <QWidget>
+#include <QObject>
 
 namespace Ui {class EntryWindow;}
 

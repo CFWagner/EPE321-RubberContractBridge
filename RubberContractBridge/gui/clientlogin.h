@@ -3,6 +3,7 @@
 
 #include "game-server/playergamestate.h"
 #include "network/clientnetwork.h"
+#include "gui/gamewindow.h"
 #include "hover.h"
 #include "gui/gamewindow.h"
 #include <QHostAddress>
@@ -27,7 +28,7 @@ public slots:
     void connectionResult(int status, QString errorMsg);
     void serverDisconnected();
     void generalError(QString errorMsg);
-    void updateGameState(PlayerGameState player);
+    void updateGameState(PlayerGameState gameState);
 
 signals:
     void connectToServer(QHostAddress serverIP, quint16 port, QString playerName, QString password);

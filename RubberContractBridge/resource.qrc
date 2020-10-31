@@ -120,5 +120,6 @@
         <file>guiResources/bid/PASS.png</file>
         <file>guiResources/bid/X.png</file>
         <file>guiResources/bid/XX.png</file>
+        <file>guiResources/background/waitScreen.png</file>
     </qresource>
 </RCC>

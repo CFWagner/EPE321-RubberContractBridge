@@ -79,13 +79,17 @@ void ServerLogin::tryConnect()
         // If the IP address or port isn't given then set it as default.
         if (ui->ipLine->text() == ""){
             ipAddress = QHostAddress::LocalHost;
-        }else{
+        }
+        else
+        {
             ipAddress = QHostAddress(ui->ipLine->text());
         }
 
         if (ui->portLine->text() == ""){
             portID = 61074;
-        }else{
+        }
+        else
+        {
             portID = ui->portLine->text().toUShort();
         }
 

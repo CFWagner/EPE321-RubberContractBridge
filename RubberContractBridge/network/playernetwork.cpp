@@ -234,6 +234,7 @@ void PlayerNetwork::txAll(QJsonObject data)
     out << data;
     qDebug() << "HEREE";
     int tempVal = clientSoc->write(block);
+    clientSoc->flush();
 
     qInfo() << "txAll: Number of bytes expected to be sent to the client: " << block.size();
     qInfo() << "txAll: Number of bytes sent to client: " << tempVal;

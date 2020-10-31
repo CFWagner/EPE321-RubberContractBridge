@@ -56,9 +56,27 @@ void ClientLogin::attemptLoginButton()
     else
     {
         // The details are read in form the QLineEdits for sending.
+
+        // Set the password
+#ifdef QUICK_SERVER_ENTRY
+        password = "123@@321";
+#endif
+#ifndef QUICK_SERVER_ENTRY
         password = ui->passwordLine->text();
-        ipAddress = QHostAddress(ui->ipAddressLine->text());
-        portID = ui->portLine->text().toUShort();
+#endif
+
+        if (ui->ipAddressLine->text() == ""){
+            ipAddress = QHostAddress::LocalHost;
+        }else{
+            ipAddress = QHostAddress(ui->ipAddressLine->text());
+        }
+
+        if (ui->portLine->text() == ""){
+            portID = 61074;
+        }else{
+            portID = ui->portLine->text().toUShort();
+        }
+
         emit connectToServer(ipAddress,portID,username,password);
     }
 }

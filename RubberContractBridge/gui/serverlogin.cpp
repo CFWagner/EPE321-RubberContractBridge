@@ -66,20 +66,29 @@ bool ServerLogin::checkValidPassword()
 
 void ServerLogin::tryConnect()
 {
-    bool validPassword = checkValidPassword();
+    bool validPassword = true;
+#ifdef QUICK_SERVER_ENTRY
+    password = "123@@321";
+#endif
+#ifndef QUICK_SERVER_ENTRY
+    validPassword = checkValidPassword();
+#endif
+
     if (validPassword == true)
     {
         // If the IP address or port isn't given then set it as default.
-        if(ui->ipLine->text() == "" || ui->portLine->text() == "")
-        {
+        if (ui->ipLine->text() == ""){
             ipAddress = QHostAddress::LocalHost;
-            portID = 61074;
-        }
-        else
-        {
+        }else{
             ipAddress = QHostAddress(ui->ipLine->text());
+        }
+
+        if (ui->portLine->text() == ""){
+            portID = 61074;
+        }else{
             portID = ui->portLine->text().toUShort();
         }
+
         //           this->close();
         emit serverPassword(password);
         emit serverIPAddressPort(ipAddress,portID);

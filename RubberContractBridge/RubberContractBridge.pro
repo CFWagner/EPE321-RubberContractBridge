@@ -8,6 +8,9 @@ CONFIG += no_testcase_installs
 CONFIG += resources_big
 CONFIG(release, debug|release):DEFINES += QT_NO_INFO_OUTPUT
 
+# If quick entry is defined, then no passwords will be required to connect to the server.
+#DEFINES += QUICK_SERVER_ENTRY
+
 #All sources classes of the project is addded below.
 SOURCES += \
     ai/ai.cpp \

@@ -88,20 +88,6 @@
         <file>guiResources/bid/clubs_5.png</file>
         <file>guiResources/bid/clubs_6.png</file>
         <file>guiResources/bid/clubs_7.png</file>
-        <file>guiResources/bid/diamond_1.png</file>
-        <file>guiResources/bid/diamond_2.png</file>
-        <file>guiResources/bid/diamond_3.png</file>
-        <file>guiResources/bid/diamond_4.png</file>
-        <file>guiResources/bid/diamond_5.png</file>
-        <file>guiResources/bid/diamond_6.png</file>
-        <file>guiResources/bid/diamond_7.png</file>
-        <file>guiResources/bid/heart_1.png</file>
-        <file>guiResources/bid/heart_2.png</file>
-        <file>guiResources/bid/heart_3.png</file>
-        <file>guiResources/bid/heart_4.png</file>
-        <file>guiResources/bid/heart_5.png</file>
-        <file>guiResources/bid/heart_6.png</file>
-        <file>guiResources/bid/heart_7.png</file>
         <file>guiResources/bid/NT_1.png</file>
         <file>guiResources/bid/NT_2.png</file>
         <file>guiResources/bid/NT_3.png</file>
@@ -109,17 +95,34 @@
         <file>guiResources/bid/NT_5.png</file>
         <file>guiResources/bid/NT_6.png</file>
         <file>guiResources/bid/NT_7.png</file>
-        <file>guiResources/bid/spade_1.png</file>
-        <file>guiResources/bid/spade_2.png</file>
-        <file>guiResources/bid/spade_3.png</file>
-        <file>guiResources/bid/spade_4.png</file>
-        <file>guiResources/bid/spade_5.png</file>
-        <file>guiResources/bid/spade_6.png</file>
-        <file>guiResources/bid/spade_7.png</file>
         <file>guiResources/bid/arrows.png</file>
         <file>guiResources/bid/PASS.png</file>
         <file>guiResources/bid/X.png</file>
         <file>guiResources/bid/XX.png</file>
         <file>guiResources/background/waitScreen.png</file>
+        <file>guiResources/background/bidBoard.png</file>
+        <file>guiResources/background/gameBoard.png</file>
+        <file>guiResources/bid/frame.png</file>
+        <file>guiResources/bid/diamonds_1.png</file>
+        <file>guiResources/bid/diamonds_2.png</file>
+        <file>guiResources/bid/diamonds_3.png</file>
+        <file>guiResources/bid/diamonds_4.png</file>
+        <file>guiResources/bid/diamonds_5.png</file>
+        <file>guiResources/bid/diamonds_6.png</file>
+        <file>guiResources/bid/diamonds_7.png</file>
+        <file>guiResources/bid/hearts_1.png</file>
+        <file>guiResources/bid/hearts_2.png</file>
+        <file>guiResources/bid/hearts_3.png</file>
+        <file>guiResources/bid/hearts_4.png</file>
+        <file>guiResources/bid/hearts_5.png</file>
+        <file>guiResources/bid/hearts_6.png</file>
+        <file>guiResources/bid/hearts_7.png</file>
+        <file>guiResources/bid/spades_1.png</file>
+        <file>guiResources/bid/spades_2.png</file>
+        <file>guiResources/bid/spades_3.png</file>
+        <file>guiResources/bid/spades_4.png</file>
+        <file>guiResources/bid/spades_5.png</file>
+        <file>guiResources/bid/spades_6.png</file>
+        <file>guiResources/bid/spades_7.png</file>
     </qresource>
 </RCC>

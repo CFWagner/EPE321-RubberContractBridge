@@ -8,6 +8,10 @@ CONFIG += no_testcase_installs
 CONFIG += resources_big
 CONFIG(release, debug|release):DEFINES += QT_NO_INFO_OUTPUT
 
+# If quick entry is defined, then no passwords will be required to connect to the server.
+# QUICK_SERVER_ENTRY will also only be defined if in DEBUG mode.
+#CONFIG(debug, release|debug):DEFINES += QUICK_SERVER_ENTRY
+
 #All sources classes of the project is addded below.
 SOURCES += \
     ai/ai.cpp \
@@ -21,8 +25,12 @@ SOURCES += \
     game-server/score.cpp \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
+    gui/bidselect.cpp \
+    gui/clientlogin.cpp \
     gui/entrywindow.cpp \
+    gui/gamewindow.cpp \
     gui/hover.cpp \
+    gui/serverlobby.cpp \
     gui/serverlogin.cpp \
     logger/logger.cpp \
     main.cpp \
@@ -64,8 +72,12 @@ HEADERS += \
     game-server/score.h \
     game-server/server.h \
     game-server/servergamestate.h \
+    gui/bidselect.h \
+    gui/clientlogin.h \
     gui/entrywindow.h \
+    gui/gamewindow.h \
     gui/hover.h \
+    gui/serverlobby.h \
     gui/serverlogin.h \
     logger/logger.h \
     network/servernetwork.h \
@@ -92,7 +104,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 FORMS += \
+    gui/clientlogin.ui \
     gui/entrywindow.ui \
+    gui/gamewindow.ui \
+    gui/serverlobby.ui \
     gui/serverlogin.ui
 
 DISTFILES += \

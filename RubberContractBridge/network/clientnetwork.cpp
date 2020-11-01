@@ -353,6 +353,7 @@ void ClientNetwork::txAll(QJsonObject data)
     // Send the login request to the server
     out << data;
     int tempVal = tcpSoc->write(block);
+    tcpSoc->flush();
 
     qInfo() << "txAll: Number of bytes expected to be sent to the server: " << block.size();
     qInfo() << "txAll: Number of bytes sent to server: " << tempVal;
@@ -479,7 +480,6 @@ void ClientNetwork::rxUpdateGameState(QJsonObject gsObj)
     // Convert to QJsonOnject to PlayerGameState
     PlayerGameState playerState;
     playerState.read(jsonPlayerState);
-
     emit updateGameState(playerState);
 }
 

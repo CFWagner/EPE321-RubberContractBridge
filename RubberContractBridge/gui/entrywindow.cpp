@@ -69,5 +69,7 @@ void EntryWindow::gotoServer()
 
 void EntryWindow::goClientLogin()
 {
-
+    qDebug() <<"client";
+    clientLoginWindow = new ClientLogin();
+    this->close();
 }

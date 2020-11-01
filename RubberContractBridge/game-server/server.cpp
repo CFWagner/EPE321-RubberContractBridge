@@ -10,9 +10,9 @@ Server::Server(QObject *parent) : QObject(parent)
     serverLoginWindow = new ServerLogin();
     connect(serverLoginWindow,&ServerLogin::serverPassword,this,&Server::serverPassword);
     connect(serverLoginWindow,&ServerLogin::serverIPAddressPort,this,&Server::serverIPAddressPort);
+    connect(serverLoginWindow,&ServerLogin::createLobby,this,&Server::createLobby);
     connect(serverNetwork,&ServerNetwork::connectionResult,serverLoginWindow,&ServerLogin::connectionResult);
     connect(serverNetwork,&ServerNetwork::generalError,serverLoginWindow,&ServerLogin::generalError);
-
 }
 
 // Destructor
@@ -79,7 +79,6 @@ void Server::playersSelected(QVector<QString> playerNames)
             position = WEST;
             break;
         }
-
         // Create players
         Player* player;
         // Create AI player
@@ -115,4 +114,13 @@ void Server::serverPassword(QString passwordSent)
 void Server::serverIPAddressPort(QHostAddress addressSent, quint16 portSent)
 {
     serverNetwork->initServer(addressSent, portSent);
+}
+
+void Server::createLobby()
+{
+    serverLobby = new ServerLobby();
+    connect(serverLobby, &ServerLobby::playersSelected, this,&Server::playersSelected);
+    connect(serverNetwork,&ServerNetwork::playerJoined, serverLobby, &ServerLobby::addPlayer);
+    connect(serverNetwork,&ServerNetwork::playerDisconnected, serverLobby, &ServerLobby::removePlayer);
+    serverLobby->show();
 }

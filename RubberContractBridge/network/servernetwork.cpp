@@ -320,6 +320,7 @@ void ServerNetwork::validateClient()
     // Send the login request to the server
     out << txObj;
     int tempVal = tempSocket->write(block);
+    tempSocket->flush();
 
     qInfo() << "validateClient: Number of bytes expected to be sent to the client: " << block.size();
     qInfo() << "validateClient: Number of bytes sent to client: " << tempVal;

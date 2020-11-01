@@ -3,7 +3,9 @@
 
 #include "hover.h"
 #include "game-server/server.h"
+#include "gui/clientlogin.h"
 #include <QWidget>
+#include <QObject>
 
 namespace Ui {class EntryWindow;}
 
@@ -24,7 +26,8 @@ public slots:
 private:
     Ui::EntryWindow *ui;
     int pageID = 0;
-    Server *createdServer;
+    Server *createdServer = nullptr;
+    ClientLogin *clientLoginWindow = nullptr;
 };
 
 #endif // ENTRYWINDOW_H

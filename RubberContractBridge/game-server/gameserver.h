@@ -5,6 +5,8 @@
 #include "servergamestate.h"
 #include "enumerations/GameEvent.h"
 #include <QObject>
+#include <QCoreApplication>
+#include <QEventLoop>
 
 // Class responsible for controlling the game at a high level and
 // interfacing the players with the game logic and state

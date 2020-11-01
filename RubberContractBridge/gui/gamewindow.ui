@@ -35,8 +35,8 @@
   <widget class="QLabel" name="you">
    <property name="geometry">
     <rect>
-     <x>940</x>
-     <y>945</y>
+     <x>950</x>
+     <y>880</y>
      <width>71</width>
      <height>21</height>
     </rect>
@@ -52,8 +52,8 @@ color:rgb(255, 255, 255);</string>
   <widget class="QLabel" name="left">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>500</y>
+     <x>340</x>
+     <y>520</y>
      <width>71</width>
      <height>41</height>
     </rect>
@@ -69,8 +69,8 @@ color:rgb(255, 255, 255);</string>
   <widget class="QLabel" name="top">
    <property name="geometry">
     <rect>
-     <x>940</x>
-     <y>110</y>
+     <x>950</x>
+     <y>186</y>
      <width>71</width>
      <height>21</height>
     </rect>
@@ -86,8 +86,8 @@ color:rgb(255, 255, 255);</string>
   <widget class="QLabel" name="right">
    <property name="geometry">
     <rect>
-     <x>1660</x>
-     <y>500</y>
+     <x>1550</x>
+     <y>520</y>
      <width>71</width>
      <height>41</height>
     </rect>

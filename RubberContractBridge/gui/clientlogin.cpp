@@ -62,10 +62,11 @@ void ClientLogin::attemptLoginButton()
         password = "123@@321";
 #endif
 #ifndef QUICK_SERVER_ENTRY
-        password = ui->passwordLine->text();
-#endif
+        //        password = ui->passwordLine->text();
+        password = "1234@@@@";
+        #endif
 
-        if (ui->ipAddressLine->text() == ""){
+                if (ui->ipAddressLine->text() == ""){
             ipAddress = QHostAddress::LocalHost;
         }
         else
@@ -144,6 +145,9 @@ void ClientLogin::updateGameState(PlayerGameState player)
     if(player.getEvent() == INITIALIZE)
     {
         playerWindow = new GameWindow(networkConnection);
+        playerWindow->setName(username);
+        playerWindow->setGameState(player);
+        connect(networkConnection,&ClientNetwork::notifyBidTurn, playerWindow,&GameWindow::playerTurnBid);
         disconnect(networkConnection,&ClientNetwork::connectionResult, this,&ClientLogin::connectionResult);
         disconnect(networkConnection,&ClientNetwork::loginResult, this,&ClientLogin::loginStatus);
         disconnect(networkConnection,&ClientNetwork::serverDisconnected, this,&ClientLogin::serverDisconnected);

@@ -39,6 +39,22 @@ void GameWindow::staticGUIElements()
     frame->setPixmap(arrowPix);
     frame->setGeometry(356,186,1208,708);
     ui->button_exit->setIcon(QIcon(":/resources/guiResources/buttons/exit_button.png"));
+
+    QPixmap XP(":/resources/guiResources/bid/X.png");
+    QPixmap XXP(":/resources/guiResources/bid/XX.png");
+    QPixmap passP(":/resources/guiResources/bid/PASS.png");
+    BidSelect *X = new BidSelect(DOUBLE_BID,this);
+    X->setPixmap(XP);
+    X->setGeometry(860,600,101,61);
+    connect(X,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
+    BidSelect *XX = new BidSelect(REDOUBLE_BID,this);
+    XX->setPixmap(XXP);
+    XX->setGeometry(1000,600,101,61);
+    connect(XX,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
+    BidSelect *passB = new BidSelect(PASS,this);
+    passB->setPixmap(passP);
+    passB->setGeometry(760,600,101,61);
+    connect(passB,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
 }
 
 void GameWindow::updateGameState(PlayerGameState gameState)
@@ -67,8 +83,31 @@ void GameWindow::updateGameState(PlayerGameState gameState)
 
 void GameWindow::updateBidTable()
 {
-    qDebug()<<gameState.getCurrentBid()->getTricksAbove();
-    qDebug() << "UPDATE";
+    int counter = 0;
+    if (gameState.getCurrentBid()->getTricksAbove() == 1)
+    {
+        for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
+        {
+            bidTable[i*7]->hide();
+        }
+    }
+    else
+    {
+        for(int i = 0; i < gameState.getCurrentBid()->getTricksAbove()-1;i++)
+        {
+            bidTable[i]->hide();
+            bidTable[i + 7]->hide();
+            bidTable[i + 14]->hide();
+            bidTable[i + 21]->hide();
+            bidTable[i + 28]->hide();
+            counter++;
+        }
+        for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
+        {
+            bidTable[counter+i*7]->hide();
+        }
+    }
+    bidTable[(gameState.getCurrentBid()->getTricksAbove()-1)+gameState.getCurrentBid()->getTrumpSuit()*7]->setGeometry(10,10,61,31);
 }
 
 void GameWindow::receiveBid(BidSelect *bidSelected)
@@ -76,10 +115,20 @@ void GameWindow::receiveBid(BidSelect *bidSelected)
     this->bidSelected = bidSelected;
     if (gameState.getPlayerName(gameState.getPlayerTurn())==name)
     {
-        playerMayBid = false;
-        qDebug() << "Bid made: " <<  bidSelected->getValue();
-        Bid bidMade(gameState.getPlayerTurn(),bidSelected->getSuit(),bidSelected->getValue());
-        emit bidAction(bidMade);
+        if(bidSelected->getBidCall() == BID)
+        {
+            playerMayBid = false;
+            qDebug() << "Bid made: " <<  bidSelected->getValue();
+            Bid bidMade(gameState.getPlayerTurn(),bidSelected->getSuit(),bidSelected->getValue());
+            emit bidAction(bidMade);
+        }
+        else
+        {
+           playerMayBid = false;
+           qDebug() << "PASS: " <<  bidSelected->getBidCall();
+//           Bid bidMade(gameState.getPlayerTurn(),bidSelected->getBidCall());
+//           emit bidAction(bidMade);
+        }
     }
 }
 
@@ -160,6 +209,7 @@ void GameWindow::generalError(QString errorMsg)
 
 void GameWindow::playerTurnBid()
 {
+    qDebug() << "PLAYER MUST PLAY: "<< name;
     playerMayBid = true;
 }
 

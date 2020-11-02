@@ -48,7 +48,7 @@ void GameServer::executeMatch(qint32 maxRubbers)
 
         // Indicate to next player to take turn
         notifyNextPlayerTurn();
-
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
         // Wait until player completes turn
         while(!turnComplete)
         {

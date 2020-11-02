@@ -30,6 +30,7 @@ void GameWindow::setupWindow()
     this->setPalette(palette);
     this->setFixedSize(1920,1080);
     this->setWindowTitle ("Rubber Contract Bridge");
+    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
 }
 
 void GameWindow::staticGUIElements()
@@ -45,11 +46,11 @@ void GameWindow::staticGUIElements()
     QPixmap passP(":/resources/guiResources/bid/PASS.png");
     BidSelect *X = new BidSelect(DOUBLE_BID,this);
     X->setPixmap(XP);
-    X->setGeometry(960,600,101,61);
+    X->setGeometry(910,600,101,61);
     connect(X,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
     BidSelect *XX = new BidSelect(REDOUBLE_BID,this);
     XX->setPixmap(XXP);
-    XX->setGeometry(1100,600,101,61);
+    XX->setGeometry(1060,600,101,61);
     connect(XX,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
     BidSelect *passB = new BidSelect(PASS,this);
     passB->setPixmap(passP);
@@ -299,7 +300,7 @@ void GameWindow::createHandTable()
         cardMine = new CardSelected(this);
         cardsInHand[i] = cardMine;
         cardsInHand[i] ->setStyleSheet(imageName+cardName);
-        cardsInHand[i] ->setGeometry(700+ i*30,940,101,141);
+        cardsInHand[i] ->setGeometry(720+ i*30,940,101,141);
         connect(cardsInHand[i],&CardSelected::sendCardPlayed,this,&GameWindow::receiveCard);
         cardsInHand[i]->show();
     }

@@ -27,6 +27,7 @@ void ServerLogin::setupWindow()
     //Fix the size of the window to a specified 415 by 520 ratio (16:12)
     this->setFixedSize(415,520);
     this->setWindowTitle ("Rubber Contract Bridge");
+    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_hearts.png"));
 }
 
 void ServerLogin::staticGUIElements()

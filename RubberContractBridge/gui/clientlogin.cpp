@@ -35,6 +35,7 @@ void ClientLogin::setupWindow()
 
     this->setFixedSize(415,520);
     this->setWindowTitle ("Rubber Contract Bridge");
+    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
 }
 
 void ClientLogin::staticGUIElements()
@@ -155,6 +156,7 @@ void ClientLogin::updateGameState(PlayerGameState player)
         disconnect(networkConnection,&ClientNetwork::updateGameState, this,&ClientLogin::updateGameState);
         disconnect(this,&ClientLogin::connectToServer, networkConnection,&ClientNetwork::txRequestLogin);
         this->close();
+
     }
 }
 

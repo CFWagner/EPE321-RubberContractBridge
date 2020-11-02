@@ -29,6 +29,7 @@ void EntryWindow::setupWindow()
     this->setPalette(palette);
     this->setFixedSize(640,480); //Fix the size of the window to a specified 640 by 480 ratio (16:12)
     this->setWindowTitle ("Rubber Contract Bridge");
+    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_clubs.png"));
 }
 
 void EntryWindow::staticGUIElements()

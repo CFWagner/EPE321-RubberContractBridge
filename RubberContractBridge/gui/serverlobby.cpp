@@ -24,6 +24,7 @@ void ServerLobby::setupWindow()
     this->setPalette(palette);
     //Fix the size of the window to a specified 415 by 520 ratio (16:12)
     this->setWindowTitle ("Rubber Contract Bridge");
+    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_hearts.png"));
 }
 
 void ServerLobby::staticGUIElements()
@@ -69,41 +70,53 @@ QVector<QString> ServerLobby::getplayerNames()
 
 void ServerLobby::addPlayersLobby()
 {
-    int amountAdd = 0;
-    if (ui->playerList->selectedItems().length() > openSpots)
+    QString namesC [4] = {ui->north->text(),ui->south->text(),ui->east->text(),ui->west->text()};
+    bool add = true;
+    for(int i = 0;i < ui->playerList->selectedItems().length();++i)
     {
-        amountAdd = openSpots;
+        if(namesC->contains(ui->playerList->selectedItems()[i]->text()))
+        {
+            add = false;
+        }
     }
-    else
+    if (add)
     {
-        amountAdd = ui->playerList->selectedItems().length();
-    }
-    //Place the player in the next available slot.
-    for (int i = 0; i < amountAdd; i++)
-    {
-        if (ui->north->text() == "")
+        int amountAdd = 0;
+        if (ui->playerList->selectedItems().length() > openSpots)
         {
-            ui->north->setText(ui->playerList->selectedItems()[i]->text());
-            ui->north_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
-            openSpots--;
+            amountAdd = openSpots;
         }
-        else if(ui->south->text() == "")
+        else
         {
-            ui->south->setText(ui->playerList->selectedItems()[i]->text());
-            ui->south_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
-            openSpots--;
+            amountAdd = ui->playerList->selectedItems().length();
         }
-        else if(ui->east->text() == "")
+        //Place the player in the next available slot.
+        for (int i = 0; i < amountAdd; i++)
         {
-            ui->east->setText(ui->playerList->selectedItems()[i]->text());
-            ui->east_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
-            openSpots--;
-        }
-        else if(ui->west->text() == "")
-        {
-            ui->west->setText(ui->playerList->selectedItems()[i]->text());
-            ui->west_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
-            openSpots--;
+            if (ui->north->text() == "")
+            {
+                ui->north->setText(ui->playerList->selectedItems()[i]->text());
+                ui->north_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
+                openSpots--;
+            }
+            else if(ui->south->text() == "")
+            {
+                ui->south->setText(ui->playerList->selectedItems()[i]->text());
+                ui->south_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
+                openSpots--;
+            }
+            else if(ui->east->text() == "")
+            {
+                ui->east->setText(ui->playerList->selectedItems()[i]->text());
+                ui->east_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
+                openSpots--;
+            }
+            else if(ui->west->text() == "")
+            {
+                ui->west->setText(ui->playerList->selectedItems()[i]->text());
+                ui->west_b->setIcon(QIcon(":/resources/guiResources/background/userIcon.png"));
+                openSpots--;
+            }
         }
     }
 }

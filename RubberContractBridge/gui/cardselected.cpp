@@ -1,7 +1,9 @@
 #include "cardselected.h"
 
-CardSelected::CardSelected(QWidget *parent) : QLabel(parent)
+CardSelected::CardSelected(CardSuit suit, CardRank rank,QWidget *parent) : QLabel(parent)
 {
+    this->suit = suit;
+    this->rank = rank;
 }
 
 //Move the cards up and down
@@ -18,4 +20,14 @@ void CardSelected::leaveEvent(QEvent *)
 void CardSelected::mousePressEvent(QMouseEvent *)
 {
     emit sendCardPlayed(this);
+}
+
+CardSuit CardSelected::getSuit()
+{
+    return suit;
+}
+
+CardRank CardSelected::getRank()
+{
+    return rank;
 }

@@ -124,5 +124,6 @@
         <file>guiResources/bid/spades_5.png</file>
         <file>guiResources/bid/spades_6.png</file>
         <file>guiResources/bid/spades_7.png</file>
+        <file>guiResources/buttons/turn.png</file>
     </qresource>
 </RCC>

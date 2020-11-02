@@ -26,8 +26,8 @@ public:
     void write(QJsonObject &json) const;
     bool operator >(const Bid& bid) const;
     bool operator ==(const Bid& bid) const;
-private:
     PlayerPosition bidder; // Position of the player that made the bid
+private:
     BidCall call; // Call made by the player during their bidding turn
     CardSuit trumpSuit; // Suit bid as trump suit. Only relevant if call is BID
     qint8 tricksAbove; // Number of tricks bid. Only relevant if call is BID

@@ -26,20 +26,24 @@ public:
     void createBidTable();
     void updateBidTable();
     void setName(QString username);
+    void addCardToTrick();
+    void indicatePlayerTurn();
 
 public slots:
     void updateGameState(PlayerGameState gameState);
     void gameTerminated(QString reason);
     void generalError(QString errorMsg);
     void receiveBid(BidSelect *bidSelected);
-    void receiveCard();
+    void receiveCard(CardSelected *card);
     void playerTurnBid();
     void createHandTable();
     void bidRejected(QString reason);
     void setGameState(PlayerGameState gameState);
+    QString getStyle(int);
 
 signals:
     void bidAction(Bid bidMade);
+    void cardAction(Card cardPlayed);
 
 private slots:
     void on_button_exit_clicked();
@@ -52,9 +56,19 @@ private:
     BidSelect *bids = nullptr;
     BidSelect *bidTable [35];
     CardSelected *cardsInHand[13];
+    QLabel *trickTabel[4];
     CardSelected *cardMine;
     QString name;
     bool playerMayBid = false;
+    QLabel *turnIndicator;
+    bool cardsClickable = false;
+    int trickPos = 0;
+    QLabel *bidBoard;
+    QLabel *gameBoard;
+    BidSelect *XX;
+    BidSelect *X;
+    BidSelect *passB;
+    bool bidTableCreated = false;
 };
 
 #endif // GAMEWINDOW_H

@@ -145,6 +145,8 @@ void ClientNetwork::txMessage(QString msg)
 
 void ClientNetwork::rxAll()
 {
+    qInfo() << "rxAll Entered";
+
     in.startTransaction();
 
     QJsonObject rxObj;
@@ -354,9 +356,6 @@ void ClientNetwork::txAll(QJsonObject data)
     out << data;
     int tempVal = tcpSoc->write(block);
     tcpSoc->flush();
-
-    qInfo() << "txAll: Number of bytes expected to be sent to the server: " << block.size();
-    qInfo() << "txAll: Number of bytes sent to server: " << tempVal;
 
     if (tempVal == -1 || tempVal < block.size()) {
         // An error occured when writing the data block.

@@ -47,6 +47,7 @@ void GameServer::executeMatch(qint32 maxRubbers)
         turnComplete = false;
 
         // Indicate to next player to take turn
+
         notifyNextPlayerTurn();
         QCoreApplication::processEvents(QEventLoop::AllEvents);
         // Wait until player completes turn
@@ -61,6 +62,47 @@ void GameServer::executeMatch(qint32 maxRubbers)
 void GameServer::broadcastStateUpdate(GameEvent gameEvent)
 {
     for(Player* player: players){
+        // TEMP DEBUG
+        QString event = "";
+        switch(gameEvent){
+        case BID_START:
+            event = "bid start";
+            break;
+        case BID_RESTART:
+            event = "bid restart";
+            break;
+        case PLAYER_BID:
+            event = "player bid";
+            break;
+        case BID_END:
+            event = "bid end";
+            break;
+        case PLAY_START:
+            event = "play start";
+            break;
+        case TRICK_START:
+            event = "trick start";
+            break;
+        case PLAYER_MOVED:
+            event = "player moved";
+            break;
+        case TRICK_END:
+            event = "trick";
+            break;
+        case PLAY_END:
+            event = "play end";
+            break;
+        case INITIALIZE:
+            event = "initialize";
+            break;
+        case MATCH_END:
+            event = "match end";
+            break;
+        }
+        // END TEMP DEBUG
+
+        qInfo() << "Broadcast: Event->" << player->getPlayerName() << " Event->" << event;
+
         PlayerGameState playerState = state->getPlayerGameState(player->getPosition(), players, gameEvent);
         player->updateGameState(playerState);
     }
@@ -80,6 +122,7 @@ Player* GameServer::getPlayerInPosition(PlayerPosition position)
 void GameServer::notifyNextPlayerTurn()
 {
     Player* playerTurn = getPlayerInPosition(state->getPlayerTurn());
+    qInfo() << "Notify player turn: " << playerTurn->getPlayerName();
     if(state->getPhase() == BIDDING)
         playerTurn->notifyBidTurn();
     else

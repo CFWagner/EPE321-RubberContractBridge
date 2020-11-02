@@ -129,7 +129,6 @@ void PlayerNetwork::gameTerminated(QString reason)
 void PlayerNetwork::rxAll()
 {
     in.startTransaction();
-    qDebug() <<"Bidd3";
     QJsonObject rxObj;
     in >> rxObj;
 

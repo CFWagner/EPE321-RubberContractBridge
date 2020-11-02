@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "game-server/bid.h"
 #include "bidselect.h"
+#include "cardselected.h"
 #include "network/clientnetwork.h"
 #include "game-server/playergamestate.h"
 
@@ -31,7 +32,9 @@ public slots:
     void gameTerminated(QString reason);
     void generalError(QString errorMsg);
     void receiveBid(BidSelect *bidSelected);
+    void receiveCard();
     void playerTurnBid();
+    void createHandTable();
     void bidRejected(QString reason);
     void setGameState(PlayerGameState gameState);
 
@@ -48,6 +51,8 @@ private:
     BidSelect *bidSelected = nullptr;
     BidSelect *bids = nullptr;
     BidSelect *bidTable [35];
+    CardSelected *cardsInHand[13];
+    CardSelected *cardMine;
     QString name;
     bool playerMayBid = false;
 };

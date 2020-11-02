@@ -45,11 +45,11 @@ void GameWindow::staticGUIElements()
     QPixmap passP(":/resources/guiResources/bid/PASS.png");
     BidSelect *X = new BidSelect(DOUBLE_BID,this);
     X->setPixmap(XP);
-    X->setGeometry(860,600,101,61);
+    X->setGeometry(960,600,101,61);
     connect(X,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
     BidSelect *XX = new BidSelect(REDOUBLE_BID,this);
     XX->setPixmap(XXP);
-    XX->setGeometry(1000,600,101,61);
+    XX->setGeometry(1100,600,101,61);
     connect(XX,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
     BidSelect *passB = new BidSelect(PASS,this);
     passB->setPixmap(passP);
@@ -69,6 +69,8 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case (BID_START):
     {
         createBidTable();
+        qDebug() <<"CreateCARDS";
+        createHandTable();
         break;
     }
     case (PLAYER_BID):
@@ -124,12 +126,17 @@ void GameWindow::receiveBid(BidSelect *bidSelected)
         }
         else
         {
-           playerMayBid = false;
-           qDebug() << "PASS: " <<  bidSelected->getBidCall();
-//           Bid bidMade(gameState.getPlayerTurn(),bidSelected->getBidCall());
-//           emit bidAction(bidMade);
+            playerMayBid = false;
+            qDebug() << "PASS: " <<  bidSelected->getBidCall() << "FOR: "<<gameState.getPlayerTurn();
+            Bid bidMade(gameState.getPlayerTurn(),bidSelected->getBidCall());
+            emit bidAction(bidMade);
         }
     }
+}
+
+void GameWindow::receiveCard()
+{
+   qDebug() << "Card selected "<< name;
 }
 
 void GameWindow::createBidTable()
@@ -213,6 +220,91 @@ void GameWindow::playerTurnBid()
     playerMayBid = true;
 }
 
+void GameWindow::createHandTable()
+{
+    CardSet playerHand = gameState.getPlayerHand();
+    playerHand.orderHand();
+    QString imageName = "background-image: url(:/resources/guiResources/cards/";
+    QString cardName;
+    for(int i = 0; i < 13;i++)
+    {
+        if(playerHand.getCard(i).getRank() == 1)
+        {
+            cardName = "two_";
+        }
+        else if (playerHand.getCard(i).getRank() == 2)
+        {
+            cardName = "three_";
+        }
+        else if (playerHand.getCard(i).getRank() == 3)
+        {
+            cardName = "four_";
+        }
+        else if (playerHand.getCard(i).getRank() == 4)
+        {
+            cardName = "five_";
+        }
+        else if (playerHand.getCard(i).getRank() == 5)
+        {
+            cardName = "six_";
+        }
+        else if (playerHand.getCard(i).getRank() == 6)
+        {
+            cardName = "seven_";
+        }
+        else if (playerHand.getCard(i).getRank() == 7)
+        {
+            cardName = "eight_";
+        }
+        else if (playerHand.getCard(i).getRank() == 8)
+        {
+            cardName = "nine_";
+        }
+        else if (playerHand.getCard(i).getRank() == 9)
+        {
+            cardName = "ten_";
+        }
+        else if (playerHand.getCard(i).getRank() == 10)
+        {
+            cardName = "jack_";
+        }
+        else if (playerHand.getCard(i).getRank() == 11)
+        {
+            cardName = "queen_";
+        }
+        else if (playerHand.getCard(i).getRank() == 12)
+        {
+            cardName = "king_";
+        }
+        else if (playerHand.getCard(i).getRank() == 13)
+        {
+            cardName = "ace_";
+        }
+        if(playerHand.getCard(i).getSuit() == 0)
+        {
+            cardName+= "clubs.png)";
+        }
+        else if(playerHand.getCard(i).getSuit() == 1)
+        {
+            cardName+= "diamonds.png)";
+        }
+        else if(playerHand.getCard(i).getSuit() == 2)
+        {
+            cardName+= "hearts.png)";
+        }
+        else if(playerHand.getCard(i).getSuit() == 3)
+        {
+            cardName+= "spades.png)";
+        }
+        cardMine = new CardSelected(this);
+        cardsInHand[i] = cardMine;
+        cardsInHand[i] ->setStyleSheet(imageName+cardName);
+        cardsInHand[i] ->setGeometry(700+ i*30,940,101,141);
+        connect(cardsInHand[i],&CardSelected::sendCardPlayed,this,&GameWindow::receiveCard);
+        cardsInHand[i]->show();
+    }
+}
+
 void GameWindow::bidRejected(QString reason)
 {
     qDebug() <<reason;
@@ -231,16 +323,16 @@ void GameWindow::setGameState(PlayerGameState gameState)
     else if (name == gameState.getPlayerName(EAST))
     {
         ui->you->setText(gameState.getPlayerName(EAST));
-        ui->left->setText(gameState.getPlayerName(NORTH));
+        ui->left->setText(gameState.getPlayerName(SOUTH));
         ui->top->setText(gameState.getPlayerName(WEST));
-        ui->right->setText(gameState.getPlayerName(SOUTH));
+        ui->right->setText(gameState.getPlayerName(NORTH));
     }
     else if (name == gameState.getPlayerName(WEST))
     {
         ui->you->setText(gameState.getPlayerName(WEST));
-        ui->left->setText(gameState.getPlayerName(SOUTH));
+        ui->left->setText(gameState.getPlayerName(NORTH));
         ui->top->setText(gameState.getPlayerName(EAST));
-        ui->right->setText(gameState.getPlayerName(NORTH));
+        ui->right->setText(gameState.getPlayerName(SOUTH));
     }
     else if (name == gameState.getPlayerName(SOUTH))
     {

@@ -130,7 +130,6 @@ void PlayerNetwork::gameTerminated(QString reason)
 void PlayerNetwork::rxAll()
 {
     in.startTransaction();
-    qDebug() <<"Bidd3";
     QJsonObject rxObj;
     in >> rxObj;
 
@@ -232,12 +231,8 @@ void PlayerNetwork::txAll(QJsonObject data)
 
     // Send the login request to the server
     out << data;
-    qDebug() << "HEREE";
     int tempVal = clientSoc->write(block);
     clientSoc->flush();
-
-    qInfo() << "txAll: Number of bytes expected to be sent to the client: " << block.size();
-    qInfo() << "txAll: Number of bytes sent to client: " << tempVal;
 
     if (tempVal == -1 || tempVal < block.size()) {
         // An error occured when writing the data block.

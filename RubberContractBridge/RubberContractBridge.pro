@@ -26,6 +26,7 @@ SOURCES += \
     game-server/server.cpp \
     game-server/servergamestate.cpp \
     gui/bidselect.cpp \
+    gui/cardselected.cpp \
     gui/clientlogin.cpp \
     gui/entrywindow.cpp \
     gui/gamewindow.cpp \
@@ -73,6 +74,7 @@ HEADERS += \
     game-server/server.h \
     game-server/servergamestate.h \
     gui/bidselect.h \
+    gui/cardselected.h \
     gui/clientlogin.h \
     gui/entrywindow.h \
     gui/gamewindow.h \

@@ -352,10 +352,18 @@ void ClientNetwork::txAll(QJsonObject data)
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_10);
 
+    // Add delay to give time for previous data sent to be received by the server
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 100; // Add 100ms
+    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
+         QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
+
     // Send the login request to the server
     out << data;
     int tempVal = tcpSoc->write(block);
-    tcpSoc->flush();
+    tcpSoc->waitForBytesWritten(tempVal);
+
+    qInfo() << "txAll: Number of bytes sent to server: " << tempVal;
 
     if (tempVal == -1 || tempVal < block.size()) {
         // An error occured when writing the data block.

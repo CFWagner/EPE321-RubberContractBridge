@@ -4,9 +4,11 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QDataStream>
-#include <QTimer>
+//#include <QTimer>
+#include <QDateTime>
 #include <QJsonObject>
 #include <QHostAddress>
+#include <QCoreApplication>
 
 #include "game-server/player.h"
 #include "enumerations/PlayerPosition.h"

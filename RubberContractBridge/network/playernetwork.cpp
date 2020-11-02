@@ -229,10 +229,16 @@ void PlayerNetwork::txAll(QJsonObject data)
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_10);
 
+    // Add delay to give time for previous data sent to be received by the client
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 100; // Add 100ms
+    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
+         QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
+
     // Send the login request to the server
     out << data;
     int tempVal = clientSoc->write(block);
-    clientSoc->flush();
+    clientSoc->waitForBytesWritten(tempVal);
 
     qInfo() << "txAll: Number of bytes sent to client: " << tempVal;
 

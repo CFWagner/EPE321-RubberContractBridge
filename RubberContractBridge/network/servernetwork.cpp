@@ -316,13 +316,11 @@ void ServerNetwork::validateClient()
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_10);
 
-
     // Send the login request to the server
     out << txObj;
     int tempVal = tempSocket->write(block);
-    tempSocket->flush();
+    tempSocket->waitForBytesWritten(tempVal);
 
-    qInfo() << "validateClient: Number of bytes expected to be sent to the client: " << block.size();
     qInfo() << "validateClient: Number of bytes sent to client: " << tempVal;
 
     if (tempVal == -1 || tempVal < block.size()) {

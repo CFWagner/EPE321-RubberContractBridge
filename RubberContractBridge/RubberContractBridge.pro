@@ -10,7 +10,7 @@ CONFIG(release, debug|release):DEFINES += QT_NO_INFO_OUTPUT
 
 # If quick entry is defined, then no passwords will be required to connect to the server.
 # QUICK_SERVER_ENTRY will also only be defined if in DEBUG mode.
-#CONFIG(debug, release|debug):DEFINES += QUICK_SERVER_ENTRY
+CONFIG(debug, release|debug):DEFINES += QUICK_SERVER_ENTRY
 
 #All sources classes of the project is addded below.
 SOURCES += \

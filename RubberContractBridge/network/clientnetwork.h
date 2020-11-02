@@ -7,6 +7,8 @@
 #include <QTimer>
 #include <QJsonObject>
 #include <QHostAddress>
+#include <QDateTime>
+#include <QCoreApplication>
 
 #include "game-server/playergamestate.h"
 #include "game-server/bid.h"

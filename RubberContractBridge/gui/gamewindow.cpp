@@ -15,7 +15,6 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
     connect(clientNetwork,&ClientNetwork::messageReceived, this,&GameWindow::messageReceived);
     connect(this,&GameWindow::sendMessage, clientNetwork,&ClientNetwork::txMessage);
     connect(this,&GameWindow::bidAction, clientNetwork,&ClientNetwork::txBidSelected);
-    connect(this,&GameWindow::bidAction, clientNetwork,&ClientNetwork::txBidSelected);
     connect(this,&GameWindow::cardAction, clientNetwork,&ClientNetwork::txMoveSelected);
     setupWindow();
     staticGUIElements();

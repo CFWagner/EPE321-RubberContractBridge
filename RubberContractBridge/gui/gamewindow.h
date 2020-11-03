@@ -56,11 +56,7 @@ private slots:
     void on_button_exit_clicked();
     void messageReceived(QString source, QString msg);
     void keyPressEvent(QKeyEvent  *);
-
     void on_messagerB_clicked();
-
-    void on_pushButton_clicked();
-
     void on_ScoreButon_clicked();
 
 private:

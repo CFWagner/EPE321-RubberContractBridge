@@ -6,10 +6,15 @@ LoggerWindow::LoggerWindow(QWidget *parent) :
     ui(new Ui::LoggerWindow)
 {
     ui->setupUi(this);
+    this->show();
 }
 
 LoggerWindow::~LoggerWindow()
 {
     delete ui;
-    this->show();
+}
+
+void LoggerWindow::receivedLog(QString time, QString context, QString reason)
+{
+
 }

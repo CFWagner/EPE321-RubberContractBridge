@@ -85,7 +85,12 @@ void PlayerStub::notifyMoveRejected(QString reason)
 }
 
 // Send message to the player where source is the player name
-void PlayerStub::message(QString source, QString message) {}
+void PlayerStub::message(QString source, QString message) {
+    QString absorbSource = source;
+    QString absorbMessage = message;
+}
 
 // Indicate to the player that the game is over
-void PlayerStub::gameTerminated(QString reason) {}
+void PlayerStub::gameTerminated(QString reason) {
+    QString absorbReason = reason;
+}

@@ -310,7 +310,6 @@ void AI::generateAvailableCards()
         //this is the first card that will be played
         dummyPlay = CardSet();
         canPlay = CardSet();
-        Card trickCard;
         qint8 handAmount;
         // if card count goes from 1,2,3,4 gets the recent card played
         handAmount = myhand.getCardCount();
@@ -374,10 +373,8 @@ void AI::generateAvailableCards()
      //playing after someone
         dummyPlay = CardSet();
         canPlay = CardSet();
-        const Card* trickCard;
         qint8 handAmount;
         // if card count goes from 1,2,3,4 gets the recent card played
-        trickCard = currentState.getLastCardPlayed();
         handAmount = myhand.getCardCount();
         //check if trump or NT
         if (trump==4)
@@ -417,11 +414,11 @@ void AI::generateAvailableCards()
             //a trump is assigned select cards that are trump for player and dummy
             for (int i = 0; i <= handAmount-1; i++)
             {
-                if ((*trickCard).getSuit() == myhand.getCard(i).getSuit())
+                if (trump == myhand.getCard(i).getSuit())
                 {
                     canPlay.addCard(myhand.getCard(i));
                 }
-                if ((*trickCard).getSuit() == dummyhand.getCard(i).getSuit())
+                if (trump == dummyhand.getCard(i).getSuit())
                 {
                     dummyPlay.addCard(dummyhand.getCard(i));
                 }
@@ -431,15 +428,31 @@ void AI::generateAvailableCards()
             //If can't play trump don't waist cards
             if (canPlay.getCardCount()==0)
             {
+                CardSuit followsuit = currentTricks.getCard(0).getSuit();
+                for (int i = 0; i <= handAmount-1; i++)
+                {
+                    if (followsuit == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
 
-                canPlay=myhand;
+                }
+
             }
             if (dummyPlay.getCardCount()==0)
             {
-                 dummyPlay=dummyhand;
+                 CardSuit followsuit = currentTricks.getCard(0).getSuit();
+                 for (int i = 0; i <= handAmount-1; i++)
+                 {
+                     if (followsuit == dummyhand.getCard(i).getSuit())
+                     {
+                         dummyPlay.addCard(dummyhand.getCard(i));
+                     }
+
+                 }
+
             }
         }
-        delete trickCard;
     }// end of else for later moves
     //I do trust I needn't check for edge cases where the tricks are full yet I'm called?
 }
@@ -609,7 +622,7 @@ Card AI::guessMove()
              if (canPlay.getCard(canPlay.getCardCount()-1)<currentTricks.getCard(currentTricks.getCardCount()-1))
              {
                  //can beat this round
-                 suggestion=canPlay.getCard(canPlay.getCardCount());
+                 suggestion=canPlay.getCard(canPlay.getCardCount()-1);
              }
              else
              {

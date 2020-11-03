@@ -84,6 +84,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case (PLAY_START):
     {
+        dummyCreate =true;
         qDebug () << "DUMMY" << gameState.getDummy();
         indicatePlayerTurn();
         bidBoard->hide();
@@ -100,7 +101,11 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case (PLAYER_MOVED):
     {
         qDebug() <<gameState.getLastCardPlayed()->getRank();
-        createDummyHand();
+        if(dummyCreate)
+        {
+            createDummyHand();
+        }
+        dummyCreate =false;
         indicatePlayerTurn();
         addCardToTrick();
         trickPos += 1;
@@ -135,6 +140,11 @@ void GameWindow::updateGameState(PlayerGameState gameState)
                 delete dummyHandSet[i];
             }
         }
+        break;
+    }
+    case(MATCH_END):
+    {
+        QMessageBox::warning(this,"GAME ENDED","GAME ENDED");
         break;
     }
     default:
@@ -224,10 +234,10 @@ void GameWindow::createBidTable()
             bidTable[i+21]->setGeometry(845,300+40*i,61,31);
             bidTable[i+28]->setGeometry(760,300+40*i,61,31);
             bidTable[i]->show();
-            bidTable[i+24]->show();
+            bidTable[i+7]->show();
+            bidTable[i+14]->show();
             bidTable[i+21]->show();
             bidTable[i+28]->show();
-            bidTable[i+7]->show();
         }
     }
     bidTableCreated = true;

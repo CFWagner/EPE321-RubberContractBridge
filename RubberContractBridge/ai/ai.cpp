@@ -1,3 +1,4 @@
+
 #include "ai.h"
 
 //TLDR add edge statement to check if ai is very first round opening
@@ -17,18 +18,13 @@ void AI::notifyBidTurn()
 {
 //assuming this tells AI to make a bid suggestion
     initialBidSet();
-    Bid made;
-    made = guessBid();
-    emit bidSelected(made);
+    emit bidSelected(guessBid());
 }
 void AI::notifyMoveTurn()
 {
 //assuming this tells AI to make a move suggestion
     initialMainSet();
-    Card maker;
-    maker=guessMove();
-    cardRecovered = maker;
-    emit moveSelected(maker);
+    emit moveSelected(guessMove());
 }
 void AI::updateGameState(PlayerGameState gameState)
 {
@@ -76,20 +72,6 @@ void AI::notifyMoveRejected(QString reason)
     //When move is made that move is saved, initial hand is generated from gamestate thus that should still stay the same after
     //this function is called. All that needs doing is removing card that caused the error from the hand and making
     // a new suggested move
-
-    // TEMP FIX 1 START: Trying to play from own hand when player needs to play from dummy hand
-    // Check if the player needs to play and play a random card from the dummy's hand
-    if(currentState.getHandToPlay() == currentState.getDummy()){
-        emit moveSelected(currentState.getDummyHand().getCard(rand() % currentState.getDummyHand().getCardCount()));
-        return;
-    }
-    // TEMP FIX 1 END
-
-    // TEMP FIX 2 START: AI can get into infinite loop of playing the wrong cards over and over
-    // Play randomly from hand (won't get stuck in loop as with AI)
-    emit moveSelected(currentState.getPlayerHand().getCard(rand() % currentState.getPlayerHand().getCardCount()));
-    return;
-    // TEMP FIX 2 END
 
         generateDeckOptions();
         generateAvailableCards();
@@ -231,14 +213,25 @@ void AI::generateDeckOptions()
 //initialize the needed variables to play a card
 void AI::initialMainSet()
 {
-    myhand = currentState.getPlayerHand();
-    dummyhand = currentState.getDummyHand();
+    //Checks if it is using the dummy or not fixing error 1
+    if(currentState.getHandToPlay()!=currentState.getPlayerTurn())
+    {
+        myhand = currentState.getDummyHand();
+    }
+    else
+    {
+        myhand = currentState.getPlayerHand();
+
+    }
+
     //assuming the contract bid is all bids that made the contract
     contract = *currentState.getContractBid();
     //get most recent tricks assuming tricks is array of max 4 size arrays of played tricks
     currentTricks = currentState.getTricks().back();
     trump = contract.getTrumpSuit();
     dummypos = currentState.getDummy();
+    //Checks if it can see the dummy currently or not
+    dummyhand = currentState.getDummyHand();
 }
 void AI::initialBidSet()
 {
@@ -259,11 +252,37 @@ void AI::generateAvailableCards()
         // if card count goes from 1,2,3,4 gets the recent card played
         handAmount = myhand.getCardCount();
         //check if trump or NT
+        //This is the fix for the tricks error at NT
         if (trump==4)
         {
-            //then it is no trump so any card is valid
-            dummyPlay=dummyhand;
-            canPlay=myhand;
+            //then it is no trump so check tricks first card
+            if (currentTricks.getCardCount()==0)
+            {
+                dummyPlay=dummyhand;
+                canPlay=myhand;
+            }
+            else
+            {
+                //Must play the first suit at the tricks
+                for (int i = 0; i <= handAmount-1; i++)
+                {
+                    if (currentTricks.getCard(0).getSuit() == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (currentTricks.getCard(0).getSuit()  == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
+                }
+
+            }
+            //If can't play trump don't waist cards
+            if (canPlay.getCardCount()==0)
+            {
+                dummyPlay=dummyhand;
+                canPlay=myhand;
+            }
         }
         else
         {
@@ -300,27 +319,35 @@ void AI::generateAvailableCards()
         //check if trump or NT
         if (trump==4)
         {
-            //then it is no trump so any card higher than last played is valid for me and dummy
-            for (int i = 0; i <= handAmount-1; i++)
+            //then it is no trump so any card equal to suit of first p[layed card is valid
+            if (currentTricks.getCardCount()==0)
             {
-                if (*trickCard <myhand.getCard(i))
-                {
-                    canPlay.addCard(myhand.getCard(i));
-                }
-                if (*trickCard <dummyhand.getCard(i))
-                {
-                    dummyPlay.addCard(dummyhand.getCard(i));
-                }
-            }
-            // if none higher were found treat just like every card found
-            if (canPlay.getCardCount()==0)
-            {
+                dummyPlay=dummyhand;
                 canPlay=myhand;
             }
-            if (dummyPlay.getCardCount()==0)
+            else
             {
-                 dummyPlay=dummyhand;
+                //Must play the first suit at the tricks
+                for (int i = 0; i <= handAmount-1; i++)
+                {
+                    if (currentTricks.getCard(0).getSuit() == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (currentTricks.getCard(0).getSuit()  == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
+                }
+
             }
+            //If can't play trump don't waist cards
+            if (canPlay.getCardCount()==0)
+            {
+                dummyPlay=dummyhand;
+                canPlay=myhand;
+            }
+
         }
         else
         {
@@ -356,18 +383,12 @@ void AI::generateAvailableCards()
 Card AI::guessMove()
 {
     //do intial data processing before card selection
-    initialMainSet();
     generateAvailableCards();
     removecards(myhand);
     canPlay.orderHand();
     dummyPlay.orderHand();
     Card suggestion;
 
-    // TEMP FIX START: Trying to play from own hand when player needs to play from dummy hand
-    // Check if the player needs to play and play a random card from the dummy's hand
-    if(currentState.getHandToPlay() == currentState.getDummy())
-        return dummyhand.getCard(rand() % dummyhand.getCardCount());
-    // TEMP FIX END
 
     if ((myhand.getCard(0)==canPlay.getCard(0)) && ((myhand.getCard(myhand.getCardCount()-1)==canPlay.getCard(canPlay.getCardCount()-1))) && (myhand.getCardCount()==canPlay.getCardCount()))
     {
@@ -623,7 +644,6 @@ Bid AI::guessBid()
 {
     Bid idea = Bid();
     Bid suggestion = Bid();
-    initialBidSet();
     generatebidlist();
     removebids();
     //gets the total points for each high card in a suit. 10=1,J=2,Q=3 ... A=5

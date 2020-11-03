@@ -1,5 +1,5 @@
 #include "server.h"
-#include "ai/ai.h"
+#include "ai/dumbai.h"
 #include "network/playernetwork.h"
 
 // Default constructor
@@ -95,7 +95,7 @@ void Server::playersSelected(QVector<QString> playerNames)
         Player* player;
         // Create AI player
         if(playerName.contains("BOT")){
-            player = new AI();
+            player = new DumbAI();
             player->setPlayerName(playerName);
             player->setPosition(position);
         }

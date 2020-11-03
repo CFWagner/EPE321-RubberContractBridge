@@ -44,12 +44,12 @@ public:
     void generatebidlist();
     void removebids();
     //move variables here now just for testing
+    QVector<Bid> bidlist;
     CardSet myhand;
     CardSet canPlay; //available legal cards to play if size = 0 then try to play trump or higher suit as top card
     //these variables are for recovery testing, replace when signals are available
     Card cardRecovered;
     Bid bidRecovered;
-    QVector<Bid> bidlist;
 private:
     void generateAvailableCards();
     void generateDeckOptions();

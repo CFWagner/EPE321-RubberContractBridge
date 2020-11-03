@@ -1,3 +1,4 @@
+
 #include "ai.h"
 
 //TLDR add edge statement to check if ai is very first round opening
@@ -17,18 +18,14 @@ void AI::notifyBidTurn()
 {
 //assuming this tells AI to make a bid suggestion
     initialBidSet();
-    Bid made;
-    made = guessBid();
-    emit bidSelected(made);
+    emit bidSelected(guessBid());
 }
 void AI::notifyMoveTurn()
 {
 //assuming this tells AI to make a move suggestion
     initialMainSet();
-    Card maker;
-    maker=guessMove();
-    cardRecovered = maker;
-    emit moveSelected(maker);
+    Card mover = guessMove();
+    emit moveSelected(mover);
 }
 void AI::updateGameState(PlayerGameState gameState)
 {
@@ -76,21 +73,7 @@ void AI::notifyMoveRejected(QString reason)
     //When move is made that move is saved, initial hand is generated from gamestate thus that should still stay the same after
     //this function is called. All that needs doing is removing card that caused the error from the hand and making
     // a new suggested move
-
-    // TEMP FIX 1 START: Trying to play from own hand when player needs to play from dummy hand
-    // Check if the player needs to play and play a random card from the dummy's hand
-    if(currentState.getHandToPlay() == currentState.getDummy()){
-        emit moveSelected(currentState.getDummyHand().getCard(rand() % currentState.getDummyHand().getCardCount()));
-        return;
-    }
-    // TEMP FIX 1 END
-
-    // TEMP FIX 2 START: AI can get into infinite loop of playing the wrong cards over and over
-    // Play randomly from hand (won't get stuck in loop as with AI)
-    emit moveSelected(currentState.getPlayerHand().getCard(rand() % currentState.getPlayerHand().getCardCount()));
-    return;
-    // TEMP FIX 2 END
-
+start:
         generateDeckOptions();
         generateAvailableCards();
     for (int i=0;i<canPlay.getCardCount();i++)
@@ -101,6 +84,11 @@ void AI::notifyMoveRejected(QString reason)
         }
     }
     int size = canPlay.getCardCount();
+    if (size==0)
+    {
+        trump = currentTricks.getCard(0).getSuit();
+        goto start;
+    }
     int seed = time(0);
     int number = random(seed)%size;
     cardRecovered = canPlay.getCard(number);
@@ -199,8 +187,8 @@ void AI::generateDeckOptions()
     {
         for (int i=0;i<currentState.getTricks().length();i++)
         {
-            if (currentState.getTricks()[i].getCardCount()!=0)
-                removecards(currentState.getTricks()[i]);
+            if (currentState.getTricks().value(i).getCardCount()!=0)
+                removecards(currentState.getTricks().value(i));
         }
     }
     //first check if trump cards are still in circulation
@@ -215,6 +203,23 @@ void AI::generateDeckOptions()
             }
         }
     }
+    else
+    {
+        CardSuit firstTrick;
+        if (currentTricks.getCardCount()!=0)
+        {
+            firstTrick=currentTricks.getCard(0).getSuit();
+            for (int i = 0;i<deck.getCardCount();i++)
+            {
+                if (deck.getCard(i).getSuit()!=firstTrick)
+                {
+                    amount++;
+                }
+            }
+
+        }
+
+    }
     //remove all non trump suits if trump exists
     // also only if a trump is in circulation do we care about this
     if ((trump!=NONE) && (amount!=deck.getCardCount()))
@@ -224,26 +229,82 @@ void AI::generateDeckOptions()
             if (deck.getCard(i).getSuit()!=trump)
             {
                 deck.removeCard(i);
+                i=0;
             }
         }
+    }
+    else if ((trump==NONE) && (amount!=deck.getCardCount()))
+    {
+        CardSuit firstTrick;
+        if (currentTricks.getCardCount()!=0)
+        {
+            firstTrick=currentTricks.getCard(0).getSuit();
+            label1:
+            for (int i = 0;i<deck.getCardCount();i++)
+            {
+                if (deck.getCard(i).getSuit()!=firstTrick)
+                {
+                    deck.removeCard(i);
+                    goto label1;
+                }
+            }
+
+        }
+
     }
 }
 //initialize the needed variables to play a card
 void AI::initialMainSet()
 {
-    myhand = currentState.getPlayerHand();
-    dummyhand = currentState.getDummyHand();
+    //Checks if it is using the dummy or not fixing error 1 and making a deep copy
+    if(currentState.getHandToPlay()!=currentState.getPlayerTurn())
+    {
+        myhand = CardSet();
+        for (int i = 0;i<currentState.getDummyHand().getCardCount();i++)
+        {
+            myhand.addCard(currentState.getDummyHand().getCard(i));
+        }
+    }
+    else
+    {
+        myhand = CardSet();
+        for (int i = 0;i<currentState.getPlayerHand().getCardCount();i++)
+        {
+            myhand.addCard(currentState.getPlayerHand().getCard(i));
+        }
+
+    }
+
     //assuming the contract bid is all bids that made the contract
     contract = *currentState.getContractBid();
     //get most recent tricks assuming tricks is array of max 4 size arrays of played tricks
     currentTricks = currentState.getTricks().back();
     trump = contract.getTrumpSuit();
     dummypos = currentState.getDummy();
+    //Checks if it can see the dummy currently or not makes a deep copy
+    if ((currentState.getTricks().length()==1) && (currentTricks.getCardCount()==0))
+    {
+       dummyhand = CardSet();
+    }
+    else
+    {
+        dummyhand = CardSet();
+        for (int i = 0;i<currentState.getPlayerHand().getCardCount();i++)
+        {
+            dummyhand.addCard(currentState.getPlayerHand().getCard(i));
+        }
+    }
 }
 void AI::initialBidSet()
 {
     if(currentState.getCurrentBid() != nullptr)
         currentbid= *currentState.getCurrentBid();
+    //I am getting no card passed to me try to make deep copy
+    myhand = CardSet();
+    for (int i = 0;i<currentState.getPlayerHand().getCardCount();i++)
+    {
+        myhand.addCard(currentState.getPlayerHand().getCard(i));
+    }
 }
 //generates available legal cards that can be selected from the hand
 void AI::generateAvailableCards()
@@ -254,16 +315,41 @@ void AI::generateAvailableCards()
         //this is the first card that will be played
         dummyPlay = CardSet();
         canPlay = CardSet();
-        Card trickCard;
         qint8 handAmount;
         // if card count goes from 1,2,3,4 gets the recent card played
         handAmount = myhand.getCardCount();
         //check if trump or NT
+        //This is the fix for the tricks error at NT
         if (trump==4)
         {
-            //then it is no trump so any card is valid
-            dummyPlay=dummyhand;
-            canPlay=myhand;
+            //then it is no trump so check tricks first card
+            if (currentTricks.getCardCount()==0)
+            {
+                dummyPlay=dummyhand;
+                canPlay=myhand;
+            }
+            else
+            {
+                //Must play the first suit at the tricks
+                for (int i = 0; i <= handAmount-1; i++)
+                {
+                    if (currentTricks.getCard(0).getSuit() == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (currentTricks.getCard(0).getSuit()  == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
+                }
+
+            }
+            //If can't play trump don't waist cards
+            if (canPlay.getCardCount()==0)
+            {
+                dummyPlay=dummyhand;
+                canPlay=myhand;
+            }
         }
         else
         {
@@ -292,82 +378,139 @@ void AI::generateAvailableCards()
      //playing after someone
         dummyPlay = CardSet();
         canPlay = CardSet();
-        const Card* trickCard;
         qint8 handAmount;
         // if card count goes from 1,2,3,4 gets the recent card played
-        trickCard = currentState.getLastCardPlayed();
         handAmount = myhand.getCardCount();
         //check if trump or NT
         if (trump==4)
         {
-            //then it is no trump so any card higher than last played is valid for me and dummy
-            for (int i = 0; i <= handAmount-1; i++)
+            //then it is no trump so any card equal to suit of first p[layed card is valid
+            if (currentTricks.getCardCount()==0)
             {
-                if (*trickCard <myhand.getCard(i))
-                {
-                    canPlay.addCard(myhand.getCard(i));
-                }
-                if (*trickCard <dummyhand.getCard(i))
-                {
-                    dummyPlay.addCard(dummyhand.getCard(i));
-                }
-            }
-            // if none higher were found treat just like every card found
-            if (canPlay.getCardCount()==0)
-            {
+                dummyPlay=dummyhand;
                 canPlay=myhand;
             }
-            if (dummyPlay.getCardCount()==0)
+            else
             {
-                 dummyPlay=dummyhand;
+                //Must play the first suit at the tricks
+                for (int i = 0; i <= handAmount-1; i++)
+                {
+                    if (currentTricks.getCard(0).getSuit() == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (currentTricks.getCard(0).getSuit()  == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
+                }
+
             }
+            //If can't play trump don't waist cards
+            if (canPlay.getCardCount()==0)
+            {
+                dummyPlay=dummyhand;
+                canPlay=myhand;
+            }
+
         }
         else
         {
             //a trump is assigned select cards that are trump for player and dummy
-            for (int i = 0; i <= handAmount-1; i++)
+            if (trump == currentTricks.getCard(0).getSuit())
             {
-                if ((*trickCard).getSuit() == myhand.getCard(i).getSuit())
+                //Leading with a trump
+                for (int i = 0; i <= handAmount-1; i++)
                 {
-                    canPlay.addCard(myhand.getCard(i));
+                    if (trump == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (trump == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
                 }
-                if ((*trickCard).getSuit() == dummyhand.getCard(i).getSuit())
+            }
+            else
+            {
+                //Must play the first suit at the tricks
+                for (int i = 0; i <= handAmount-1; i++)
                 {
-                    dummyPlay.addCard(dummyhand.getCard(i));
+                    if (currentTricks.getCard(0).getSuit() == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (currentTricks.getCard(0).getSuit()  == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
                 }
 
             }
+
 
             //If can't play trump don't waist cards
             if (canPlay.getCardCount()==0)
             {
+                CardSuit followsuit = currentTricks.getCard(0).getSuit();
+                if (trump !=followsuit)
+                {
+                    for (int i = 0; i <= handAmount-1; i++)
+                    {
+                        if (followsuit == myhand.getCard(i).getSuit())
+                        {
+                            canPlay.addCard(myhand.getCard(i));
+                        }
 
-                canPlay=myhand;
+                    }
+                }
+                else
+                {
+                    canPlay=myhand;
+                }
+                if (canPlay.getCardCount()==0)
+                {
+                    canPlay=myhand;
+                }
+
             }
             if (dummyPlay.getCardCount()==0)
             {
-                 dummyPlay=dummyhand;
-            }
+                CardSuit followsuit = currentTricks.getCard(0).getSuit();
+                if (trump !=followsuit)
+                {
+                    for (int i = 0; i <= handAmount-1; i++)
+                    {
+                        if (followsuit == dummyhand.getCard(i).getSuit())
+                        {
+                            dummyPlay.addCard(dummyhand.getCard(i));
+                        }
+
+                    }
+                }
+                else
+                {
+                    dummyPlay=dummyhand;
+                }
+               if (dummyPlay.getCardCount()==0)
+               {
+                    dummyPlay=dummyhand;
+               }
         }
-        delete trickCard;
     }// end of else for later moves
     //I do trust I needn't check for edge cases where the tricks are full yet I'm called?
+}
 }
 Card AI::guessMove()
 {
     //do intial data processing before card selection
-    initialMainSet();
     generateAvailableCards();
     removecards(myhand);
     canPlay.orderHand();
     dummyPlay.orderHand();
     Card suggestion;
 
-    // TEMP FIX START: Trying to play from own hand when player needs to play from dummy hand
-    // Check if the player needs to play and play a random card from the dummy's hand
-    if(currentState.getHandToPlay() == currentState.getDummy())
-        return dummyhand.getCard(rand() % dummyhand.getCardCount());
-    // TEMP FIX END
 
     if ((myhand.getCard(0)==canPlay.getCard(0)) && ((myhand.getCard(myhand.getCardCount()-1)==canPlay.getCard(canPlay.getCardCount()-1))) && (myhand.getCardCount()==canPlay.getCardCount()))
     {
@@ -474,6 +617,7 @@ Card AI::guessMove()
                      suggestion=canPlay.getCard(canPlay.getCardCount()-1);}
 
                  }
+         break;
          }
          case 1:
          {
@@ -498,7 +642,7 @@ Card AI::guessMove()
                 }
             }
 
-
+        break;
          }
          case 2:
          {
@@ -516,22 +660,23 @@ Card AI::guessMove()
                  suggestion=canPlay.getCard(canPlay.getCardCount()-1);
 
              }
-
+        break;
          }
          case 3:
          {
-             int count=0;
              currentTricks.orderHand();
              if (canPlay.getCard(canPlay.getCardCount()-1)<currentTricks.getCard(currentTricks.getCardCount()-1))
              {
                  //can beat this round
-                 suggestion=canPlay.getCard(canPlay.getCardCount());
+                 suggestion=canPlay.getCard(canPlay.getCardCount()-1);
              }
              else
              {
                  //useless gg
                  suggestion=canPlay.getCard(0);
              }
+
+            break;
 
            }
         default:
@@ -578,12 +723,12 @@ Card AI::guessMove()
                 int newpos=random(seeder) % 100*position;
                 newpos = newpos/100;
                 suggestion = canPlay.getCard(newpos);
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
             else
             {
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
         }
@@ -598,12 +743,12 @@ Card AI::guessMove()
                 int newpos=random(time(0)) % 100*position;
                 newpos = newpos/100;
                 suggestion = canPlay.getCard(newpos);
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
             else
             {
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
 
@@ -613,7 +758,7 @@ Card AI::guessMove()
     else
     {
         //playing highest card
-        cardPlayed=suggestion;
+       cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
        return suggestion;
     }
 
@@ -623,7 +768,6 @@ Bid AI::guessBid()
 {
     Bid idea = Bid();
     Bid suggestion = Bid();
-    initialBidSet();
     generatebidlist();
     removebids();
     //gets the total points for each high card in a suit. 10=1,J=2,Q=3 ... A=5
@@ -704,64 +848,29 @@ Bid AI::guessBid()
     //The bot's plan is to mostly play with suit with most high cards. if the tricks are higher than roundup(count/12) then pass
     //the bot will never double since making a bot do that results in an insane algorithm
     //for NT shouldn't be higher than total of two highes ceiling minus 1
-    // first obtain highest suit and second highest
-    int highest=0;
-    int second = 0;
-    CardSuit highsuit = CLUBS;
-    CardSuit secondsuit = CLUBS;
-    if (clubsCount>second)
-    {
-       if (clubsCount>highest)
+    // first obtain highest suit and second highest suit
+    int countarray[4] = {clubsCount,spadesCount,heartsCount,diamondsCount};
+    CardSuit suitarray[4] = {CLUBS,SPADES,HEARTS,DIAMONDS};
+    CardSuit tempSuit;
+    int tempCount;
+    for(int i = 0; i<4; i++) {
+       for(int j = i+1; j<4; j++)
        {
-           highest=clubsCount;
-           highsuit=CLUBS;
-       }
-       else
-       {
-           second=clubsCount;
-           secondsuit=CLUBS;
-       }
-    }
-    if (diamondsCount>second)
-    {
-       if (diamondsCount>highest)
-       {
-           highest=diamondsCount;
-           highsuit=DIAMONDS;
-       }
-       else
-       {
-           second=diamondsCount;
-           secondsuit=DIAMONDS;
+          if(countarray[j]<countarray[i]) {
+             tempCount = countarray[i];
+             tempSuit = suitarray[i];
+             countarray[i] = countarray[j];
+             suitarray[i] = suitarray[j];
+             countarray[j] = tempCount;
+             suitarray[j] = tempSuit;
+          }
        }
     }
-    if (heartsCount>second)
-    {
-       if (heartsCount>highest)
-       {
-           highest=heartsCount;
-           highsuit=HEARTS;
-       }
-       else
-       {
-           second=heartsCount;
-           secondsuit=HEARTS;
-       }
-    }
-    if (spadesCount>second)
-    {
-       if (spadesCount>highest)
-       {
-           highest=spadesCount;
-           highsuit=SPADES;
-       }
-       else
-       {
-           second=spadesCount;
-           secondsuit=SPADES;
-       }
-    }
-    if (currentState.getContractBid()==nullptr)
+    int highest = countarray[3];
+    int second = countarray[2];
+    CardSuit highsuit = suitarray[3];
+    CardSuit secondsuit = suitarray[2];
+    if (currentState.getCurrentBid()==nullptr)
     {
         //no bid yet throw highest out
 
@@ -827,7 +936,10 @@ Bid AI::guessBid()
             bIsDouble = random(seed) % 256 < 32;
             if (bIsDouble)
             {
-                suggestion.setCall(DOUBLE_BID);
+                if (suggestion.getTricksAbove()!=7)
+                {
+                    suggestion = Bid(position,suggestion.getTrumpSuit(),suggestion.getTricksAbove()+1);
+                }
             }
 
         }

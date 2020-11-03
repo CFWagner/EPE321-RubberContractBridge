@@ -274,19 +274,29 @@ void GameWindow::addCardToTrick()
     if (getH == gameState.getDummy())
     {
         qDebug() << "DUMMY HAND MUST BE PLAYED";
-        qDebug() <<"DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
-        qDebug() <<"PLAYER TURN:" << gameState.getPlayerName(gameState.getPlayerTurn());
+        qDebug() <<"DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
+        qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();
+        qDebug() <<"PLAYER TURN:" << gameState.getPlayerName(gameState.getPlayerTurn()) << gameState.getPlayerTurn();
         QLabel *trickLabel = new QLabel(this);
         QString styleL = getStyle(0);
         trickPlacement =gameState.getDummy()-1;
-        qDebug() <<"DUMMY POSi: "<<gameState.getDummy();
+
+        // Overflow
         if (trickPlacement == -1)
         {
             trickPlacement = 3;
         }
+
         trickPlacement = gameState.playerPositions.key(name) - trickPlacement;
+        // Swap around?
+        // trickPlacement = trickPlacement - gameState.playerPositions.key(name);
+        qDebug() << "Trick placement:" << trickPlacement;
+        qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3) %4 - gameState.playerPositions.key(name);
+        qDebug() << "My guess 2:" << (gameState.getDummy()+ 3) %4 - gameState.playerPositions.key(name);
+
         if (trickPlacement == 0)
         {
+            // Bottom
             trickPlacement = 0;
             trickPool[trickPos] = trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);
@@ -295,6 +305,7 @@ void GameWindow::addCardToTrick()
         }
         else if (trickPlacement == -1 || trickPlacement == 3)
         {
+            // Left
             trickPlacement = 1;
             trickPool[trickPos]= trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);
@@ -303,6 +314,7 @@ void GameWindow::addCardToTrick()
         }
         else if (trickPlacement == -2 || trickPlacement == 2)
         {
+            // Top
             trickPlacement = 2;
             trickPool[trickPos]= trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);
@@ -311,6 +323,7 @@ void GameWindow::addCardToTrick()
         }
         else if (trickPlacement == -3 || trickPlacement == 1)
         {
+            // Right
             trickPlacement = 3;
             trickPool[trickPos]= trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);
@@ -323,11 +336,15 @@ void GameWindow::addCardToTrick()
         QLabel *trickLabel = new QLabel(this);
         QString styleL = getStyle(0);
         trickPlacement = gameState.playerPositions.key(name) - gameState.getHandToPlay();
-        qDebug() << "NORMAL PERSON POS:" << gameState.playerPositions.key(name);
-        qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
-        qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay());
+//        trickPlacement = (gameState.getHandToPlay() - gameState.playerPositions.key(name) + 3)%4;
+        qDebug() << "NORMAL PERSON:" << name << gameState.playerPositions.key(name);
+        qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
+        qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();
+        qDebug() << "Trick placement:" << trickPlacement;
+        qDebug() << "My guess 1:" << gameState.getHandToPlay() - gameState.playerPositions.key(name);
         if (trickPlacement == 0)
         {
+            // Top
             trickPlacement = 0;
             trickPool[trickPos]= trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);
@@ -336,6 +353,7 @@ void GameWindow::addCardToTrick()
         }
         else if (trickPlacement == -1 || trickPlacement == 3)
         {
+            // Left
             trickPlacement = 1;
             trickPool[trickPos]= trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);
@@ -344,6 +362,7 @@ void GameWindow::addCardToTrick()
         }
         else if (trickPlacement == -2 || trickPlacement == 2)
         {
+            // Top
             trickPlacement = 2;
             trickPool[trickPos]= trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);
@@ -352,6 +371,7 @@ void GameWindow::addCardToTrick()
         }
         else if (trickPlacement == -3 || trickPlacement == 1)
         {
+            // Right
             trickPlacement = 3;
             trickPool[trickPos]= trickLabel;
             trickPool[trickPos]->setStyleSheet(styleL);

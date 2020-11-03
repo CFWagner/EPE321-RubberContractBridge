@@ -14,6 +14,7 @@ public:
 
 private slots:
     void testGameServer();
+    void testGameServerWithDumbAI();
     void testGameServerWithAI();
 };
 

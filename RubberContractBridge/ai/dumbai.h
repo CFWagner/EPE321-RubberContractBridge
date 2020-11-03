@@ -1,12 +1,12 @@
-#ifndef PLAYERSTUB_H
-#define PLAYERSTUB_H
+#ifndef DUMBAI_H
+#define DUMBAI_H
 
 #include "game-server/player.h"
 
-class PlayerStub: public Player
+class DumbAI: public Player
 {
 public:
-    PlayerStub(QObject *parent = nullptr);
+    DumbAI(QObject *parent = nullptr);
     void notifyBidTurn();
     void notifyMoveTurn();
     void updateGameState(PlayerGameState gameState);
@@ -19,4 +19,4 @@ private:
     qint8 playCardPos = 0; // Keeps track of current position to attempt card play
 };
 
-#endif // PLAYERSTUB_H
+#endif // DUMBAI_H

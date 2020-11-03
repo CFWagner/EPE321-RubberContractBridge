@@ -73,7 +73,7 @@ void AI::notifyMoveRejected(QString reason)
     //When move is made that move is saved, initial hand is generated from gamestate thus that should still stay the same after
     //this function is called. All that needs doing is removing card that caused the error from the hand and making
     // a new suggested move
-
+start:
         generateDeckOptions();
         generateAvailableCards();
     for (int i=0;i<canPlay.getCardCount();i++)
@@ -84,6 +84,11 @@ void AI::notifyMoveRejected(QString reason)
         }
     }
     int size = canPlay.getCardCount();
+    if (size==0)
+    {
+        trump = currentTricks.getCard(0).getSuit();
+        goto start;
+    }
     int seed = time(0);
     int number = random(seed)%size;
     cardRecovered = canPlay.getCard(number);
@@ -412,49 +417,90 @@ void AI::generateAvailableCards()
         else
         {
             //a trump is assigned select cards that are trump for player and dummy
-            for (int i = 0; i <= handAmount-1; i++)
+            if (trump == currentTricks.getCard(0).getSuit())
             {
-                if (trump == myhand.getCard(i).getSuit())
+                //Leading with a trump
+                for (int i = 0; i <= handAmount-1; i++)
                 {
-                    canPlay.addCard(myhand.getCard(i));
+                    if (trump == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (trump == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
                 }
-                if (trump == dummyhand.getCard(i).getSuit())
+            }
+            else
+            {
+                //Must play the first suit at the tricks
+                for (int i = 0; i <= handAmount-1; i++)
                 {
-                    dummyPlay.addCard(dummyhand.getCard(i));
+                    if (currentTricks.getCard(0).getSuit() == myhand.getCard(i).getSuit())
+                    {
+                        canPlay.addCard(myhand.getCard(i));
+                    }
+                    if (currentTricks.getCard(0).getSuit()  == dummyhand.getCard(i).getSuit())
+                    {
+                        dummyPlay.addCard(dummyhand.getCard(i));
+                    }
                 }
 
             }
+
 
             //If can't play trump don't waist cards
             if (canPlay.getCardCount()==0)
             {
                 CardSuit followsuit = currentTricks.getCard(0).getSuit();
-                for (int i = 0; i <= handAmount-1; i++)
+                if (trump !=followsuit)
                 {
-                    if (followsuit == myhand.getCard(i).getSuit())
+                    for (int i = 0; i <= handAmount-1; i++)
                     {
-                        canPlay.addCard(myhand.getCard(i));
-                    }
+                        if (followsuit == myhand.getCard(i).getSuit())
+                        {
+                            canPlay.addCard(myhand.getCard(i));
+                        }
 
+                    }
+                }
+                else
+                {
+                    canPlay=myhand;
+                }
+                if (canPlay.getCardCount()==0)
+                {
+                    canPlay=myhand;
                 }
 
             }
             if (dummyPlay.getCardCount()==0)
             {
-                 CardSuit followsuit = currentTricks.getCard(0).getSuit();
-                 for (int i = 0; i <= handAmount-1; i++)
-                 {
-                     if (followsuit == dummyhand.getCard(i).getSuit())
-                     {
-                         dummyPlay.addCard(dummyhand.getCard(i));
-                     }
+                CardSuit followsuit = currentTricks.getCard(0).getSuit();
+                if (trump !=followsuit)
+                {
+                    for (int i = 0; i <= handAmount-1; i++)
+                    {
+                        if (followsuit == dummyhand.getCard(i).getSuit())
+                        {
+                            dummyPlay.addCard(dummyhand.getCard(i));
+                        }
 
-                 }
-
-            }
+                    }
+                }
+                else
+                {
+                    dummyPlay=dummyhand;
+                }
+               if (dummyPlay.getCardCount()==0)
+               {
+                    dummyPlay=dummyhand;
+               }
         }
     }// end of else for later moves
     //I do trust I needn't check for edge cases where the tricks are full yet I'm called?
+}
 }
 Card AI::guessMove()
 {

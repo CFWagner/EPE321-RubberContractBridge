@@ -126,5 +126,6 @@
         <file>guiResources/bid/spades_7.png</file>
         <file>guiResources/buttons/turn.png</file>
         <file>guiResources/background/LoggerBack.png</file>
+        <file>guiResources/buttons/SCORE.png</file>
     </qresource>
 </RCC>

@@ -9,6 +9,8 @@
 #include "cardselected.h"
 #include "network/clientnetwork.h"
 #include "game-server/playergamestate.h"
+#include "gui/scorewindow.h"
+
 
 namespace Ui {
 class GameWindow;
@@ -48,6 +50,7 @@ signals:
     void bidAction(Bid bidMade);
     void cardAction(Card cardPlayed);
     void sendMessage(QString msg);
+    void getScore(PlayerGameState gameState);
 
 private slots:
     void on_button_exit_clicked();
@@ -55,6 +58,10 @@ private slots:
     void keyPressEvent(QKeyEvent  *);
 
     void on_messagerB_clicked();
+
+    void on_pushButton_clicked();
+
+    void on_ScoreButon_clicked();
 
 private:
     Ui::GameWindow *ui;
@@ -86,6 +93,7 @@ private:
     QString name;
     int trickPos = 0;
     int trickPlacement = 0;
+    ScoreWindow *scoreWindow = nullptr;
 };
 
 #endif // GAMEWINDOW_H

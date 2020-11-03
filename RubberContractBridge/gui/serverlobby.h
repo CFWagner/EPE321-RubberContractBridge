@@ -41,6 +41,7 @@ private slots:
     void on_east_b_clicked();
     void on_west_b_clicked();
     void on_south_b_clicked();
+    void keyPressEvent(QKeyEvent  *);
 
 private:
     Ui::ServerLobby *ui;

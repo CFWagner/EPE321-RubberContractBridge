@@ -255,3 +255,10 @@ void ServerLobby::on_south_b_clicked()
         openSpots++;
     }
 }
+void ServerLobby::keyPressEvent(QKeyEvent *event)
+{
+    if( event->key() == 16777220 )
+    {
+        startGameB();
+    }
+}

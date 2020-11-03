@@ -22,10 +22,15 @@
      <height>671</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+font-weight: bold;</string>
+   </property>
    <property name="title">
     <string>LOGGER OUTPUT:</string>
    </property>
-   <widget class="QTextBrowser" name="textBrowser">
+   <widget class="QPlainTextEdit" name="plainTextEdit">
     <property name="geometry">
      <rect>
       <x>10</x>

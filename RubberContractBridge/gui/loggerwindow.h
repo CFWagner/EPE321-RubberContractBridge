@@ -2,6 +2,7 @@
 #define LOGGERWINDOW_H
 
 #include <QWidget>
+#include <QTextStream>
 #include "logger/logger.h"
 namespace Ui {
 class LoggerWindow;

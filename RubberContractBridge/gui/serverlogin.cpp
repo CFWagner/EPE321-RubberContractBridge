@@ -94,7 +94,6 @@ void ServerLogin::tryConnect()
             portID = ui->portLine->text().toUShort();
         }
 
-        //           this->close();
         emit serverPassword(password);
         emit serverIPAddressPort(ipAddress,portID);
     }

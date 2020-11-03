@@ -10,6 +10,8 @@ ServerLobby::ServerLobby(QWidget *parent) :QWidget(parent), ui(new Ui::ServerLob
 
 ServerLobby::~ServerLobby()
 {
+    qDebug() << "Server close";
+    emit closeServer();
     delete ui;
 }
 

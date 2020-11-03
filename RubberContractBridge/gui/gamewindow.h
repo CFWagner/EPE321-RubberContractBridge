@@ -25,9 +25,9 @@ public:
     void staticGUIElements();
     void createBidTable();
     void updateBidTable();
-    void setName(QString username);
     void addCardToTrick();
     void indicatePlayerTurn();
+    void setName(QString username);
 
 public slots:
     void updateGameState(PlayerGameState gameState);
@@ -36,8 +36,10 @@ public slots:
     void receiveBid(BidSelect *bidSelected);
     void receiveCard(CardSelected *card);
     void playerTurnBid();
+    void playerTurnMove();
     void createHandTable();
     void bidRejected(QString reason);
+    void moveRejected(QString reason);
     void setGameState(PlayerGameState gameState);
     QString getStyle(int);
 
@@ -52,23 +54,32 @@ private:
     Ui::GameWindow *ui;
     ClientNetwork *clientNetwork = nullptr;
     PlayerGameState gameState;
+
     BidSelect *bidSelected = nullptr;
     BidSelect *bids = nullptr;
     BidSelect *bidTable [35];
     CardSelected *cardsInHand[13];
-    QLabel *trickTabel[4];
     CardSelected *cardMine;
-    QString name;
-    bool playerMayBid = false;
-    QLabel *turnIndicator;
-    bool cardsClickable = false;
-    int trickPos = 0;
+
     QLabel *bidBoard;
     QLabel *gameBoard;
+    QLabel *turnIndicator;
+    QLabel *leftTrick;
+    QLabel *rightTrick;
+    QLabel *topTrick;
+    QLabel *bottomTrick;
+
     BidSelect *XX;
     BidSelect *X;
     BidSelect *passB;
+
     bool bidTableCreated = false;
+    bool playerMayBid = false;
+    bool playerMayPlay = false;
+    bool cardsClickable = false;
+
+    QString name;
+    int trickPos = 0;
 };
 
 #endif // GAMEWINDOW_H

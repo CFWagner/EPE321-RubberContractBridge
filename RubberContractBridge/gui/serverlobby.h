@@ -32,6 +32,7 @@ public slots:
     void removePlayer(QString name);
 signals:
     void playersSelected (QVector<QString> playerNames);
+    void closeServer();
 private slots:
     //Pool buttons to add BOTS.
     void on_north_b_clicked();

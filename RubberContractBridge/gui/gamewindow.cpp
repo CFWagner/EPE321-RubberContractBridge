@@ -9,7 +9,9 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
     connect(clientNetwork,&ClientNetwork::generalError, this,&GameWindow::generalError);
     connect(clientNetwork,&ClientNetwork::gameTerminated, this,&GameWindow::gameTerminated);
     connect(clientNetwork,&ClientNetwork::notifyBidTurn, this,&GameWindow::playerTurnBid);
+    connect(clientNetwork,&ClientNetwork::notifyMoveTurn, this,&GameWindow::playerTurnMove);
     connect(clientNetwork,&ClientNetwork::notifyBidRejected, this,&GameWindow::bidRejected);
+    connect(clientNetwork,&ClientNetwork::notifyMoveRejected, this,&GameWindow::moveRejected);
     connect(this,&GameWindow::bidAction, clientNetwork,&ClientNetwork::txBidSelected);
     connect(this,&GameWindow::cardAction, clientNetwork,&ClientNetwork::txMoveSelected);
     setupWindow();
@@ -20,52 +22,6 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
 GameWindow::~GameWindow()
 {
     delete ui;
-}
-
-void GameWindow::setupWindow()
-{
-    QPixmap bkgnd(":/resources/guiResources/background/background1.png");
-    bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
-    QPalette palette;
-    palette.setBrush(QPalette::Background, bkgnd);
-    this->setPalette(palette);
-    this->setFixedSize(1920,1080);
-    this->setWindowTitle ("Rubber Contract Bridge");
-    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
-}
-
-void GameWindow::staticGUIElements()
-{
-    QPixmap arrowPix(":/resources/guiResources/background/bidBoard.png");
-    bidBoard = new QLabel(this);
-    bidBoard->setPixmap(arrowPix);
-    bidBoard->setGeometry(356,186,1208,708);
-    QPixmap playPix(":/resources/guiResources/background/gameBoard.png");
-    gameBoard = new QLabel(this);
-    gameBoard->setPixmap(playPix);
-    gameBoard->setGeometry(356,186,1208,708);
-    gameBoard->hide();
-    ui->button_exit->setIcon(QIcon(":/resources/guiResources/buttons/exit_button.png"));
-
-    QPixmap XP(":/resources/guiResources/bid/X.png");
-    QPixmap XXP(":/resources/guiResources/bid/XX.png");
-    QPixmap passP(":/resources/guiResources/bid/PASS.png");
-    X = new BidSelect(DOUBLE_BID,this);
-    X->setPixmap(XP);
-    X->setGeometry(910,600,101,61);
-    connect(X,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
-    XX = new BidSelect(REDOUBLE_BID,this);
-    XX->setPixmap(XXP);
-    XX->setGeometry(1060,600,101,61);
-    connect(XX,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
-    passB = new BidSelect(PASS,this);
-    passB->setPixmap(passP);
-    passB->setGeometry(760,600,101,61);
-    connect(passB,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
-    QPixmap tI(":/resources/guiResources/buttons/turn.png");
-    turnIndicator = new QLabel(this);
-    turnIndicator->setPixmap(tI);
-
 }
 
 void GameWindow::updateGameState(PlayerGameState gameState)
@@ -87,6 +43,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
         XX->show();
         createBidTable();
         createHandTable();
+        cardsClickable = false;
         break;
     }
     case (BID_RESTART):
@@ -124,7 +81,6 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case (PLAY_START):
     {
-
         indicatePlayerTurn();
         bidBoard->hide();
         gameBoard->show();
@@ -147,6 +103,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case(TRICK_END):
     {
         qDebug() << "END of trick";
+        trickPos = 0;
         break;
     }
     default:
@@ -154,34 +111,12 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
 }
 
-void GameWindow::receiveBid(BidSelect *bidSelected)
-{
-    this->bidSelected = bidSelected;
-    if (gameState.getPlayerName(gameState.getPlayerTurn())==name)
-    {
-        if(bidSelected->getBidCall() == BID)
-        {
-            playerMayBid = false;
-            qDebug() << "Bid made: " <<  bidSelected->getValue();
-            Bid bidMade(gameState.getPlayerTurn(),bidSelected->getSuit(),bidSelected->getValue());
-            emit bidAction(bidMade);
-        }
-        else
-        {
-            playerMayBid = false;
-            qDebug() << "PASS: " <<  bidSelected->getBidCall() << "FOR: "<<gameState.getPlayerTurn();
-            Bid bidMade(gameState.getPlayerTurn(),bidSelected->getBidCall());
-            emit bidAction(bidMade);
-        }
-    }
-}
-
 void GameWindow::receiveCard(CardSelected *card)
 {
-    if (cardsClickable && gameState.getPlayerName(gameState.getPlayerTurn())==name)
+    if (cardsClickable && playerMayPlay)
     {
-
-        qDebug() << "Card selected "<< name;
+        playerMayPlay = false;
+        qDebug() << "Card selected "<< card->getSuit() << card->getRank();
         Card cardPlayed(card->getSuit(),card->getRank());
         emit cardAction(cardPlayed);
     }
@@ -314,33 +249,6 @@ void GameWindow::addCardToTrick()
 //    qDebug() <<"aaaa";
 }
 
-void GameWindow::indicatePlayerTurn()
-{
-    int turnPosition = gameState.playerPositions.key(name) - gameState.getPlayerTurn();
-    if (turnPosition == 0)
-    {
-        turnIndicator->setGeometry(800,800,51,51);
-    }
-    else if (turnPosition == -1 || turnPosition == 3)
-    {
-        turnIndicator->setGeometry(500,520,51,51);
-    }
-    else if (turnPosition == -2 || turnPosition == 2)
-    {
-        turnIndicator->setGeometry(800,220,51,51);
-    }
-    else if (turnPosition == -3 || turnPosition == 1)
-    {
-        turnIndicator->setGeometry(1400,520,51,51);
-    }
-    turnIndicator->show();
-}
-
-void GameWindow::playerTurnBid()
-{
-    playerMayBid = true;
-}
-
 //Finished
 //////////////////////////////////////////////////////////
 void GameWindow::updateBidTable()
@@ -392,52 +300,6 @@ void GameWindow::updateBidTable()
             bidTable[(gameState.getCurrentBid()->getTricksAbove()-1)+gameState.getCurrentBid()->getTrumpSuit()*7]->setGeometry(1550,560,61,31);
         }
     }
-}
-
-void GameWindow::bidRejected(QString reason)
-{
-    qDebug() <<reason;
-}
-
-void GameWindow::setGameState(PlayerGameState gameState)
-{
-    this->gameState = gameState;
-    if (name == gameState.getPlayerName(NORTH))
-    {
-        ui->you->setText(gameState.getPlayerName(NORTH));
-        ui->left->setText(gameState.getPlayerName(EAST));
-        ui->top->setText(gameState.getPlayerName(SOUTH));
-        ui->right->setText(gameState.getPlayerName(WEST));
-    }
-    else if (name == gameState.getPlayerName(EAST))
-    {
-        ui->you->setText(gameState.getPlayerName(EAST));
-        ui->left->setText(gameState.getPlayerName(SOUTH));
-        ui->top->setText(gameState.getPlayerName(WEST));
-        ui->right->setText(gameState.getPlayerName(NORTH));
-    }
-    else if (name == gameState.getPlayerName(WEST))
-    {
-        ui->you->setText(gameState.getPlayerName(WEST));
-        ui->left->setText(gameState.getPlayerName(NORTH));
-        ui->top->setText(gameState.getPlayerName(EAST));
-        ui->right->setText(gameState.getPlayerName(SOUTH));
-    }
-    else if (name == gameState.getPlayerName(SOUTH))
-    {
-        ui->you->setText(gameState.getPlayerName(SOUTH));
-        ui->left->setText(gameState.getPlayerName(WEST));
-        ui->top->setText(gameState.getPlayerName(NORTH));
-        ui->right->setText(gameState.getPlayerName(EAST));
-    }
-    ui->you->show();
-    ui->left->show();
-    ui->top->show();
-    ui->right->show();
-    ui->you->raise();
-    ui->left->raise();
-    ui->top->raise();
-    ui->right->raise();
 }
 
 QString GameWindow::getStyle(int)
@@ -514,12 +376,7 @@ QString GameWindow::getStyle(int)
 //    }
 //    qDebug() <<"Get style";
 //    qDebug() <<imageName;
-//    return imageName;
-}
-
-void GameWindow::on_button_exit_clicked()
-{
-    this->close();
+    //    return imageName;
 }
 
 void GameWindow::createHandTable()
@@ -607,6 +464,138 @@ void GameWindow::createHandTable()
     }
 }
 
+void GameWindow::indicatePlayerTurn()
+{
+    int turnPosition = gameState.playerPositions.key(name) - gameState.getPlayerTurn();
+    if (turnPosition == 0)
+    {
+        turnIndicator->setGeometry(800,800,51,51);
+    }
+    else if (turnPosition == -1 || turnPosition == 3)
+    {
+        turnIndicator->setGeometry(500,520,51,51);
+    }
+    else if (turnPosition == -2 || turnPosition == 2)
+    {
+        turnIndicator->setGeometry(800,220,51,51);
+    }
+    else if (turnPosition == -3 || turnPosition == 1)
+    {
+        turnIndicator->setGeometry(1400,520,51,51);
+    }
+    turnIndicator->show();
+}
+
+void GameWindow::receiveBid(BidSelect *bidSelected)
+{
+    this->bidSelected = bidSelected;
+    if (playerMayBid)
+    {
+        if(bidSelected->getBidCall() == BID)
+        {
+            playerMayBid = false;
+            qDebug() << "Bid made: " <<  bidSelected->getValue();
+            Bid bidMade(gameState.getPlayerTurn(),bidSelected->getSuit(),bidSelected->getValue());
+            emit bidAction(bidMade);
+        }
+        else
+        {
+            playerMayBid = false;
+            qDebug() << "PASS: " <<  bidSelected->getBidCall() << "FOR: "<<gameState.getPlayerTurn();
+            Bid bidMade(gameState.getPlayerTurn(),bidSelected->getBidCall());
+            emit bidAction(bidMade);
+        }
+    }
+}
+
+//SMALL FUNCTIONS//
+void GameWindow::playerTurnBid()
+{
+    qDebug() << "YOU MAY BID";
+    playerMayBid = true;
+}
+
+void GameWindow::playerTurnMove()
+{
+    qDebug() << "YOU MAY MAKE CARD CHOICE";
+    playerMayPlay = true;
+}
+
+void GameWindow::setGameState(PlayerGameState gameState)
+{
+    this->gameState = gameState;
+    if (name == gameState.getPlayerName(NORTH))
+    {
+        ui->you->setText(gameState.getPlayerName(NORTH));
+        ui->left->setText(gameState.getPlayerName(EAST));
+        ui->top->setText(gameState.getPlayerName(SOUTH));
+        ui->right->setText(gameState.getPlayerName(WEST));
+    }
+    else if (name == gameState.getPlayerName(EAST))
+    {
+        ui->you->setText(gameState.getPlayerName(EAST));
+        ui->left->setText(gameState.getPlayerName(SOUTH));
+        ui->top->setText(gameState.getPlayerName(WEST));
+        ui->right->setText(gameState.getPlayerName(NORTH));
+    }
+    else if (name == gameState.getPlayerName(WEST))
+    {
+        ui->you->setText(gameState.getPlayerName(WEST));
+        ui->left->setText(gameState.getPlayerName(NORTH));
+        ui->top->setText(gameState.getPlayerName(EAST));
+        ui->right->setText(gameState.getPlayerName(SOUTH));
+    }
+    else if (name == gameState.getPlayerName(SOUTH))
+    {
+        ui->you->setText(gameState.getPlayerName(SOUTH));
+        ui->left->setText(gameState.getPlayerName(WEST));
+        ui->top->setText(gameState.getPlayerName(NORTH));
+        ui->right->setText(gameState.getPlayerName(EAST));
+    }
+    ui->you->show();
+    ui->left->show();
+    ui->top->show();
+    ui->right->show();
+    ui->you->raise();
+    ui->left->raise();
+    ui->top->raise();
+    ui->right->raise();
+}
+
+void GameWindow::staticGUIElements()
+{
+    QPixmap arrowPix(":/resources/guiResources/background/bidBoard.png");
+    bidBoard = new QLabel(this);
+    bidBoard->setPixmap(arrowPix);
+    bidBoard->setGeometry(356,186,1208,708);
+    QPixmap playPix(":/resources/guiResources/background/gameBoard.png");
+    gameBoard = new QLabel(this);
+    gameBoard->setPixmap(playPix);
+    gameBoard->setGeometry(356,186,1208,708);
+    gameBoard->hide();
+    ui->button_exit->setIcon(QIcon(":/resources/guiResources/buttons/exit_button.png"));
+
+    QPixmap XP(":/resources/guiResources/bid/X.png");
+    QPixmap XXP(":/resources/guiResources/bid/XX.png");
+    QPixmap passP(":/resources/guiResources/bid/PASS.png");
+    X = new BidSelect(DOUBLE_BID,this);
+    X->setPixmap(XP);
+    X->setGeometry(910,600,101,61);
+    connect(X,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
+    XX = new BidSelect(REDOUBLE_BID,this);
+    XX->setPixmap(XXP);
+    XX->setGeometry(1060,600,101,61);
+    connect(XX,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
+    passB = new BidSelect(PASS,this);
+    passB->setPixmap(passP);
+    passB->setGeometry(760,600,101,61);
+    connect(passB,&BidSelect::sendBidPressed,this,&GameWindow::receiveBid);
+
+    QPixmap tI(":/resources/guiResources/buttons/turn.png");
+    turnIndicator = new QLabel(this);
+    turnIndicator->setPixmap(tI);
+}
+
 void GameWindow::generalError(QString errorMsg)
 {
     QMessageBox::warning(this,"Error message",errorMsg);
@@ -614,11 +603,40 @@ void GameWindow::generalError(QString errorMsg)
 
 void GameWindow::gameTerminated(QString reason)
 {
-    QMessageBox::warning(this,"Error message",reason);
+    QMessageBox::warning(this,"Game terminated",reason);
     this->close();
 }
 
 void GameWindow::setName(QString username)
 {
     this->name = username;
+}
+
+void GameWindow::on_button_exit_clicked()
+{
+    this->close();
+}
+
+void GameWindow::bidRejected(QString reason)
+{
+    playerMayBid = true;
+    QMessageBox::warning(this,"Bid rejected",reason);
+}
+
+void GameWindow::moveRejected(QString reason)
+{
+   playerMayPlay = true;
+   QMessageBox::warning(this,"Move rejected",reason);
+}
+
+void GameWindow::setupWindow()
+{
+    QPixmap bkgnd(":/resources/guiResources/background/background1.png");
+    bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
+    QPalette palette;
+    palette.setBrush(QPalette::Background, bkgnd);
+    this->setPalette(palette);
+    this->setFixedSize(1920,1080);
+    this->setWindowTitle ("Rubber Contract Bridge");
+    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
 }

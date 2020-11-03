@@ -55,11 +55,13 @@ void testLogger::testLog()
     QCOMPARE(spy.count(), 1); // make sure the signal was emitted exactly one time
     QList<QVariant> arguments = spy.takeFirst(); // take the first signal
 
-    QVERIFY(arguments.at(0).type() == QVariant::String); // verify the first argument
-    QVERIFY(arguments.at(0).toString() == context);
+    QVERIFY(arguments.at(0).type() == QVariant::String);
 
     QVERIFY(arguments.at(1).type() == QVariant::String); // verify the first argument
-    QVERIFY(arguments.at(1).toString() == msg);
+    QVERIFY(arguments.at(1).toString() == context);
+
+    QVERIFY(arguments.at(2).type() == QVariant::String); // verify the first argument
+    QVERIFY(arguments.at(2).toString() == msg);
 
     // Prepare for next test
     spy.clear();

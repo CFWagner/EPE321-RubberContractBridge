@@ -18,6 +18,7 @@ void DumbAI::notifyBidTurn()
             bid = Bid(position, PASS);
 
     }
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 1000; // Add 1s
     emit bidSelected(bid);
 }
 
@@ -35,7 +36,7 @@ void DumbAI::notifyMoveTurn()
     // Check card position is not out of range
     if(playCardPos >= hand.getCardCount())
         playCardPos = 0;
-
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 100; // Add 1s
     emit moveSelected(hand.getCard(playCardPos));
 }
 

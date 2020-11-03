@@ -53,14 +53,15 @@ void Logger::log(QString context, QString msg)
         // Get the local time
         QDateTime UTC(QDateTime::currentDateTimeUtc());
         QDateTime local(UTC.toLocalTime());
+        QString logTime = QLocale().toString(local, QLocale::ShortFormat);
 
         // Print log to command line
-        // qDebug() << QLocale().toString(local, QLocale::ShortFormat) <<" {" << context << "}: " << msg;
+        // qDebug() << logTime <<" {" << context << "}: " << msg;
         QTextStream out(stdout);
-        out << QLocale().toString(local, QLocale::ShortFormat) <<" {" << context << "}: " << msg << "\n";
+        out << logTime << " {" << context << "}: " << msg << "\n";
 
         //Transmit a signal with the logging data.
-        emit sendLog(context,msg);
+        emit sendLog(logTime, context, msg);
     }
 
     // If not enabled, do nothing

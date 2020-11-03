@@ -17,7 +17,7 @@ public:
     bool isLogEnabled() const;
 
 signals:
-    void sendLog (QString context, QString msg) const;
+    void sendLog (QString logTime, QString context, QString msg) const;
 
 
 public slots:

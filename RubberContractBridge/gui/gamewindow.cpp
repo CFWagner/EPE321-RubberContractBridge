@@ -281,8 +281,8 @@ void GameWindow::addCardToTrick()
         // Swap around?
         // trickPlacement = trickPlacement - gameState.playerPositions.key(name);
         qDebug() << "Trick placement:" << trickPlacement;
-        qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3) %4 - gameState.playerPositions.key(name);
-        qDebug() << "My guess 2:" << (gameState.getDummy()+ 3) %4 - gameState.playerPositions.key(name);
+        qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3 - gameState.playerPositions.key(name)) %4;
+        qDebug() << "My guess 2:" << (gameState.getDummy() + 3 - gameState.playerPositions.key(name)) %4;
 
         if (trickPlacement == 0)
         {
@@ -331,7 +331,7 @@ void GameWindow::addCardToTrick()
         qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
         qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();
         qDebug() << "Trick placement:" << trickPlacement;
-        qDebug() << "My guess 1:" << gameState.getHandToPlay() - gameState.playerPositions.key(name);
+        qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3 - gameState.playerPositions.key(name)) %4;
         if (trickPlacement == 0)
         {
             // Top

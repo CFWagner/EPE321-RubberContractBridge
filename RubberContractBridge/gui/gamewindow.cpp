@@ -281,8 +281,8 @@ void GameWindow::addCardToTrick()
         // Swap around?
         // trickPlacement = trickPlacement - gameState.playerPositions.key(name);
         qDebug() << "Trick placement:" << trickPlacement;
-        qDebug() << "My guess 1:" << gameState.getHandToPlay() - gameState.playerPositions.key(name);
-        qDebug() << "My guess 2:" << gameState.getDummy() - gameState.playerPositions.key(name);
+        qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3) %4 - gameState.playerPositions.key(name);
+        qDebug() << "My guess 2:" << (gameState.getDummy()+ 3) %4 - gameState.playerPositions.key(name);
 
         if (trickPlacement == 0)
         {
@@ -326,6 +326,7 @@ void GameWindow::addCardToTrick()
         QLabel *trickLabel = new QLabel(this);
         QString styleL = getStyle(0);
         trickPlacement = gameState.playerPositions.key(name) - gameState.getHandToPlay();
+//        trickPlacement = (gameState.getHandToPlay() - gameState.playerPositions.key(name) + 3)%4;
         qDebug() << "NORMAL PERSON:" << name << gameState.playerPositions.key(name);
         qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
         qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();

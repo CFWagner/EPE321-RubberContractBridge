@@ -18,7 +18,10 @@ void DumbAI::notifyBidTurn()
             bid = Bid(position, PASS);
 
     }
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 1000; // Add 1s
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 500; // Add 100ms
+    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
+         QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
     emit bidSelected(bid);
 }
 
@@ -36,7 +39,10 @@ void DumbAI::notifyMoveTurn()
     // Check card position is not out of range
     if(playCardPos >= hand.getCardCount())
         playCardPos = 0;
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 100; // Add 1s
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 500; // Add 100ms
+    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
+         QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
     emit moveSelected(hand.getCard(playCardPos));
 }
 
@@ -49,6 +55,10 @@ void DumbAI::updateGameState(PlayerGameState gameState)
 // Indicate to the player that the last bid was rejected to the given reason
 void DumbAI::notifyBidRejected(QString reason)
 {
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 500; // Add 100ms
+    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
+         QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
     emit bidSelected(Bid(position, PASS));
 }
 
@@ -67,7 +77,10 @@ void DumbAI::notifyMoveRejected(QString reason)
     playCardPos++;
     if(playCardPos >= hand.getCardCount())
         playCardPos = 0;
-
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 500; // Add 100ms
+    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
+         QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
     emit moveSelected(hand.getCard(playCardPos));
 }
 

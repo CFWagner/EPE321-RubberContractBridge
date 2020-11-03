@@ -325,10 +325,8 @@ void GameWindow::updateBidTable()
         {
             for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
             {
-                if(i*7 < 35)
+
                     bidTable[i*7]->hide();
-                else
-                    break;
             }
         }
         else

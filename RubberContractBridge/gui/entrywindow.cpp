@@ -54,7 +54,7 @@ void EntryWindow::staticGUIElements()
 
     //Background
     QLabel *title = new QLabel(this);
-    QFont westernFont("Arial", 28);
+    QFont westernFont("Arial", 24);
     title->setFont(westernFont);
     title->setText("RUBBER CONTRACT BRIDGE");
     title->setGeometry(50,80,600,100);

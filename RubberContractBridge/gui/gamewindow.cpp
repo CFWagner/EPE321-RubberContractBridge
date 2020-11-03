@@ -105,6 +105,13 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case(TRICK_END):
     {
+        for(int i = 0; i <4;i++)
+        {
+            if(trickPool[i] != nullptr)
+            {
+                delete trickPool[i];
+            }
+        }
         qDebug() << "END of trick";
         trickPos = 0;
         break;
@@ -207,40 +214,119 @@ void GameWindow::createBidTable()
 
 void GameWindow::addCardToTrick()
 {
-    QLabel *trickLabel = new QLabel(this);
-    QString styleL = getStyle(0);
-    int trickPlacement = gameState.playerPositions.key(name) - gameState.getPlayerTurn()-1;
-    if (trickPlacement == -1)
+    for(CardSelected *cardSelecteds: cardsInHand)
     {
-        trickPlacement = 0;
-        trickPool[trickPlacement]= trickLabel;
-        trickPool[trickPlacement]->setStyleSheet(styleL);
-        trickPool[trickPlacement]->setGeometry(900,500,101,141);
-        trickPool[trickPlacement]->show();
+        if(cardSelecteds != nullptr)
+        {
+            Card card(cardSelecteds->getSuit(),cardSelecteds->getRank());
+            if(!gameState.getPlayerHand().containsCard(card))
+            {
+                delete cardSelecteds;
+            }
+        }
     }
-    else if (trickPlacement == -2 || trickPlacement == 2)
+    for(CardSelected *cardSelecteds: dummyHandSet)
     {
-        trickPlacement = 1;
-        trickPool[trickPlacement]= trickLabel;
-        trickPool[trickPlacement]->setStyleSheet(styleL);
-        trickPool[trickPlacement]->setGeometry(800,450,101,141);
-        trickPool[trickPlacement]->show();
+        if(cardSelecteds != nullptr)
+        {
+            Card card(cardSelecteds->getSuit(),cardSelecteds->getRank());
+            if(!gameState.getDummyHand().containsCard(card))
+            {
+
+                delete cardSelecteds;
+            }
+        }
     }
-    else if (trickPlacement == -3 || trickPlacement == 1)
+
+    int trickPlacement = 0;
+    int getH = gameState.getHandToPlay();
+    if (getH == gameState.getDummy())
     {
-        trickPlacement = 2;
-        trickPool[trickPlacement]= trickLabel;
-        trickPool[trickPlacement]->setStyleSheet(styleL);
-        trickPool[trickPlacement]->setGeometry(900,400,101,141);
-        trickPool[trickPlacement]->show();
+        qDebug() << "DUMMY HAND MUST BE PLAYED";
+        qDebug() <<"DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
+        qDebug() <<"PLAYER TURN:" << gameState.getPlayerName(gameState.getPlayerTurn());
+        QLabel *trickLabel = new QLabel(this);
+        QString styleL = getStyle(0);
+        trickPlacement =gameState.getDummy()-1;
+        qDebug() <<"DUMMY POSi: "<<gameState.getDummy();
+        if (trickPlacement == -1)
+        {
+            trickPlacement = 3;
+        }
+        trickPlacement = gameState.playerPositions.key(name) - trickPlacement;
+        if (trickPlacement == 0)
+        {
+            trickPlacement = 0;
+            trickPool[trickPos] = trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(900,500,101,141);
+            trickPool[trickPos]->show();
+        }
+        else if (trickPlacement == -1 || trickPlacement == 3)
+        {
+            trickPlacement = 1;
+            trickPool[trickPos]= trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(820,450,101,141);
+            trickPool[trickPos]->show();
+        }
+        else if (trickPlacement == -2 || trickPlacement == 2)
+        {
+            trickPlacement = 2;
+            trickPool[trickPos]= trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(900,400,101,141);
+            trickPool[trickPos]->show();
+        }
+        else if (trickPlacement == -3 || trickPlacement == 1)
+        {
+            trickPlacement = 3;
+            trickPool[trickPos]= trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(1000,450,101,141);
+            trickPool[trickPos]->show();
+        }
     }
-    else if (trickPlacement == -4 || trickPlacement == 0)
+    else
     {
-        trickPlacement = 3;
-        trickPool[trickPlacement]= trickLabel;
-        trickPool[trickPlacement]->setStyleSheet(styleL);
-        trickPool[trickPlacement]->setGeometry(1000,450,101,141);
-        trickPool[trickPlacement]->show();
+        QLabel *trickLabel = new QLabel(this);
+        QString styleL = getStyle(0);
+        trickPlacement =gameState.playerPositions.key(name) - gameState.getHandToPlay();
+        qDebug() << "NORMAL PERSON";
+        qDebug() <<"DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
+        qDebug() <<"Hand side:" << gameState.getPlayerName(gameState.getHandToPlay());
+        if (trickPlacement == 0)
+        {
+            trickPlacement = 0;
+            trickPool[trickPos]= trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(900,500,101,141);
+            trickPool[trickPos]->show();
+        }
+        else if (trickPlacement == -1 || trickPlacement == 3)
+        {
+            trickPlacement = 1;
+            trickPool[trickPos]= trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(820,450,101,141);
+            trickPool[trickPos]->show();
+        }
+        else if (trickPlacement == -2 || trickPlacement == 2)
+        {
+            trickPlacement = 2;
+            trickPool[trickPos]= trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(900,400,101,141);
+            trickPool[trickPos]->show();
+        }
+        else if (trickPlacement == -3 || trickPlacement == 1)
+        {
+            trickPlacement = 3;
+            trickPool[trickPos]= trickLabel;
+            trickPool[trickPos]->setStyleSheet(styleL);
+            trickPool[trickPos]->setGeometry(1000,450,101,141);
+            trickPool[trickPos]->show();
+        }
     }
 
 }

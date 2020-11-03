@@ -38,6 +38,7 @@ public slots:
     void playerTurnBid();
     void playerTurnMove();
     void createHandTable();
+    void createDummyHand();
     void bidRejected(QString reason);
     void moveRejected(QString reason);
     void setGameState(PlayerGameState gameState);
@@ -59,7 +60,9 @@ private:
     BidSelect *bids = nullptr;
     BidSelect *bidTable [35];
     CardSelected *cardsInHand[13];
+    CardSelected *dummyHandSet[13];
     CardSelected *cardMine;
+    CardSelected *cardDummy;
 
     QLabel *bidBoard;
     QLabel *gameBoard;

@@ -81,6 +81,8 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case (PLAY_START):
     {
+        qDebug () << "DUMMY" << gameState.getDummy();
+        createDummyHand();
         indicatePlayerTurn();
         bidBoard->hide();
         gameBoard->show();
@@ -461,6 +463,120 @@ void GameWindow::createHandTable()
         cardsInHand[i] ->setGeometry(720+ i*30,940,101,141);
         connect(cardsInHand[i],&CardSelected::sendCardPlayed,this,&GameWindow::receiveCard);
         cardsInHand[i]->show();
+    }
+}
+
+void GameWindow::createDummyHand()
+{
+    CardSet dummyHand = gameState.getDummyHand();
+    dummyHand.orderHand();
+    QString imageName = "background-image: url(:/resources/guiResources/cards/";
+    QString cardName;
+    for(int i = 0; i < 13;i++)
+    {
+        if(dummyHand.getCard(i).getRank() == 1)
+        {
+            cardName = "two_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 2)
+        {
+            cardName = "three_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 3)
+        {
+            cardName = "four_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 4)
+        {
+            cardName = "five_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 5)
+        {
+            cardName = "six_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 6)
+        {
+            cardName = "seven_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 7)
+        {
+            cardName = "eight_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 8)
+        {
+            cardName = "nine_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 9)
+        {
+            cardName = "ten_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 10)
+        {
+            cardName = "jack_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 11)
+        {
+            cardName = "queen_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 12)
+        {
+            cardName = "king_";
+        }
+        else if (dummyHand.getCard(i).getRank() == 13)
+        {
+            cardName = "ace_";
+        }
+        if(dummyHand.getCard(i).getSuit() == 0)
+        {
+            cardName+= "clubs.png)";
+        }
+        else if(dummyHand.getCard(i).getSuit() == 1)
+        {
+            cardName+= "diamonds.png)";
+        }
+        else if(dummyHand.getCard(i).getSuit() == 2)
+        {
+            cardName+= "hearts.png)";
+        }
+        else if(dummyHand.getCard(i).getSuit() == 3)
+        {
+            cardName+= "spades.png)";
+        }
+        cardDummy = new CardSelected(dummyHand.getCard(i).getSuit(),dummyHand.getCard(i).getRank(),this);
+        dummyHandSet[i] = cardDummy;
+        dummyHandSet[i] ->setStyleSheet(imageName+cardName);
+        connect(dummyHandSet[i],&CardSelected::sendCardPlayed,this,&GameWindow::receiveCard);
+
+    }
+
+    int dummyPosition = gameState.playerPositions.key(name) - gameState.getDummy();
+    if (dummyPosition == 0)
+    {
+        qDebug() << "YOU ARE DUMMY";
+    }
+    else if (dummyPosition == -1 || dummyPosition == 3)
+    {
+        for (int i = 0; i< 13;++i)
+        {
+            dummyHandSet[i]->setGeometry(40,320+30*i,101,141);
+            dummyHandSet[i]->show();
+        }
+    }
+    else if (dummyPosition == -2 || dummyPosition == 2)
+    {
+        for (int i = 0; i< 13;++i)
+        {
+            dummyHandSet[i]->setGeometry(720+30*i,40,101,141);
+            dummyHandSet[i]->show();
+        }
+    }
+    else if (dummyPosition == -3 || dummyPosition == 1)
+    {
+        for (int i = 0; i< 13;++i)
+        {
+            dummyHandSet[i]->setGeometry(1720,320+30*i,101,141);
+            dummyHandSet[i]->show();
+        }
     }
 }
 

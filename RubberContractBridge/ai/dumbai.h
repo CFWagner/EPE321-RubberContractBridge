@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 class DumbAI: public Player
 {
+    Q_OBJECT;
 public:
     DumbAI(QObject *parent = nullptr);
     void notifyBidTurn();

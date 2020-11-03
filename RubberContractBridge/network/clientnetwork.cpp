@@ -353,7 +353,7 @@ void ClientNetwork::txAll(QJsonObject data)
     out.setVersion(QDataStream::Qt_5_10);
 
     // Add delay to give time for previous data sent to be received by the server
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 50; // Add 50ms
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 100; // Add 100ms
     while(timeNow > QDateTime::currentMSecsSinceEpoch()){
          QCoreApplication::processEvents(QEventLoop::AllEvents);
     }

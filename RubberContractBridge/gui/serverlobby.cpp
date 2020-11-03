@@ -145,6 +145,7 @@ void ServerLobby::startGameB()
         playerNames[2] = ui->east->text();
         playerNames[3] = ui->west->text();
         emit playersSelected(playerNames);
+        emit rubberNumber(ui->rubberCount->text().toInt());
     }
 }
 

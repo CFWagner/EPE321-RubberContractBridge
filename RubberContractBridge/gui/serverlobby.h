@@ -33,6 +33,7 @@ public slots:
 signals:
     void playersSelected (QVector<QString> playerNames);
     void closeServer();
+    void rubberNumber(int rubberCount);
 private slots:
     //Pool buttons to add BOTS.
     void on_north_b_clicked();

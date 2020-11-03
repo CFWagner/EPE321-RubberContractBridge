@@ -393,7 +393,10 @@ void GameWindow::updateBidTable()
         {
             for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
             {
-                bidTable[i*7]->hide();
+                if(i*7 < 35)
+                    bidTable[i*7]->hide();
+                else
+                    break;
             }
         }
         else
@@ -409,8 +412,12 @@ void GameWindow::updateBidTable()
             }
             for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
             {
-                bidTable[counter+(i*7)]->hide();
+                if(counter+(i*7) < 35)
+                    bidTable[counter+(i*7)]->hide();
+                else
+                    break;
             }
+
         }
 
         qDebug() << "My pos: "<<gameState.playerPositions.key(name);
@@ -877,7 +884,7 @@ void GameWindow::bidRejected(QString reason)
 void GameWindow::moveRejected(QString reason)
 {
     playerMayPlay = true;
-    QMessageBox::warning(this,"Move rejected",reason);
+//    QMessageBox::warning(this,"Move rejected",reason);
 }
 
 void GameWindow::setupWindow()

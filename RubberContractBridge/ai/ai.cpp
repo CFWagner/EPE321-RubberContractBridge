@@ -936,7 +936,10 @@ Bid AI::guessBid()
             bIsDouble = random(seed) % 256 < 32;
             if (bIsDouble)
             {
-                suggestion.setCall(DOUBLE_BID);
+                if (suggestion.getTricksAbove()!=7)
+                {
+                    suggestion = Bid(position,suggestion.getTrumpSuit(),suggestion.getTricksAbove()+1);
+                }
             }
 
         }

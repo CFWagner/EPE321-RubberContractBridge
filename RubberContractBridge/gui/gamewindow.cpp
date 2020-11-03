@@ -116,6 +116,24 @@ void GameWindow::updateGameState(PlayerGameState gameState)
         trickPos = 0;
         break;
     }
+    case(PLAY_END):
+    {
+        for (int i = 0; i < 13;i++)
+        {
+            if(cardsInHand[i] != nullptr)
+            {
+                delete cardsInHand[i];
+            }
+        }
+        for (int i = 0; i < 13;i++)
+        {
+            if(dummyHandSet[i] != nullptr)
+            {
+                delete dummyHandSet[i];
+            }
+        }
+        break;
+    }
     default:
         break;
     }
@@ -221,7 +239,7 @@ void GameWindow::addCardToTrick()
             Card card(cardSelecteds->getSuit(),cardSelecteds->getRank());
             if(!gameState.getPlayerHand().containsCard(card))
             {
-                delete cardSelecteds;
+                cardSelecteds->hide();
             }
         }
     }
@@ -233,7 +251,7 @@ void GameWindow::addCardToTrick()
             if(!gameState.getDummyHand().containsCard(card))
             {
 
-                delete cardSelecteds;
+                cardSelecteds->hide();
             }
         }
     }

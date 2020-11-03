@@ -1,7 +1,7 @@
 #ifndef PLAYERSTUB_H
 #define PLAYERSTUB_H
 
-#include "game-server/player.h":
+#include "game-server/player.h"
 
 class PlayerStub: public Player
 {

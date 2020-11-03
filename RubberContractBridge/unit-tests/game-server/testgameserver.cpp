@@ -180,7 +180,7 @@ void TestGameServer::testGameServerWithAI()
     gameServer2.addPlayer(player4);
 
     // Start game with game server
-    maxRubbers = 5;
+    maxRubbers = 10;
     gameServer1.executeMatch(maxRubbers);
     QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 }

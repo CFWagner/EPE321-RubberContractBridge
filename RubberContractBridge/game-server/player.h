@@ -35,6 +35,7 @@ signals:
     void bidSelected(Bid bid);
     void moveSelected(Card card);
     void messageGenerated(QString message);
+    void logGenerated(QString context, QString msg);
 };
 
 #endif // PLAYER_H

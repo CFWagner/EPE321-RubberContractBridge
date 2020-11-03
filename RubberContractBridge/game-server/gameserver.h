@@ -25,6 +25,8 @@ public slots:
     void bidSelected(Bid bid);
     void moveSelected(Card card);
     void messageGenerated(QString message);
+signals:
+    void logGenerated(QString context, QString msg);
 private:
     void broadcastStateUpdate(GameEvent gameEvent);
     Player* getPlayerInPosition(PlayerPosition position);

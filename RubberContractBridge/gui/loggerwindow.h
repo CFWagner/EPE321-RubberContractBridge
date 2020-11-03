@@ -15,6 +15,8 @@ public:
     explicit LoggerWindow(QWidget *parent = nullptr);
     ~LoggerWindow();
 
+public slots:
+    void receivedLog(QString time,QString context,QString reason);
 private:
     Ui::LoggerWindow *ui;
 };

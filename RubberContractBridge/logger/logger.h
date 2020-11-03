@@ -19,7 +19,6 @@ public:
 signals:
     void sendLog (QString logTime, QString context, QString msg) const;
 
-
 public slots:
     void log(QString context, QString msg);
 

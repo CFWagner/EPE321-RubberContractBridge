@@ -123,10 +123,14 @@ void GameServer::notifyNextPlayerTurn()
 {
     Player* playerTurn = getPlayerInPosition(state->getPlayerTurn());
     qInfo() << "Notify player turn: " << playerTurn->getPlayerName();
-    if(state->getPhase() == BIDDING)
+    if(state->getPhase() == BIDDING){
+        emit logGenerated("Game Server", playerTurn->getPlayerName() + " to bid");
         playerTurn->notifyBidTurn();
-    else
+    }
+    else{
+        emit logGenerated("Game Server", playerTurn->getPlayerName() + " to play");
         playerTurn->notifyMoveTurn();
+    }
 }
 
 // Slot for when the server game state indicates a game event has occured
@@ -134,19 +138,42 @@ void GameServer::gameEvent(GameEvent gameEvent)
 {
     switch(gameEvent){
     case BID_START:
+        broadcastStateUpdate(gameEvent);
+        emit logGenerated("Game Server", "Bidding started");
+        break;
     case BID_RESTART:
+        broadcastStateUpdate(gameEvent);
+        emit logGenerated("Game Server", "Bidding restarted");
+        break;
     case PLAYER_BID:
+        broadcastStateUpdate(gameEvent);
+        break;
     case BID_END:
+        broadcastStateUpdate(gameEvent);
+        break;
     case PLAY_START:
+        emit logGenerated("Game Server", "Cardplay started");
+        broadcastStateUpdate(gameEvent);
+        break;
     case TRICK_START:
+        broadcastStateUpdate(gameEvent);
+        break;
     case PLAYER_MOVED:
+        broadcastStateUpdate(gameEvent);
+        break;
     case TRICK_END:
+        emit logGenerated("Game Server", "Trick completed");
+        broadcastStateUpdate(gameEvent);
+        break;
     case PLAY_END:
+        emit logGenerated("Game Server", "Cardplay completed");
         broadcastStateUpdate(gameEvent);
         break;
     case INITIALIZE:
+        emit logGenerated("Game Server", "Match started");
         break;
     case MATCH_END:
+        emit logGenerated("Game Server", "Match completed");
         matchComplete = true;
         for(Player* player: players)
             player->gameTerminated("Match Completed");
@@ -157,13 +184,16 @@ void GameServer::gameEvent(GameEvent gameEvent)
 // Slot for when a player chooses a bid for their bidding turn
 void GameServer::bidSelected(Bid bid)
 {
+    Player* senderPlayer = (Player*) sender();
+
     // Check if bid is valid
     if(state->isBidValid(bid)){
+        emit logGenerated(senderPlayer->getPlayerName(), " Made bid");
         state->updateBidState(bid);
         turnComplete = true;
     }
     else{
-        Player* senderPlayer = (Player*) sender();
+        emit logGenerated(senderPlayer->getPlayerName(), " Tried to make invalid bid");
         senderPlayer->notifyBidRejected("Invalid Bid");
     }
 }
@@ -171,13 +201,16 @@ void GameServer::bidSelected(Bid bid)
 // Slot for when a player selects a card for their turn
 void GameServer::moveSelected(Card card)
 {
+    Player* senderPlayer = (Player*) sender();
+
     // Check if card is valid
     if(state->isCardValid(card)){
+        emit logGenerated(senderPlayer->getPlayerName(), " Played card");
         state->updatePlayState(card);
         turnComplete = true;
     }
     else{
-        Player* senderPlayer = (Player*) sender();
+        emit logGenerated(senderPlayer->getPlayerName(), " Tried to play invalid card");
         senderPlayer->notifyMoveRejected("Invalid Card");
     }
 }

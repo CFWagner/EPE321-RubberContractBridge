@@ -5,6 +5,8 @@
 #include "network/servernetwork.h"
 #include "gui/serverlogin.h"
 #include "gui/serverlobby.h"
+#include "gui/loggerwindow.h"
+#include "logger/logger.h"
 #include <QHostAddress>
 #include <QObject>
 
@@ -30,8 +32,10 @@ private:
     qint32 maxRubbers = 5;
     ServerNetwork* serverNetwork = nullptr;
     GameServer* gameServer = nullptr;
-    ServerLogin *serverLoginWindow = nullptr;
-    ServerLobby *serverLobby = nullptr;
+    ServerLogin* serverLoginWindow = nullptr;
+    ServerLobby* serverLobby = nullptr;
+    LoggerWindow* loggerWindow = nullptr;
+    Logger* logger = nullptr;
 };
 
 #endif // SERVER_H

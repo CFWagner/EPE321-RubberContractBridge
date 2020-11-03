@@ -20,6 +20,8 @@ Server::~Server()
 {
     delete serverNetwork;
     delete gameServer;
+    delete loggerWindow;
+    delete logger;
 }
 
 // Getter for server network
@@ -60,6 +62,12 @@ void Server::playersSelected(QVector<QString> playerNames)
     delete gameServer;
     gameServer = new GameServer();
 
+    // Instantiate logger window and logger
+    loggerWindow = new LoggerWindow();
+    logger = new Logger();
+    connect(loggerWindow, &LoggerWindow::receivedLog, logger, &Logger::sendLog);
+    connect(gameServer, &GameServer::logGenerated, logger, &Logger::log);
+
     // Create players and add to game server
     for(qint8 i = 0; i < playerNames.length(); ++ i){
         // Get player name and position
@@ -93,6 +101,8 @@ void Server::playersSelected(QVector<QString> playerNames)
             player = new PlayerNetwork(this, playerName, playerSocket);
             player->setPosition(position);
         }
+        // Connect players to logger
+        connect(player, &Player::logGenerated, logger, &Logger::log);
         // Add player to match before match begins
         gameServer->addPlayer(player);
     }

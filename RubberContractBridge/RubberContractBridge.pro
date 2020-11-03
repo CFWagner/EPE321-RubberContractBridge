@@ -33,6 +33,7 @@ SOURCES += \
     gui/gamewindow.cpp \
     gui/hover.cpp \
     gui/loggerwindow.cpp \
+    gui/scorewindow.cpp \
     gui/serverlobby.cpp \
     gui/serverlogin.cpp \
     logger/logger.cpp \
@@ -83,6 +84,7 @@ HEADERS += \
     gui/gamewindow.h \
     gui/hover.h \
     gui/loggerwindow.h \
+    gui/scorewindow.h \
     gui/serverlobby.h \
     gui/serverlogin.h \
     logger/logger.h \
@@ -114,6 +116,7 @@ FORMS += \
     gui/entrywindow.ui \
     gui/gamewindow.ui \
     gui/loggerwindow.ui \
+    gui/scorewindow.ui \
     gui/serverlobby.ui \
     gui/serverlogin.ui
 

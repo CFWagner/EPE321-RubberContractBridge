@@ -7,7 +7,6 @@ void DumbAI::notifyBidTurn()
 {
     // Generate random bid
     CardSuit trumpSuit = CardSuit(rand() % 5);
-    qDebug() << trumpSuit;
     qint8 tricksAbove = (rand() %  3);
     Bid bid;
     if(tricksAbove == 0){
@@ -20,7 +19,7 @@ void DumbAI::notifyBidTurn()
             bid = Bid(position, PASS);
 
     }
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 1000; // Add 100ms
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 100; // Add 100ms
     while(timeNow > QDateTime::currentMSecsSinceEpoch()){
          QCoreApplication::processEvents(QEventLoop::AllEvents);
     }
@@ -41,7 +40,7 @@ void DumbAI::notifyMoveTurn()
     // Check card position is not out of range
     if(playCardPos >= hand.getCardCount())
         playCardPos = 0;
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 1000; // Add 100ms
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 100; // Add 100ms
     while(timeNow > QDateTime::currentMSecsSinceEpoch()){
          QCoreApplication::processEvents(QEventLoop::AllEvents);
     }

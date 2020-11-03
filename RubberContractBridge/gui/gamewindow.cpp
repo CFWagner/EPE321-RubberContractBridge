@@ -16,6 +16,9 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
     connect(this,&GameWindow::sendMessage, clientNetwork,&ClientNetwork::txMessage);
     connect(this,&GameWindow::bidAction, clientNetwork,&ClientNetwork::txBidSelected);
     connect(this,&GameWindow::cardAction, clientNetwork,&ClientNetwork::txMoveSelected);
+
+    scoreWindow = new ScoreWindow();
+    connect(this,&GameWindow::getScore, scoreWindow,&ScoreWindow::showScore);
     setupWindow();
     staticGUIElements();
     //    this->showMaximized();
@@ -325,10 +328,7 @@ void GameWindow::updateBidTable()
         {
             for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
             {
-                if(i*7 < 35)
-                    bidTable[i*7]->hide();
-                else
-                    break;
+                bidTable[i*7]->hide();
             }
         }
         else
@@ -344,10 +344,7 @@ void GameWindow::updateBidTable()
             }
             for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
             {
-                if(counter+(i*7) < 35)
-                    bidTable[counter+(i*7)]->hide();
-                else
-                    break;
+                bidTable[counter+(i*7)]->hide();
             }
 
         }
@@ -810,13 +807,13 @@ void GameWindow::messageReceived(QString source, QString msg)
 void GameWindow::bidRejected(QString reason)
 {
     playerMayBid = true;
-    QMessageBox::warning(this,"Bid rejected",reason);
+    //QMessageBox::warning(this,"Bid rejected",reason);
 }
 
 void GameWindow::moveRejected(QString reason)
 {
     playerMayPlay = true;
-//    QMessageBox::warning(this,"Move rejected",reason);
+    //QMessageBox::warning(this,"Move rejected",reason);
 }
 
 void GameWindow::setupWindow()
@@ -829,6 +826,7 @@ void GameWindow::setupWindow()
     this->setFixedSize(1920,1080);
     this->setWindowTitle ("Rubber Contract Bridge");
     setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
+    ui->ScoreButon->setIcon(QIcon(":/resources/guiResources/buttons/SCORE.png"));
 }
 
 void GameWindow::on_messagerB_clicked()
@@ -850,4 +848,9 @@ void GameWindow::keyPressEvent(QKeyEvent *event)
             ui->messageEdit->clear();
         }
     }
+}
+
+void GameWindow::on_ScoreButon_clicked()
+{
+    emit getScore(this->gameState);
 }

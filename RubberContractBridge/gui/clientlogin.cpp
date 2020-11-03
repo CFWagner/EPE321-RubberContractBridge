@@ -72,11 +72,10 @@ void ClientLogin::attemptLoginButton()
         password = "123@@321";
 #endif
 #ifndef QUICK_SERVER_ENTRY
-        //        password = ui->passwordLine->text();
-        password = "1234@@@@";
-        #endif
+        password = ui->passwordLine->text();
+#endif
 
-                if (ui->ipAddressLine->text() == ""){
+        if (ui->ipAddressLine->text() == ""){
             ipAddress = QHostAddress::LocalHost;
         }
         else

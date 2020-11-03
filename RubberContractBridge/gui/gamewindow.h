@@ -47,9 +47,13 @@ public slots:
 signals:
     void bidAction(Bid bidMade);
     void cardAction(Card cardPlayed);
+    void sendMessage(QString msg);
 
 private slots:
     void on_button_exit_clicked();
+    void messageReceived(QString source, QString msg);
+
+    void on_messagerB_clicked();
 
 private:
     Ui::GameWindow *ui;

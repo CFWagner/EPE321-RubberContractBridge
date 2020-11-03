@@ -12,7 +12,7 @@ LoggerWindow::LoggerWindow(QWidget *parent) :
     palette.setBrush(QPalette::Background, bkgnd);
     this->setPalette(palette);
     this->setStyleSheet("background-color: black;");
-    this->setFixedSize(405,720);
+    this->setFixedSize(810,720);
     this->setWindowTitle ("Server Logger");
     this->show();
 }

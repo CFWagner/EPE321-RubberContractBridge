@@ -12,11 +12,14 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
     connect(clientNetwork,&ClientNetwork::notifyMoveTurn, this,&GameWindow::playerTurnMove);
     connect(clientNetwork,&ClientNetwork::notifyBidRejected, this,&GameWindow::bidRejected);
     connect(clientNetwork,&ClientNetwork::notifyMoveRejected, this,&GameWindow::moveRejected);
+    connect(clientNetwork,&ClientNetwork::messageReceived, this,&GameWindow::messageReceived);
+    connect(this,&GameWindow::sendMessage, clientNetwork,&ClientNetwork::txMessage);
+    connect(this,&GameWindow::bidAction, clientNetwork,&ClientNetwork::txBidSelected);
     connect(this,&GameWindow::bidAction, clientNetwork,&ClientNetwork::txBidSelected);
     connect(this,&GameWindow::cardAction, clientNetwork,&ClientNetwork::txMoveSelected);
     setupWindow();
     staticGUIElements();
-    this->showFullScreen();
+    this->showMaximized();
 }
 
 GameWindow::~GameWindow()
@@ -309,10 +312,10 @@ void GameWindow::addCardToTrick()
     {
         QLabel *trickLabel = new QLabel(this);
         QString styleL = getStyle(0);
-        trickPlacement =gameState.playerPositions.key(name) - gameState.getHandToPlay();
-        qDebug() << "NORMAL PERSON";
-        qDebug() <<"DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
-        qDebug() <<"Hand side:" << gameState.getPlayerName(gameState.getHandToPlay());
+        trickPlacement = gameState.playerPositions.key(name) - gameState.getHandToPlay();
+        qDebug() << "NORMAL PERSON POS:" << gameState.playerPositions.key(name);
+        qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
+        qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay());
         if (trickPlacement == 0)
         {
             trickPlacement = 0;
@@ -829,6 +832,12 @@ void GameWindow::on_button_exit_clicked()
     this->close();
 }
 
+void GameWindow::messageReceived(QString source, QString msg)
+{
+    QString reMessage =" {" + source + "}: " + msg;
+    ui->messagePanel->appendPlainText(reMessage);
+}
+
 void GameWindow::bidRejected(QString reason)
 {
     playerMayBid = true;
@@ -851,4 +860,10 @@ void GameWindow::setupWindow()
     this->setFixedSize(1920,1080);
     this->setWindowTitle ("Rubber Contract Bridge");
     setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
+}
+
+void GameWindow::on_messagerB_clicked()
+{
+    emit sendMessage(ui->messageEdit->text());
+    ui->messageEdit->clear();
 }

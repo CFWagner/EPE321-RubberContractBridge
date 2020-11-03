@@ -27,3 +27,5 @@ build-RubberContractBridge-Desktop_x86_windows_msvc2019_pe_64bit-Profile/
 RubberContractBridge/RubberContractBridge.pro
 
 build-RubberContractBridge-Desktop_Qt_5_15_0_MinGW_64_bit-Profile/
+
+build-RubberContractBridge-Desktop_Qt_5_15_0_MinGW_64_bit-Release/

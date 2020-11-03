@@ -15,6 +15,7 @@ CONFIG(debug, release|debug):DEFINES += QUICK_SERVER_ENTRY
 #All sources classes of the project is addded below.
 SOURCES += \
     ai/ai.cpp \
+    ai/dumbai.cpp \
     game-server/bid.cpp \
     game-server/card.cpp \
     game-server/cardset.cpp \
@@ -57,6 +58,7 @@ SOURCES += \
 #All header files of the project is addded below.
 HEADERS += \
     ai/ai.h \
+    ai/dumbai.h \
     enumerations/BidCall.h \
     enumerations/CardRank.h \
     enumerations/CardSuit.h \

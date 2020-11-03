@@ -18,10 +18,7 @@ void DumbAI::notifyBidTurn()
             bid = Bid(position, PASS);
 
     }
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 1000; // Add 100ms
-    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
-         QCoreApplication::processEvents(QEventLoop::AllEvents);
-    }
+    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 1000; // Add 1s
     emit bidSelected(bid);
 }
 
@@ -70,10 +67,7 @@ void DumbAI::notifyMoveRejected(QString reason)
     playCardPos++;
     if(playCardPos >= hand.getCardCount())
         playCardPos = 0;
-    qint64 timeNow = QDateTime::currentMSecsSinceEpoch() + 1000; // Add 100ms
-    while(timeNow > QDateTime::currentMSecsSinceEpoch()){
-         QCoreApplication::processEvents(QEventLoop::AllEvents);
-    }
+
     emit moveSelected(hand.getCard(playCardPos));
 }
 

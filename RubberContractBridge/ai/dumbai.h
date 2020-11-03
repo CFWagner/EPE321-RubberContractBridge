@@ -2,11 +2,9 @@
 #define DUMBAI_H
 
 #include "game-server/player.h"
-#include<QCoreApplication>
 
 class DumbAI: public Player
 {
-    Q_OBJECT
 public:
     DumbAI(QObject *parent = nullptr);
     void notifyBidTurn();

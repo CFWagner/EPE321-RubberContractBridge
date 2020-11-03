@@ -67,10 +67,7 @@ private:
     QLabel *bidBoard;
     QLabel *gameBoard;
     QLabel *turnIndicator;
-    QLabel *leftTrick;
-    QLabel *rightTrick;
-    QLabel *topTrick;
-    QLabel *bottomTrick;
+    QLabel *trickPool[4];
 
     BidSelect *XX;
     BidSelect *X;

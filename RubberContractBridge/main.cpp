@@ -5,9 +5,8 @@
 
 int main(int argc, char *argv[])
 {
-    TestPlayerGameState testPlayerGameState;
-    QTest::qExec(&testPlayerGameState);
-
+//    TestPlayerGameState testPlayerGameState;
+//    QTest::qExec(&testPlayerGameState);
     QApplication rcbApplication(argc, argv);
     EntryWindow entryWindow;
     entryWindow.show();

@@ -97,6 +97,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case (PLAYER_MOVED):
     {
+        qDebug() <<gameState.getLastCardPlayed()->getRank();
         indicatePlayerTurn();
         addCardToTrick();
         trickPos += 1;
@@ -206,49 +207,42 @@ void GameWindow::createBidTable()
 
 void GameWindow::addCardToTrick()
 {
-    qDebug() <<"Move card";
-//    QString styleTrick ="";
-//    int trickPositions = gameState.playerPositions.key(name) - gameState.getPlayerTurn()-1;
-//    if (trickPositions == 0)
-//    {
-//        trickPositions = 0;
-//        trickTabel[trickPositions] = new QLabel(this);
-//        styleTrick = getStyle(trickPositions);
-//        qDebug() <<"a";
-//        trickTabel[trickPositions] ->setStyleSheet(styleTrick);
-//        qDebug() <<"x";
-//        trickTabel[trickPositions]->setGeometry(1000,890,61,31);
-//        qDebug() <<"z";
-//        trickTabel[trickPositions]->show();
-//    }
-//    else if (trickPositions == -1 || trickPositions == 3)
-//    {
-//        trickPositions = 1;
-//        trickTabel[trickPositions] = new QLabel(this);
-//        styleTrick = getStyle(trickPositions);
-//        trickTabel[trickPositions] ->setStyleSheet(styleTrick);
-//        trickTabel[trickPositions]->setGeometry(310,560,61,31);
-//        trickTabel[trickPositions]->show();
-//    }
-//    else if (trickPositions == -2 || trickPositions == 2)
-//    {
-//        trickPositions = 2;
-//        trickTabel[trickPositions] = new QLabel(this);
-//        styleTrick = getStyle(trickPositions);
-//        trickTabel[trickPositions] ->setStyleSheet(styleTrick);
-//        trickTabel[trickPositions]->setGeometry(1000,146,61,31);
-//        trickTabel[trickPositions]->show();
-//    }
-//    else if (trickPositions == -3 || trickPositions == 1)
-//    {
-//        trickPositions = 3;
-//        trickTabel[trickPositions] = new QLabel(this);
-//        styleTrick = getStyle(trickPositions);
-//        trickTabel[trickPositions] ->setStyleSheet(styleTrick);
-//        trickTabel[trickPositions]->setGeometry(1550,560,61,31);
-//        trickTabel[trickPositions]->show();
-//    }
-//    qDebug() <<"aaaa";
+    QLabel *trickLabel = new QLabel(this);
+    QString styleL = getStyle(0);
+    int trickPlacement = gameState.playerPositions.key(name) - gameState.getPlayerTurn()-1;
+    if (trickPlacement == -1)
+    {
+        trickPlacement = 0;
+        trickPool[trickPlacement]= trickLabel;
+        trickPool[trickPlacement]->setStyleSheet(styleL);
+        trickPool[trickPlacement]->setGeometry(900,500,101,141);
+        trickPool[trickPlacement]->show();
+    }
+    else if (trickPlacement == -2 || trickPlacement == 2)
+    {
+        trickPlacement = 1;
+        trickPool[trickPlacement]= trickLabel;
+        trickPool[trickPlacement]->setStyleSheet(styleL);
+        trickPool[trickPlacement]->setGeometry(800,450,101,141);
+        trickPool[trickPlacement]->show();
+    }
+    else if (trickPlacement == -3 || trickPlacement == 1)
+    {
+        trickPlacement = 2;
+        trickPool[trickPlacement]= trickLabel;
+        trickPool[trickPlacement]->setStyleSheet(styleL);
+        trickPool[trickPlacement]->setGeometry(900,400,101,141);
+        trickPool[trickPlacement]->show();
+    }
+    else if (trickPlacement == -4 || trickPlacement == 0)
+    {
+        trickPlacement = 3;
+        trickPool[trickPlacement]= trickLabel;
+        trickPool[trickPlacement]->setStyleSheet(styleL);
+        trickPool[trickPlacement]->setGeometry(1000,450,101,141);
+        trickPool[trickPlacement]->show();
+    }
+
 }
 
 //Finished
@@ -306,79 +300,77 @@ void GameWindow::updateBidTable()
 
 QString GameWindow::getStyle(int)
 {
-//    qDebug() <<"Style";
-//    QString imageName = "background-image: url(:/resources/guiResources/cards/";
-//    if(gameState.getTricks().end()->getCard(0).getRank() == 1)
-//    {
-//        imageName += "two_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 2)
-//    {
-//        imageName += "three_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 3)
-//    {
-//        imageName += "four_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 4)
-//    {
-//        imageName += "five_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 5)
-//    {
-//        imageName += "six_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 6)
-//    {
-//        imageName += "seven_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 7)
-//    {
-//        imageName += "eight_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 8)
-//    {
-//        imageName += "nine_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 9)
-//    {
-//        imageName += "ten_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 10)
-//    {
-//        imageName += "jack_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 11)
-//    {
-//        imageName += "queen_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 12)
-//    {
-//        imageName += "king_";
-//    }
-//    else if (gameState.getTricks().end()->getCard(0).getRank() == 13)
-//    {
-//        imageName += "ace_";
-//    }
-//    if(gameState.getTricks().end()->getCard(0).getSuit() == 0)
-//    {
-//        imageName += "clubs.png)";
-//    }
-//    else if(gameState.getTricks().end()->getCard(0).getSuit() == 1)
-//    {
-//        imageName += "diamonds.png)";
-//    }
-//    else if(gameState.getTricks().end()->getCard(0).getSuit() == 2)
-//    {
-//        imageName += "hearts.png)";
-//    }
-//    else if(gameState.getTricks().end()->getCard(0).getSuit() == 3)
-//    {
-//        imageName += "spades.png)";
-//    }
-//    qDebug() <<"Get style";
-//    qDebug() <<imageName;
-    //    return imageName;
+    QString imageName = "background-image: url(:/resources/guiResources/cards/";
+    QString cardName;
+    if(gameState.getLastCardPlayed()->getRank() == 1)
+    {
+        cardName = "two_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 2)
+    {
+        cardName = "three_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 3)
+    {
+        cardName = "four_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 4)
+    {
+        cardName = "five_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 5)
+    {
+        cardName = "six_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 6)
+    {
+        cardName = "seven_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 7)
+    {
+        cardName = "eight_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 8)
+    {
+        cardName = "nine_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 9)
+    {
+        cardName = "ten_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 10)
+    {
+        cardName = "jack_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 11)
+    {
+        cardName = "queen_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 12)
+    {
+        cardName = "king_";
+    }
+    else if (gameState.getLastCardPlayed()->getRank() == 13)
+    {
+        cardName = "ace_";
+    }
+    if(gameState.getLastCardPlayed()->getSuit() == 0)
+    {
+        cardName+= "clubs.png)";
+    }
+    else if(gameState.getLastCardPlayed()->getSuit() == 1)
+    {
+        cardName+= "diamonds.png)";
+    }
+    else if(gameState.getLastCardPlayed()->getSuit() == 2)
+    {
+        cardName+= "hearts.png)";
+    }
+    else if(gameState.getLastCardPlayed()->getSuit() == 3)
+    {
+        cardName+= "spades.png)";
+    }
+    return imageName+cardName;
 }
 
 void GameWindow::createHandTable()
@@ -741,8 +733,8 @@ void GameWindow::bidRejected(QString reason)
 
 void GameWindow::moveRejected(QString reason)
 {
-   playerMayPlay = true;
-   QMessageBox::warning(this,"Move rejected",reason);
+    playerMayPlay = true;
+    QMessageBox::warning(this,"Move rejected",reason);
 }
 
 void GameWindow::setupWindow()

@@ -115,15 +115,15 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
 font-weight: bold;</string>
    </property>
    <property name="title">
-    <string>GroupBox</string>
+    <string/>
    </property>
    <widget class="QPlainTextEdit" name="messagePanel">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>30</y>
+      <y>10</y>
       <width>281</width>
-      <height>121</height>
+      <height>141</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -156,6 +156,23 @@ font-weight: bold;</string>
      <string>SEND</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>860</y>
+     <width>281</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>GROUP CHAT</string>
+   </property>
   </widget>
  </widget>
  <resources/>

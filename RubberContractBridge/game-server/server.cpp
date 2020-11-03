@@ -65,7 +65,7 @@ void Server::playersSelected(QVector<QString> playerNames)
     // Instantiate logger window and logger
     loggerWindow = new LoggerWindow();
     logger = new Logger();
-    connect(loggerWindow, &LoggerWindow::receivedLog, logger, &Logger::sendLog);
+    connect(logger, &Logger::sendLog, loggerWindow, &LoggerWindow::receivedLog);
     connect(gameServer, &GameServer::logGenerated, logger, &Logger::log);
 
     // Create players and add to game server

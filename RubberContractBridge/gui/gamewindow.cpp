@@ -259,22 +259,18 @@ void GameWindow::addCardToTrick()
         }
     }
 
-    int trickPlacement = 0;
-
-    qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
-    qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();
-    qDebug() << "PLAYER TURN:" << gameState.getPlayerName(gameState.getPlayerTurn()) << gameState.getPlayerTurn();
-
     QLabel *trickLabel = new QLabel(this);
     QString styleL = getStyle(0);
-    trickPlacement = (gameState.getHandToPlay() - gameState.playerPositions.key(name) + 3) % 4;
-
-//    trickPlacement = gameState.playerPositions.key(name) - trickPlacement;
-    // Swap around?
-    // trickPlacement = trickPlacement - gameState.playerPositions.key(name);
-    qDebug() << "Trick placement:" << trickPlacement;
-    qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3 - gameState.playerPositions.key(name)) %4;
-    qDebug() << "My guess 2 (dummy only):" << (gameState.getDummy() + 3 - gameState.playerPositions.key(name)) %4;
+    if (trickPos == 3){
+        // Last card played in trick
+        // Use other method, since next player will be determined by who won the trick,
+        // and not just the next player in the circle.
+        trickPlacement = (trickPlacement + 1) % 4;
+    } else{
+        // Convert the current player to play to the position of the player that just played.
+        // Also normalise the position to the position of the player.
+        trickPlacement = (gameState.getHandToPlay() - gameState.playerPositions.key(name) + 3) % 4;
+    }
 
     trickPool[trickPos] = trickLabel;
     trickPool[trickPos]->setStyleSheet(styleL);

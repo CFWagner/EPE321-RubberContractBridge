@@ -84,6 +84,7 @@ private:
 
     QString name;
     int trickPos = 0;
+    int trickPlacement = 0;
 };
 
 #endif // GAMEWINDOW_H

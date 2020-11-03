@@ -35,7 +35,7 @@
   <widget class="QLabel" name="you">
    <property name="geometry">
     <rect>
-     <x>950</x>
+     <x>935</x>
      <y>880</y>
      <width>71</width>
      <height>21</height>
@@ -52,7 +52,7 @@ color:rgb(255, 255, 255);</string>
   <widget class="QLabel" name="left">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>330</x>
      <y>520</y>
      <width>71</width>
      <height>41</height>
@@ -69,7 +69,7 @@ color:rgb(255, 255, 255);</string>
   <widget class="QLabel" name="top">
    <property name="geometry">
     <rect>
-     <x>950</x>
+     <x>935</x>
      <y>186</y>
      <width>71</width>
      <height>21</height>

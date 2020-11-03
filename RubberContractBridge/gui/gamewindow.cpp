@@ -84,7 +84,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case (PLAY_START):
     {
-        dummyCreate =true;
+        dummyCreate  = true;
         qDebug () << "DUMMY" << gameState.getDummy();
         indicatePlayerTurn();
         bidBoard->hide();
@@ -389,7 +389,7 @@ void GameWindow::updateBidTable()
             }
             for(int i = 0; i < gameState.getCurrentBid()->getTrumpSuit();i++)
             {
-                bidTable[counter+i*7]->hide();
+                bidTable[counter+(i*7)]->hide();
             }
         }
 

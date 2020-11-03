@@ -18,6 +18,11 @@ public:
 
 public slots:
     void receivedLog(QString time,QString context,QString reason);
+signals:
+    void closeServerB();
+private slots:
+    void on_button_exit_clicked();
+
 private:
     Ui::LoggerWindow *ui;
 };

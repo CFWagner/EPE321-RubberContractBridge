@@ -29,6 +29,7 @@ public slots:
     void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
     void createLobby();
     void rubberNumber(int rubberCount);
+    void closeServer();
 private:
     qint32 maxRubbers = 1;
     ServerNetwork* serverNetwork = nullptr;

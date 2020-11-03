@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>40</y>
      <width>781</width>
-     <height>671</height>
+     <height>641</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -33,13 +33,32 @@ font-weight: bold;</string>
    <widget class="QPlainTextEdit" name="plainTextEdit">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>761</width>
-      <height>631</height>
+      <x>20</x>
+      <y>40</y>
+      <width>741</width>
+      <height>581</height>
      </rect>
     </property>
    </widget>
+  </widget>
+  <widget class="QPushButton" name="button_exit">
+   <property name="geometry">
+    <rect>
+     <x>760</x>
+     <y>10</y>
+     <width>40</width>
+     <height>38</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>50</width>
+     <height>50</height>
+    </size>
+   </property>
   </widget>
  </widget>
  <resources/>

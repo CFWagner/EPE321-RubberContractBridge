@@ -18,10 +18,13 @@ Server::Server(QObject *parent) : QObject(parent)
 // Destructor
 Server::~Server()
 {
+    delete serverLobby;
+    delete serverLoginWindow;
     delete serverNetwork;
     delete gameServer;
     delete loggerWindow;
     delete logger;
+    delete this;
 }
 
 // Getter for server network
@@ -65,6 +68,7 @@ void Server::playersSelected(QVector<QString> playerNames)
     // Instantiate logger window and logger
     loggerWindow = new LoggerWindow();
     logger = new Logger();
+    connect(loggerWindow, &LoggerWindow::closeServerB,this,&Server::closeServer);
     connect(logger, &Logger::sendLog, loggerWindow, &LoggerWindow::receivedLog);
     connect(gameServer, &GameServer::logGenerated, logger, &Logger::log);
 
@@ -130,6 +134,11 @@ void Server::serverIPAddressPort(QHostAddress addressSent, quint16 portSent)
 void Server::rubberNumber(int rubberCount)
 {
     maxRubbers = rubberCount;
+}
+
+void Server::closeServer()
+{
+    delete this;
 }
 
 void Server::createLobby()

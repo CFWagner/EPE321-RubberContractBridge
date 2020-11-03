@@ -81,7 +81,7 @@ private:
     bool playerMayBid = false;
     bool playerMayPlay = false;
     bool cardsClickable = false;
-
+    bool dummyCreate = true;
     QString name;
     int trickPos = 0;
 };

@@ -181,8 +181,8 @@ void AI::generateDeckOptions()
     {
         for (int i=0;i<currentState.getTricks().length();i++)
         {
-            if (currentState.getTricks()[i].getCardCount()!=0)
-                removecards(currentState.getTricks()[i]);
+            if (currentState.getTricks().value(i).getCardCount()!=0)
+                removecards(currentState.getTricks().value(i));
         }
     }
     //first check if trump cards are still in circulation
@@ -197,6 +197,23 @@ void AI::generateDeckOptions()
             }
         }
     }
+    else
+    {
+        CardSuit firstTrick;
+        if (currentTricks.getCardCount()!=0)
+        {
+            firstTrick=currentTricks.getCard(0).getSuit();
+            for (int i = 0;i<deck.getCardCount();i++)
+            {
+                if (deck.getCard(i).getSuit()!=firstTrick)
+                {
+                    amount++;
+                }
+            }
+
+        }
+
+    }
     //remove all non trump suits if trump exists
     // also only if a trump is in circulation do we care about this
     if ((trump!=NONE) && (amount!=deck.getCardCount()))
@@ -206,21 +223,49 @@ void AI::generateDeckOptions()
             if (deck.getCard(i).getSuit()!=trump)
             {
                 deck.removeCard(i);
+                i=0;
             }
         }
+    }
+    else if ((trump==NONE) && (amount!=deck.getCardCount()))
+    {
+        CardSuit firstTrick;
+        if (currentTricks.getCardCount()!=0)
+        {
+            firstTrick=currentTricks.getCard(0).getSuit();
+            label1:
+            for (int i = 0;i<deck.getCardCount();i++)
+            {
+                if (deck.getCard(i).getSuit()!=firstTrick)
+                {
+                    deck.removeCard(i);
+                    goto label1;
+                }
+            }
+
+        }
+
     }
 }
 //initialize the needed variables to play a card
 void AI::initialMainSet()
 {
-    //Checks if it is using the dummy or not fixing error 1
+    //Checks if it is using the dummy or not fixing error 1 and making a deep copy
     if(currentState.getHandToPlay()!=currentState.getPlayerTurn())
     {
-        myhand = currentState.getDummyHand();
+        myhand = CardSet();
+        for (int i = 0;i<currentState.getDummyHand().getCardCount();i++)
+        {
+            myhand.addCard(currentState.getDummyHand().getCard(i));
+        }
     }
     else
     {
-        myhand = currentState.getPlayerHand();
+        myhand = CardSet();
+        for (int i = 0;i<currentState.getPlayerHand().getCardCount();i++)
+        {
+            myhand.addCard(currentState.getPlayerHand().getCard(i));
+        }
 
     }
 
@@ -230,13 +275,30 @@ void AI::initialMainSet()
     currentTricks = currentState.getTricks().back();
     trump = contract.getTrumpSuit();
     dummypos = currentState.getDummy();
-    //Checks if it can see the dummy currently or not
-    dummyhand = currentState.getDummyHand();
+    //Checks if it can see the dummy currently or not makes a deep copy
+    if ((currentState.getTricks().length()==1) && (currentTricks.getCardCount()==0))
+    {
+       dummyhand = CardSet();
+    }
+    else
+    {
+        dummyhand = CardSet();
+        for (int i = 0;i<currentState.getPlayerHand().getCardCount();i++)
+        {
+            dummyhand.addCard(currentState.getPlayerHand().getCard(i));
+        }
+    }
 }
 void AI::initialBidSet()
 {
     if(currentState.getCurrentBid() != nullptr)
         currentbid= *currentState.getCurrentBid();
+    //I am getting no card passed to me try to make deep copy
+    myhand = CardSet();
+    for (int i = 0;i<currentState.getPlayerHand().getCardCount();i++)
+    {
+        myhand.addCard(currentState.getPlayerHand().getCard(i));
+    }
 }
 //generates available legal cards that can be selected from the hand
 void AI::generateAvailableCards()
@@ -495,6 +557,7 @@ Card AI::guessMove()
                      suggestion=canPlay.getCard(canPlay.getCardCount()-1);}
 
                  }
+         break;
          }
          case 1:
          {
@@ -519,7 +582,7 @@ Card AI::guessMove()
                 }
             }
 
-
+        break;
          }
          case 2:
          {
@@ -537,7 +600,7 @@ Card AI::guessMove()
                  suggestion=canPlay.getCard(canPlay.getCardCount()-1);
 
              }
-
+        break;
          }
          case 3:
          {
@@ -553,6 +616,8 @@ Card AI::guessMove()
                  //useless gg
                  suggestion=canPlay.getCard(0);
              }
+
+            break;
 
            }
         default:
@@ -724,64 +789,29 @@ Bid AI::guessBid()
     //The bot's plan is to mostly play with suit with most high cards. if the tricks are higher than roundup(count/12) then pass
     //the bot will never double since making a bot do that results in an insane algorithm
     //for NT shouldn't be higher than total of two highes ceiling minus 1
-    // first obtain highest suit and second highest
-    int highest=0;
-    int second = 0;
-    CardSuit highsuit = CLUBS;
-    CardSuit secondsuit = CLUBS;
-    if (clubsCount>second)
-    {
-       if (clubsCount>highest)
+    // first obtain highest suit and second highest suit
+    int countarray[4] = {clubsCount,spadesCount,heartsCount,diamondsCount};
+    CardSuit suitarray[4] = {CLUBS,SPADES,HEARTS,DIAMONDS};
+    CardSuit tempSuit;
+    int tempCount;
+    for(int i = 0; i<4; i++) {
+       for(int j = i+1; j<4; j++)
        {
-           highest=clubsCount;
-           highsuit=CLUBS;
-       }
-       else
-       {
-           second=clubsCount;
-           secondsuit=CLUBS;
-       }
-    }
-    if (diamondsCount>second)
-    {
-       if (diamondsCount>highest)
-       {
-           highest=diamondsCount;
-           highsuit=DIAMONDS;
-       }
-       else
-       {
-           second=diamondsCount;
-           secondsuit=DIAMONDS;
+          if(countarray[j]<countarray[i]) {
+             tempCount = countarray[i];
+             tempSuit = suitarray[i];
+             countarray[i] = countarray[j];
+             suitarray[i] = suitarray[j];
+             countarray[j] = tempCount;
+             suitarray[j] = tempSuit;
+          }
        }
     }
-    if (heartsCount>second)
-    {
-       if (heartsCount>highest)
-       {
-           highest=heartsCount;
-           highsuit=HEARTS;
-       }
-       else
-       {
-           second=heartsCount;
-           secondsuit=HEARTS;
-       }
-    }
-    if (spadesCount>second)
-    {
-       if (spadesCount>highest)
-       {
-           highest=spadesCount;
-           highsuit=SPADES;
-       }
-       else
-       {
-           second=spadesCount;
-           secondsuit=SPADES;
-       }
-    }
-    if (currentState.getContractBid()==nullptr)
+    int highest = countarray[3];
+    int second = countarray[2];
+    CardSuit highsuit = suitarray[3];
+    CardSuit secondsuit = suitarray[2];
+    if (currentState.getCurrentBid()==nullptr)
     {
         //no bid yet throw highest out
 

@@ -24,7 +24,8 @@ void AI::notifyMoveTurn()
 {
 //assuming this tells AI to make a move suggestion
     initialMainSet();
-    emit moveSelected(guessMove());
+    Card mover = guessMove();
+    emit moveSelected(mover);
 }
 void AI::updateGameState(PlayerGameState gameState)
 {
@@ -604,7 +605,6 @@ Card AI::guessMove()
          }
          case 3:
          {
-             int count=0;
              currentTricks.orderHand();
              if (canPlay.getCard(canPlay.getCardCount()-1)<currentTricks.getCard(currentTricks.getCardCount()-1))
              {
@@ -664,12 +664,12 @@ Card AI::guessMove()
                 int newpos=random(seeder) % 100*position;
                 newpos = newpos/100;
                 suggestion = canPlay.getCard(newpos);
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
             else
             {
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
         }
@@ -684,12 +684,12 @@ Card AI::guessMove()
                 int newpos=random(time(0)) % 100*position;
                 newpos = newpos/100;
                 suggestion = canPlay.getCard(newpos);
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
             else
             {
-                cardPlayed=suggestion;
+                cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
                return suggestion;
             }
 
@@ -699,7 +699,7 @@ Card AI::guessMove()
     else
     {
         //playing highest card
-        cardPlayed=suggestion;
+       cardPlayed = Card(suggestion.getSuit(),suggestion.getRank());
        return suggestion;
     }
 

@@ -72,8 +72,8 @@ QVector<QString> ServerLobby::getplayerNames()
 
 void ServerLobby::addPlayersLobby()
 {
-    QString namesC [4] = {ui->north->text(),ui->south->text(),ui->east->text(),ui->west->text()};
     bool add = true;
+    QString namesC [4] = {ui->north->text(),ui->south->text(),ui->east->text(),ui->west->text()};
     for(int i = 0;i < ui->playerList->selectedItems().length();++i)
     {
         if(namesC->contains(ui->playerList->selectedItems()[i]->text()))
@@ -145,7 +145,13 @@ void ServerLobby::startGameB()
         playerNames[2] = ui->east->text();
         playerNames[3] = ui->west->text();
         emit playersSelected(playerNames);
+        if(ui->rubberCount->text() == "" || ui->rubberCount->text().toInt()<1)
+        {
+            ui->rubberCount->text().clear();
+            ui->rubberCount->text() = 1;
+        }
         emit rubberNumber(ui->rubberCount->text().toInt());
+        this->hide();
     }
 }
 

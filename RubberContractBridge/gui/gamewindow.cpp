@@ -85,7 +85,6 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case (PLAY_START):
     {
         qDebug () << "DUMMY" << gameState.getDummy();
-        createDummyHand();
         indicatePlayerTurn();
         bidBoard->hide();
         gameBoard->show();
@@ -101,6 +100,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case (PLAYER_MOVED):
     {
         qDebug() <<gameState.getLastCardPlayed()->getRank();
+        createDummyHand();
         indicatePlayerTurn();
         addCardToTrick();
         trickPos += 1;

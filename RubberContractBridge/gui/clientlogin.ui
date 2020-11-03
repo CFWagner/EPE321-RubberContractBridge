@@ -42,6 +42,12 @@ font-weight: bold;</string>
       </item>
       <item>
        <widget class="QLineEdit" name="usernameLine">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>25</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true">color: rgb(0, 0, 0)</string>
         </property>
@@ -60,6 +66,12 @@ font-weight: bold;</string>
       </item>
       <item>
        <widget class="QLineEdit" name="passwordLine">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>25</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true">color:rgb(0, 0, 0)</string>
         </property>
@@ -76,6 +88,12 @@ font-weight: bold;</string>
     </item>
     <item>
      <widget class="QLineEdit" name="ipAddressLine">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>25</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">color:rgb(0, 0, 0)</string>
       </property>
@@ -90,6 +108,12 @@ font-weight: bold;</string>
     </item>
     <item>
      <widget class="QLineEdit" name="portLine">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>25</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">color:rgb(0, 0, 0)</string>
       </property>

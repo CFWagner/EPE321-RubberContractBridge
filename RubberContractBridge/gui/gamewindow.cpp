@@ -260,115 +260,50 @@ void GameWindow::addCardToTrick()
     }
 
     int trickPlacement = 0;
-    int getH = gameState.getHandToPlay();
-    if (getH == gameState.getDummy())
+
+    qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
+    qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();
+    qDebug() << "PLAYER TURN:" << gameState.getPlayerName(gameState.getPlayerTurn()) << gameState.getPlayerTurn();
+
+    QLabel *trickLabel = new QLabel(this);
+    QString styleL = getStyle(0);
+    trickPlacement = (gameState.getHandToPlay() - gameState.playerPositions.key(name) + 3) % 4;
+
+//    trickPlacement = gameState.playerPositions.key(name) - trickPlacement;
+    // Swap around?
+    // trickPlacement = trickPlacement - gameState.playerPositions.key(name);
+    qDebug() << "Trick placement:" << trickPlacement;
+    qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3 - gameState.playerPositions.key(name)) %4;
+    qDebug() << "My guess 2 (dummy only):" << (gameState.getDummy() + 3 - gameState.playerPositions.key(name)) %4;
+
+    trickPool[trickPos] = trickLabel;
+    trickPool[trickPos]->setStyleSheet(styleL);
+
+    if (trickPlacement == 0)
     {
-        qDebug() << "DUMMY HAND MUST BE PLAYED";
-        qDebug() <<"DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
-        qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();
-        qDebug() <<"PLAYER TURN:" << gameState.getPlayerName(gameState.getPlayerTurn()) << gameState.getPlayerTurn();
-        QLabel *trickLabel = new QLabel(this);
-        QString styleL = getStyle(0);
-        trickPlacement =gameState.getDummy()-1;
-
-        // Overflow
-        if (trickPlacement == -1)
-        {
-            trickPlacement = 3;
-        }
-
-        trickPlacement = gameState.playerPositions.key(name) - trickPlacement;
-        // Swap around?
-        // trickPlacement = trickPlacement - gameState.playerPositions.key(name);
-        qDebug() << "Trick placement:" << trickPlacement;
-        qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3 - gameState.playerPositions.key(name)) %4;
-        qDebug() << "My guess 2:" << (gameState.getDummy() + 3 - gameState.playerPositions.key(name)) %4;
-
-        if (trickPlacement == 0)
-        {
-            // Bottom
-            trickPlacement = 0;
-            trickPool[trickPos] = trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(900,500,101,141);
-            trickPool[trickPos]->show();
-        }
-        else if (trickPlacement == -1 || trickPlacement == 3)
-        {
-            // Left
-            trickPlacement = 1;
-            trickPool[trickPos]= trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(820,450,101,141);
-            trickPool[trickPos]->show();
-        }
-        else if (trickPlacement == -2 || trickPlacement == 2)
-        {
-            // Top
-            trickPlacement = 2;
-            trickPool[trickPos]= trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(900,400,101,141);
-            trickPool[trickPos]->show();
-        }
-        else if (trickPlacement == -3 || trickPlacement == 1)
-        {
-            // Right
-            trickPlacement = 3;
-            trickPool[trickPos]= trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(1000,450,101,141);
-            trickPool[trickPos]->show();
-        }
+        // Bottom
+        trickPool[trickPos]->setGeometry(900,500,101,141);
     }
-    else
+    else if (trickPlacement == 1)
     {
-        QLabel *trickLabel = new QLabel(this);
-        QString styleL = getStyle(0);
-        trickPlacement = gameState.playerPositions.key(name) - gameState.getHandToPlay();
-//        trickPlacement = (gameState.getHandToPlay() - gameState.playerPositions.key(name) + 3)%4;
-        qDebug() << "NORMAL PERSON:" << name << gameState.playerPositions.key(name);
-        qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy()) << gameState.getDummy();
-        qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay()) << gameState.getHandToPlay();
-        qDebug() << "Trick placement:" << trickPlacement;
-        qDebug() << "My guess 1:" << (gameState.getHandToPlay() + 3 - gameState.playerPositions.key(name)) %4;
-        if (trickPlacement == 0)
-        {
-            // Top
-            trickPlacement = 0;
-            trickPool[trickPos]= trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(900,500,101,141);
-            trickPool[trickPos]->show();
-        }
-        else if (trickPlacement == -1 || trickPlacement == 3)
-        {
-            // Left
-            trickPlacement = 1;
-            trickPool[trickPos]= trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(820,450,101,141);
-            trickPool[trickPos]->show();
-        }
-        else if (trickPlacement == -2 || trickPlacement == 2)
-        {
-            // Top
-            trickPlacement = 2;
-            trickPool[trickPos]= trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(900,400,101,141);
-            trickPool[trickPos]->show();
-        }
-        else if (trickPlacement == -3 || trickPlacement == 1)
-        {
-            // Right
-            trickPlacement = 3;
-            trickPool[trickPos]= trickLabel;
-            trickPool[trickPos]->setStyleSheet(styleL);
-            trickPool[trickPos]->setGeometry(1000,450,101,141);
-            trickPool[trickPos]->show();
-        }
+        // Left
+        trickPool[trickPos]->setGeometry(820,450,101,141);
     }
+    else if (trickPlacement == 2)
+    {
+        // Top
+        trickPool[trickPos]->setGeometry(900,400,101,141);
+    }
+    else if (trickPlacement == 3)
+    {
+        // Right
+        trickPool[trickPos]->setGeometry(1000,450,101,141);
+    } else {
+        // Should never happen (Place in middle)
+        trickPool[trickPos]->setGeometry(900,450,101,141);
+    }
+
+    trickPool[trickPos]->show();
 
 }
 

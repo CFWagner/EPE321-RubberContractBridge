@@ -263,8 +263,8 @@ font-weight: bold;</string>
     <rect>
      <x>470</x>
      <y>420</y>
-     <width>111</width>
-     <height>16</height>
+     <width>141</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="styleSheet">

@@ -2,6 +2,7 @@
 #define SERVERLOBBY_H
 
 #include "hover.h"
+#include "loggerwindow.h"
 #include <QAbstractItemView>
 #include <QWidget>
 #include <QLabel>
@@ -47,6 +48,7 @@ private:
     int openSpots = 4;
     QVector<QString> playerNames = {"","","",""};
     int totalPlayers = 0;
+    LoggerWindow *loggerDisplay;
 };
 
 #endif // SERVERLOBBY_H

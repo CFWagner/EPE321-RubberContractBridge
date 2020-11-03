@@ -28,8 +28,9 @@ public slots:
     void serverPassword(QString passwordSent);
     void serverIPAddressPort(QHostAddress addressSent,quint16 portSent);
     void createLobby();
+    void rubberNumber(int rubberCount);
 private:
-    qint32 maxRubbers = 5;
+    qint32 maxRubbers = 1;
     ServerNetwork* serverNetwork = nullptr;
     GameServer* gameServer = nullptr;
     ServerLogin* serverLoginWindow = nullptr;

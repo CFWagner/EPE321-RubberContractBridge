@@ -65,7 +65,7 @@ void Server::playersSelected(QVector<QString> playerNames)
     // Instantiate logger window and logger
     loggerWindow = new LoggerWindow();
     logger = new Logger();
-    connect(loggerWindow, &LoggerWindow::receivedLog, logger, &Logger::sendLog);
+    connect(logger, &Logger::sendLog, loggerWindow, &LoggerWindow::receivedLog);
     connect(gameServer, &GameServer::logGenerated, logger, &Logger::log);
 
     // Create players and add to game server
@@ -126,9 +126,16 @@ void Server::serverIPAddressPort(QHostAddress addressSent, quint16 portSent)
     serverNetwork->initServer(addressSent, portSent);
 }
 
+// Slot for when rubber number is set by server lobby
+void Server::rubberNumber(int rubberCount)
+{
+    maxRubbers = rubberCount;
+}
+
 void Server::createLobby()
 {
     serverLobby = new ServerLobby();
+    connect(serverLobby, &ServerLobby::rubberNumber, this, &Server::rubberNumber);
     connect(serverLobby, &ServerLobby::playersSelected, this,&Server::playersSelected);
     connect(serverNetwork,&ServerNetwork::playerJoined, serverLobby, &ServerLobby::addPlayer);
     connect(serverNetwork,&ServerNetwork::playerDisconnected, serverLobby, &ServerLobby::removePlayer);

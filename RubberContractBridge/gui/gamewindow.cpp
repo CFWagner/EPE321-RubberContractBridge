@@ -18,7 +18,7 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
     connect(this,&GameWindow::cardAction, clientNetwork,&ClientNetwork::txMoveSelected);
     setupWindow();
     staticGUIElements();
-//    this->showMaximized();
+    //    this->showMaximized();
     this->showFullScreen();
 }
 
@@ -864,6 +864,9 @@ void GameWindow::setupWindow()
 
 void GameWindow::on_messagerB_clicked()
 {
-    emit sendMessage(ui->messageEdit->text());
-    ui->messageEdit->clear();
+    if (ui->messageEdit->text() != "")
+    {
+        emit sendMessage(ui->messageEdit->text());
+        ui->messageEdit->clear();
+    }
 }

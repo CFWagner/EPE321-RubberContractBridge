@@ -309,10 +309,10 @@ void GameWindow::addCardToTrick()
     {
         QLabel *trickLabel = new QLabel(this);
         QString styleL = getStyle(0);
-        trickPlacement =gameState.playerPositions.key(name) - gameState.getHandToPlay();
-        qDebug() << "NORMAL PERSON";
-        qDebug() <<"DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
-        qDebug() <<"Hand side:" << gameState.getPlayerName(gameState.getHandToPlay());
+        trickPlacement = gameState.playerPositions.key(name) - gameState.getHandToPlay();
+        qDebug() << "NORMAL PERSON POS:" << gameState.playerPositions.key(name);
+        qDebug() << "DUMMY POS:" << gameState.getPlayerName(gameState.getDummy());
+        qDebug() << "Hand side:" << gameState.getPlayerName(gameState.getHandToPlay());
         if (trickPlacement == 0)
         {
             trickPlacement = 0;

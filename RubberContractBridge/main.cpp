@@ -1,7 +1,7 @@
 #include "gui/entrywindow.h"
 #include <QApplication>
 #include <QTest>
-#include "unit-tests/game-server/testplayergamestate.h"
+#include "unit-tests/game-server/testgameserver.h"
 
 int main(int argc, char *argv[])
 {

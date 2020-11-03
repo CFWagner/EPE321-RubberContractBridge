@@ -19,7 +19,7 @@ void AI::notifyBidTurn()
     initialBidSet();
     Bid made;
     made = guessBid();
-    //for now no slots or signals since no integration
+    emit bidSelected(made);
 }
 void AI::notifyMoveTurn()
 {
@@ -27,8 +27,8 @@ void AI::notifyMoveTurn()
     initialMainSet();
     Card maker;
     maker=guessMove();
-    //for now no slots or signals since no integration
     cardRecovered = maker;
+    emit moveSelected(maker);
 }
 void AI::updateGameState(PlayerGameState gameState)
 {
@@ -56,7 +56,7 @@ void AI::notifyBidRejected(QString reason)
     }
     int seed = time(0);
     int number;
-    if (bidlist.length()<=10)
+    if (bidlist.length()<=10 && bidlist.length() > 0)
     {
         number = random(seed) % bidlist.length();
     }
@@ -66,8 +66,8 @@ void AI::notifyBidRejected(QString reason)
     }
     Bid made;
     made = bidlist.value(number);
-    //Call the signal here
     bidRecovered = made;
+    emit bidSelected(made);
 }
 void AI::notifyMoveRejected(QString reason)
 {
@@ -76,6 +76,21 @@ void AI::notifyMoveRejected(QString reason)
     //When move is made that move is saved, initial hand is generated from gamestate thus that should still stay the same after
     //this function is called. All that needs doing is removing card that caused the error from the hand and making
     // a new suggested move
+
+    // TEMP FIX 1 START: Trying to play from own hand when player needs to play from dummy hand
+    // Check if the player needs to play and play a random card from the dummy's hand
+    if(currentState.getHandToPlay() == currentState.getDummy()){
+        emit moveSelected(currentState.getDummyHand().getCard(rand() % currentState.getDummyHand().getCardCount()));
+        return;
+    }
+    // TEMP FIX 1 END
+
+    // TEMP FIX 2 START: AI can get into infinite loop of playing the wrong cards over and over
+    // Play randomly from hand (won't get stuck in loop as with AI)
+    emit moveSelected(currentState.getPlayerHand().getCard(rand() % currentState.getPlayerHand().getCardCount()));
+    return;
+    // TEMP FIX 2 END
+
         generateDeckOptions();
         generateAvailableCards();
     for (int i=0;i<canPlay.getCardCount();i++)
@@ -89,7 +104,7 @@ void AI::notifyMoveRejected(QString reason)
     int seed = time(0);
     int number = random(seed)%size;
     cardRecovered = canPlay.getCard(number);
-    //put signal here
+    emit moveSelected(cardRecovered);
 }
 void AI::gameTerminated(QString reason)
 {
@@ -143,14 +158,16 @@ void AI::generatebidlist()
 //removes invalid bids from pool
 void AI::removebids()
 {
-    currentbid = *currentState.getCurrentBid();
-    label:
-    for (int i=0;i<bidlist.size();i++)
-    {
-        if ((currentbid.getTricksAbove()*10+currentbid.getTrumpSuit())>=(bidlist.value(i).getTricksAbove()*10+bidlist.value(i).getTrumpSuit()))
+    if(currentState.getCurrentBid() != nullptr){
+        currentbid = *currentState.getCurrentBid();
+        label:
+        for (int i=0;i<bidlist.size();i++)
         {
-            bidlist.remove(i);
-            goto label;
+            if ((currentbid.getTricksAbove()*10+currentbid.getTrumpSuit())>=(bidlist.value(i).getTricksAbove()*10+bidlist.value(i).getTrumpSuit()))
+            {
+                bidlist.remove(i);
+                goto label;
+            }
         }
     }
 }
@@ -225,7 +242,8 @@ void AI::initialMainSet()
 }
 void AI::initialBidSet()
 {
-  currentbid= *currentState.getCurrentBid();
+    if(currentState.getCurrentBid() != nullptr)
+        currentbid= *currentState.getCurrentBid();
 }
 //generates available legal cards that can be selected from the hand
 void AI::generateAvailableCards()
@@ -274,10 +292,10 @@ void AI::generateAvailableCards()
      //playing after someone
         dummyPlay = CardSet();
         canPlay = CardSet();
-        Card trickCard;
+        const Card* trickCard;
         qint8 handAmount;
         // if card count goes from 1,2,3,4 gets the recent card played
-        trickCard = currentTricks.getCard(currentTricks.getCardCount()-1);
+        trickCard = currentState.getLastCardPlayed();
         handAmount = myhand.getCardCount();
         //check if trump or NT
         if (trump==4)
@@ -285,11 +303,11 @@ void AI::generateAvailableCards()
             //then it is no trump so any card higher than last played is valid for me and dummy
             for (int i = 0; i <= handAmount-1; i++)
             {
-                if (trickCard <myhand.getCard(i))
+                if (*trickCard <myhand.getCard(i))
                 {
                     canPlay.addCard(myhand.getCard(i));
                 }
-                if (trickCard <dummyhand.getCard(i))
+                if (*trickCard <dummyhand.getCard(i))
                 {
                     dummyPlay.addCard(dummyhand.getCard(i));
                 }
@@ -309,11 +327,11 @@ void AI::generateAvailableCards()
             //a trump is assigned select cards that are trump for player and dummy
             for (int i = 0; i <= handAmount-1; i++)
             {
-                if (trickCard.getSuit() == myhand.getCard(i).getSuit())
+                if ((*trickCard).getSuit() == myhand.getCard(i).getSuit())
                 {
                     canPlay.addCard(myhand.getCard(i));
                 }
-                if (trickCard.getSuit() == dummyhand.getCard(i).getSuit())
+                if ((*trickCard).getSuit() == dummyhand.getCard(i).getSuit())
                 {
                     dummyPlay.addCard(dummyhand.getCard(i));
                 }
@@ -331,6 +349,7 @@ void AI::generateAvailableCards()
                  dummyPlay=dummyhand;
             }
         }
+        delete trickCard;
     }// end of else for later moves
     //I do trust I needn't check for edge cases where the tricks are full yet I'm called?
 }
@@ -343,6 +362,13 @@ Card AI::guessMove()
     canPlay.orderHand();
     dummyPlay.orderHand();
     Card suggestion;
+
+    // TEMP FIX START: Trying to play from own hand when player needs to play from dummy hand
+    // Check if the player needs to play and play a random card from the dummy's hand
+    if(currentState.getHandToPlay() == currentState.getDummy())
+        return dummyhand.getCard(rand() % dummyhand.getCardCount());
+    // TEMP FIX END
+
     if ((myhand.getCard(0)==canPlay.getCard(0)) && ((myhand.getCard(myhand.getCardCount()-1)==canPlay.getCard(canPlay.getCardCount()-1))) && (myhand.getCardCount()==canPlay.getCardCount()))
     {
         // this means NT or nothing wins

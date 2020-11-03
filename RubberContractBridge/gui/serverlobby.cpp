@@ -72,8 +72,8 @@ QVector<QString> ServerLobby::getplayerNames()
 
 void ServerLobby::addPlayersLobby()
 {
-    QString namesC [4] = {ui->north->text(),ui->south->text(),ui->east->text(),ui->west->text()};
     bool add = true;
+    QString namesC [4] = {ui->north->text(),ui->south->text(),ui->east->text(),ui->west->text()};
     for(int i = 0;i < ui->playerList->selectedItems().length();++i)
     {
         if(namesC->contains(ui->playerList->selectedItems()[i]->text()))
@@ -138,14 +138,40 @@ void ServerLobby::clearPlayersLobby()
 
 void ServerLobby::startGameB()
 {
-    if(openSpots == 0)
+    int mayStart = true;
+    if (ui->north->text() == ui->south->text()||ui->north->text() == ui->east->text()||ui->north->text() == ui->west->text())
     {
-        playerNames[0] = ui->north->text();
-        playerNames[1] = ui->south->text();
-        playerNames[2] = ui->east->text();
-        playerNames[3] = ui->west->text();
-        emit playersSelected(playerNames);
-        emit rubberNumber(ui->rubberCount->text().toInt());
+        mayStart = false;
+    }
+    if (ui->south->text() == ui->north->text()||ui->south->text() == ui->east->text()||ui->south->text() == ui->west->text())
+    {
+        mayStart = false;
+    }
+    if (ui->east->text() == ui->south->text()||ui->north->text() == ui->east->text()||ui->east->text() == ui->west->text())
+    {
+        mayStart = false;
+    }
+    if (ui->west->text() == ui->south->text()||ui->west->text() == ui->east->text()||ui->north->text() == ui->west->text())
+    {
+        mayStart = false;
+    }
+    if(mayStart)
+    {
+        if(openSpots == 0)
+        {
+            playerNames[0] = ui->north->text();
+            playerNames[1] = ui->south->text();
+            playerNames[2] = ui->east->text();
+            playerNames[3] = ui->west->text();
+            this->hide();
+            emit playersSelected(playerNames);
+            if(ui->rubberCount->text() == "" || ui->rubberCount->text().toInt()<1)
+            {
+                ui->rubberCount->text().clear();
+                ui->rubberCount->text() = 1;
+            }
+            emit rubberNumber(ui->rubberCount->text().toInt());
+        }
     }
 }
 

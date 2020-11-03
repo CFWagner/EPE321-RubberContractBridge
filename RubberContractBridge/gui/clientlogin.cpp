@@ -49,8 +49,17 @@ void ClientLogin::staticGUIElements()
 
 void ClientLogin::attemptLoginButton()
 {
+    int countL = ui->usernameLine->text().length();
+    int countS = 0;
+    for(int i = 0; i < ui->usernameLine->text().length();i++)
+    {
+        if (ui->usernameLine->text().at(i) == " ")
+        {
+            countS++;
+        }
+    }
     username = ui->usernameLine->text();
-    if (username.contains("BOT") == true || username == "")
+    if (username.contains("BOT") == true || username == "" || countS == countL)
     {
         QMessageBox::warning(this,"Login requirments","Your username may not start with BOT or be empty.");
     }

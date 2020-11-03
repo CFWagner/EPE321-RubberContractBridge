@@ -285,6 +285,9 @@ font-weight: bold;</string>
      <height>21</height>
     </rect>
    </property>
+   <property name="text">
+    <string>1</string>
+   </property>
   </widget>
  </widget>
  <resources/>

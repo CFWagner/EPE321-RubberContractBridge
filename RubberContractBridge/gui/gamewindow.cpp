@@ -18,7 +18,7 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
     connect(this,&GameWindow::cardAction, clientNetwork,&ClientNetwork::txMoveSelected);
     setupWindow();
     staticGUIElements();
-//    this->showMaximized();
+    //    this->showMaximized();
     this->showFullScreen();
 }
 
@@ -85,7 +85,6 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case (PLAY_START):
     {
         qDebug () << "DUMMY" << gameState.getDummy();
-        createDummyHand();
         indicatePlayerTurn();
         bidBoard->hide();
         gameBoard->show();
@@ -101,6 +100,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case (PLAYER_MOVED):
     {
         qDebug() <<gameState.getLastCardPlayed()->getRank();
+        createDummyHand();
         indicatePlayerTurn();
         addCardToTrick();
         trickPos += 1;
@@ -864,6 +864,9 @@ void GameWindow::setupWindow()
 
 void GameWindow::on_messagerB_clicked()
 {
-    emit sendMessage(ui->messageEdit->text());
-    ui->messageEdit->clear();
+    if (ui->messageEdit->text() != "")
+    {
+        emit sendMessage(ui->messageEdit->text());
+        ui->messageEdit->clear();
+    }
 }

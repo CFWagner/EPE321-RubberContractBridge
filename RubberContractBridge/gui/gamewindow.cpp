@@ -137,6 +137,11 @@ void GameWindow::updateGameState(PlayerGameState gameState)
         }
         break;
     }
+    case(MATCH_END):
+    {
+        QMessageBox::warning(this,"GAME ENDED","GAME ENDED");
+        break;
+    }
     default:
         break;
     }
@@ -224,10 +229,10 @@ void GameWindow::createBidTable()
             bidTable[i+21]->setGeometry(845,300+40*i,61,31);
             bidTable[i+28]->setGeometry(760,300+40*i,61,31);
             bidTable[i]->show();
-            bidTable[i+24]->show();
+            bidTable[i+7]->show();
+            bidTable[i+14]->show();
             bidTable[i+21]->show();
             bidTable[i+28]->show();
-            bidTable[i+7]->show();
         }
     }
     bidTableCreated = true;

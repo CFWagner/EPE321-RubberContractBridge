@@ -19,7 +19,8 @@ GameWindow::GameWindow(ClientNetwork *clientNetwork, QWidget *parent) : QWidget(
     connect(this,&GameWindow::cardAction, clientNetwork,&ClientNetwork::txMoveSelected);
     setupWindow();
     staticGUIElements();
-    this->showMaximized();
+//    this->showMaximized();
+    this->showFullScreen();
 }
 
 GameWindow::~GameWindow()

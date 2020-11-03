@@ -164,13 +164,13 @@ void ServerLobby::startGameB()
             playerNames[2] = ui->east->text();
             playerNames[3] = ui->west->text();
             this->hide();
+            emit rubberNumber(ui->rubberCount->text().toInt());
             emit playersSelected(playerNames);
             if(ui->rubberCount->text() == "" || ui->rubberCount->text().toInt()<1)
             {
                 ui->rubberCount->text().clear();
                 ui->rubberCount->text() = 1;
             }
-            emit rubberNumber(ui->rubberCount->text().toInt());
         }
     }
 }

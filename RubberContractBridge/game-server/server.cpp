@@ -1,5 +1,5 @@
 #include "server.h"
-#include "ai/dumbai.h"
+#include "ai/ai.h"
 #include "network/playernetwork.h"
 
 // Default constructor
@@ -95,7 +95,7 @@ void Server::playersSelected(QVector<QString> playerNames)
         Player* player;
         // Create AI player
         if(playerName.contains("BOT")){
-            player = new DumbAI();
+            player = new AI();
             player->setPlayerName(playerName);
             player->setPosition(position);
         }
@@ -136,11 +136,13 @@ void Server::rubberNumber(int rubberCount)
     maxRubbers = rubberCount;
 }
 
+// Deallocate the servers memory
 void Server::closeServer()
 {
     delete this;
 }
 
+// Instantiate server lobby GUI and connect slots and signals
 void Server::createLobby()
 {
     serverLobby = new ServerLobby();

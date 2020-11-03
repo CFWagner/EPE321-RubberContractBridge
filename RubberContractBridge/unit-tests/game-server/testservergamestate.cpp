@@ -31,6 +31,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     QCOMPARE(serverState.getDeck().getCardCount(), 52);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
 
     // Check that the deck does not contain any duplicate cards
     QVector<Card> deckCardList;
@@ -52,6 +53,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricks().size(), 0);
     QCOMPARE(serverState.getDealer(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
 
     // Verify correct signals were emitted
     QCOMPARE(spyGameEvent.count(), 1);
@@ -72,6 +74,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
@@ -82,6 +85,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), SOUTH);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
@@ -92,6 +96,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
@@ -103,6 +108,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getPlayerTurn(), EAST);
     QCOMPARE(serverState.getDealer(), EAST);
     QCOMPARE(spyGameEvent.count(), 2);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
     arguments = spyGameEvent.takeFirst();
@@ -118,6 +124,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), SOUTH);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
@@ -142,6 +149,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
@@ -166,6 +174,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
@@ -190,6 +199,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
 
@@ -203,6 +213,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getContractBid(), nullptr);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
     QCOMPARE(spyGameEvent.count(), 2);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
     arguments = spyGameEvent.takeFirst();
@@ -224,6 +235,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getHandToPlay(), EAST);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
     QCOMPARE(spyGameEvent.count(), 4);
+    QCOMPARE(serverState.getLastCardPlayed(), nullptr);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_BID);
     arguments = spyGameEvent.takeFirst();
@@ -314,6 +326,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     QCOMPARE(serverState.getPlayerHands().value(EAST).containsCard(Card(DIAMONDS, EIGHT)), false);
     QCOMPARE(spyGameEvent.count(), 1);
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, EIGHT));
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
 
@@ -328,6 +341,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getHandToPlay(), WEST);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
     QCOMPARE(serverState.getPlayerHands().value(SOUTH).containsCard(Card(DIAMONDS, TWO)), false);
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, TWO));
     QCOMPARE(spyGameEvent.count(), 1);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
@@ -342,6 +356,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     QCOMPARE(serverState.getPlayerHands().value(WEST).containsCard(Card(SPADES, TWO)), false);
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, TWO));
     QCOMPARE(spyGameEvent.count(), 1);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
@@ -366,6 +381,7 @@ void TestServerGameState::testServerGameState()
     QCOMPARE(serverState.getTricksWon(WEST), 0);
     QCOMPARE(serverState.getTricksWon(N_S), 1);
     QCOMPARE(serverState.getTricksWon(E_W), 0);
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, NINE));
     QCOMPARE(spyGameEvent.count(), 3);
     arguments = spyGameEvent.takeFirst();
     QVERIFY(arguments.at(0).toInt() == PLAYER_MOVED);
@@ -376,11 +392,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 2nd trick where WEST wins with trump card
     serverState.updatePlayState(Card(DIAMONDS, QUEEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, QUEEN));
     serverState.updatePlayState(Card(DIAMONDS, THREE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, THREE));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(DIAMONDS, SIX));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, SIX));
     serverState.updatePlayState(Card(CLUBS, JACK));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, JACK));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getTricks().value(1).getCard(0), Card(DIAMONDS, QUEEN));
     QCOMPARE(serverState.getTricks().value(1).getCard(1), Card(DIAMONDS, THREE));
@@ -415,11 +435,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 3rd trick
     serverState.updatePlayState(Card(SPADES, QUEEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, QUEEN));
     serverState.updatePlayState(Card(SPADES, KING));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, KING));
     serverState.updatePlayState(Card(CLUBS, NINE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, NINE));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(SPADES, FOUR));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, FOUR));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), EAST);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
@@ -449,11 +473,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 4th trick
     serverState.updatePlayState(Card(HEARTS, KING));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, KING));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(HEARTS, THREE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, THREE));
     serverState.updatePlayState(Card(HEARTS, FOUR));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, FOUR));
     serverState.updatePlayState(Card(HEARTS, FIVE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, FIVE));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), EAST);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
@@ -483,11 +511,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 5th trick
     serverState.updatePlayState(Card(CLUBS, QUEEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, QUEEN));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(CLUBS, SEVEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, SEVEN));
     serverState.updatePlayState(Card(CLUBS, EIGHT));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, EIGHT));
     serverState.updatePlayState(Card(CLUBS, ACE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, ACE));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
@@ -517,11 +549,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 6th trick
     serverState.updatePlayState(Card(HEARTS, NINE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, NINE));
     serverState.updatePlayState(Card(HEARTS, TWO));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, TWO));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(HEARTS, QUEEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, QUEEN));
     serverState.updatePlayState(Card(HEARTS, SIX));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, SIX));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
@@ -551,9 +587,13 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 7th trick
     serverState.updatePlayState(Card(HEARTS, ACE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, ACE));
     serverState.updatePlayState(Card(HEARTS, TEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, TEN));
     serverState.updatePlayState(Card(DIAMONDS, FIVE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, FIVE));
     serverState.updatePlayState(Card(HEARTS, SEVEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, SEVEN));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
@@ -583,9 +623,13 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 8th trick
     serverState.updatePlayState(Card(DIAMONDS, KING));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, KING));
     serverState.updatePlayState(Card(CLUBS, KING));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, KING));
     serverState.updatePlayState(Card(SPADES, SEVEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, SEVEN));
     serverState.updatePlayState(Card(DIAMONDS, SEVEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, SEVEN));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), WEST);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
@@ -615,11 +659,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 9th trick
     serverState.updatePlayState(Card(SPADES, ACE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, ACE));
     serverState.updatePlayState(Card(SPADES, NINE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, NINE));
     serverState.updatePlayState(Card(HEARTS, JACK));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, JACK));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(SPADES, FIVE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, FIVE));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), WEST);
     QCOMPARE(serverState.getPlayerTurn(), WEST);
@@ -649,11 +697,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 10th trick
     serverState.updatePlayState(Card(SPADES, TEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, TEN));
     serverState.updatePlayState(Card(CLUBS, SIX));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, SIX));
     serverState.updatePlayState(Card(CLUBS, TEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, TEN));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(SPADES, JACK));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, JACK));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), EAST);
     QCOMPARE(serverState.getPlayerTurn(), EAST);
@@ -683,11 +735,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 11th trick
     serverState.updatePlayState(Card(DIAMONDS, ACE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, ACE));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(DIAMONDS, FOUR));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, FOUR));
     serverState.updatePlayState(Card(SPADES, THREE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, THREE));
     serverState.updatePlayState(Card(CLUBS, TWO));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, TWO));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
@@ -717,11 +773,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 12th trick
     serverState.updatePlayState(Card(CLUBS, FIVE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, FIVE));
     serverState.updatePlayState(Card(CLUBS, FOUR));
+    QCOMPARE(*serverState.getLastCardPlayed(),Card(CLUBS, FOUR) );
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(HEARTS, EIGHT));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(HEARTS, EIGHT));
     serverState.updatePlayState(Card(SPADES, SIX));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, SIX));
     QCOMPARE(serverState.getPhase(), CARDPLAY);
     QCOMPARE(serverState.getHandToPlay(), NORTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
@@ -751,11 +811,15 @@ void TestServerGameState::testServerGameState()
 
     // Test attributes after playing 13th trick
     serverState.updatePlayState(Card(CLUBS, THREE));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(CLUBS, THREE));
     serverState.updatePlayState(Card(DIAMONDS, TEN));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, TEN));
     QCOMPARE(serverState.getHandToPlay(), SOUTH);
     QCOMPARE(serverState.getPlayerTurn(), NORTH);
     serverState.updatePlayState(Card(DIAMONDS, JACK));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(DIAMONDS, JACK));
     serverState.updatePlayState(Card(SPADES, EIGHT));
+    QCOMPARE(*serverState.getLastCardPlayed(), Card(SPADES, EIGHT));
     QCOMPARE(serverState.getPhase(), BIDDING);
     QCOMPARE(serverState.getPlayerTurn(), SOUTH);
     QCOMPARE(serverState.getRubberNumber(), 1);

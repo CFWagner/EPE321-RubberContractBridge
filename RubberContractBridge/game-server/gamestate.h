@@ -34,6 +34,7 @@ public:
     qint8 getTricksWon(Team team) const;
     bool getTeamVulnerable(Team team) const;
     const Score getScore() const;
+    const Card* getLastCardPlayed() const;
 protected:
     GamePhase phase;
     // currentBid refers to the most recent valid bid made during the bidding phase

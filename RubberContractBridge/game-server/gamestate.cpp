@@ -109,6 +109,21 @@ qint8 GameState::getTrickNumber() const
     return trickNumber;
 }
 
+// Getter for the last card played during the cardplay game phase
+// Returns nullptr during bidding phase and before the first card has been played
+// When in new trick returns the last card played in the last trick
+// New card object seperate from internal trick card is returned and must be memory managed
+const Card* GameState::getLastCardPlayed() const
+{
+    // Return no card if no tricks have been played or if no card has been played in the first trick
+    if(tricks.length() == 0 || tricks[0].getCardCount() == 0)
+        return nullptr;
+    else if(tricks.last().getCardCount() == 0)
+        return new Card(tricks[tricks.length() - 2].getCard(3));
+    else
+        return new Card(tricks.last().getCard(tricks.last().getCardCount() - 1));
+}
+
 // Getter for the set of tricks that have been played so far in the current game.
 // The element at index 0 is the first trick played and the last element is the latest trick
 // The element at index 0 in the card set is the first card played in the trick and the last

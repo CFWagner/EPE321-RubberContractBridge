@@ -30,7 +30,7 @@ public:
     void read(const QJsonObject &json);
     void write(QJsonObject &json) const;
     bool operator ==(const PlayerGameState& playerGameState) const;
-    QMap<PlayerPosition, QString> playerPositions; // Map of the postions of the players to the name of the players ine each position
+    QMap<PlayerPosition, QString> playerPositions; // Map of the postions of the players to the name of the players ine each position;
 private:
     GameEvent gameEvent; // Most recent event in the game that can be used to identify which attributes likely changed
     QMap<PlayerPosition, qint8> playerCardCount; // Map of the postions of the players to number of cards each player holds

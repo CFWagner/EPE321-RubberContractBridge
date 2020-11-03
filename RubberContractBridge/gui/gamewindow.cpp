@@ -907,3 +907,17 @@ void GameWindow::on_messagerB_clicked()
         ui->messageEdit->clear();
     }
 }
+
+void GameWindow::keyPressEvent(QKeyEvent *event)
+{
+    qDebug() << "SENDMESSAGE" <<event->key();
+
+    if( event->key() == Qt::Key_Enter )
+    {
+        if (ui->messageEdit->text() != "")
+        {
+            emit sendMessage(ui->messageEdit->text());
+            ui->messageEdit->clear();
+        }
+    }
+}

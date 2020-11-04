@@ -459,24 +459,24 @@ void GameWindow::updateTrickWon()
     }
     else if (name == gameState.getPlayerName(EAST))
     {
-        ui->trickCount0->setText(gameState.getPlayerName(EAST));
-        ui->trickCount1->setText(gameState.getPlayerName(SOUTH));
-        ui->trickCount2->setText(gameState.getPlayerName(WEST));
-        ui->trickCount3->setText(gameState.getPlayerName(NORTH));
+        ui->trickCount0->setText(QString::number(gameState.getTricksWon(EAST)));
+        ui->trickCount1->setText(QString::number(gameState.getTricksWon(SOUTH)));
+        ui->trickCount2->setText(QString::number(gameState.getTricksWon(WEST)));
+        ui->trickCount3->setText(QString::number(gameState.getTricksWon(NORTH)));
     }
     else if (name == gameState.getPlayerName(WEST))
     {
-        ui->trickCount0->setText(gameState.getPlayerName(WEST));
-        ui->trickCount1->setText(gameState.getPlayerName(NORTH));
-        ui->trickCount2->setText(gameState.getPlayerName(EAST));
-        ui->trickCount3->setText(gameState.getPlayerName(SOUTH));
+        ui->trickCount0->setText(QString::number(gameState.getTricksWon(SOUTH)));
+        ui->trickCount1->setText(QString::number(gameState.getTricksWon(WEST)));
+        ui->trickCount2->setText(QString::number(gameState.getTricksWon(NORTH)));
+        ui->trickCount3->setText(QString::number(gameState.getTricksWon(EAST)));
     }
     else if (name == gameState.getPlayerName(SOUTH))
     {
-        ui->trickCount0->setText(gameState.getPlayerName(SOUTH));
-        ui->trickCount1->setText(gameState.getPlayerName(WEST));
-        ui->trickCount2->setText(gameState.getPlayerName(NORTH));
-        ui->trickCount3->setText(gameState.getPlayerName(EAST));
+        ui->trickCount0->setText(QString::number(gameState.getTricksWon(WEST)));
+        ui->trickCount1->setText(QString::number(gameState.getTricksWon(NORTH)));
+        ui->trickCount2->setText(QString::number(gameState.getTricksWon(EAST)));
+        ui->trickCount3->setText(QString::number(gameState.getTricksWon(SOUTH)));
     }
 }
 

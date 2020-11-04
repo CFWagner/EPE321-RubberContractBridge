@@ -47,9 +47,9 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>70</x>
      <y>70</y>
-     <width>461</width>
+     <width>491</width>
      <height>391</height>
     </rect>
    </property>
@@ -61,7 +61,7 @@
      <rect>
       <x>20</x>
       <y>30</y>
-      <width>121</width>
+      <width>151</width>
       <height>351</height>
      </rect>
     </property>
@@ -72,7 +72,7 @@
    <widget class="QPlainTextEdit" name="NS">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>170</x>
       <y>30</y>
       <width>151</width>
       <height>351</height>
@@ -85,7 +85,7 @@
    <widget class="QPlainTextEdit" name="EW">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>320</x>
       <y>30</y>
       <width>151</width>
       <height>351</height>
@@ -98,7 +98,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>200</x>
       <y>10</y>
       <width>101</width>
       <height>21</height>
@@ -116,7 +116,7 @@ font-weight: bold;</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>350</x>
       <y>10</y>
       <width>81</width>
       <height>21</height>

@@ -312,9 +312,9 @@ font: 75 16pt &quot;MS Shell Dlg 2&quot;;</string>
    <property name="geometry">
     <rect>
      <x>1120</x>
-     <y>810</y>
+     <y>805</y>
      <width>31</width>
-     <height>31</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="styleSheet">

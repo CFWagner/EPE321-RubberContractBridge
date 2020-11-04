@@ -827,7 +827,20 @@ void GameWindow::setupWindow()
     this->setFixedSize(1920,1080);
     this->setWindowTitle ("Rubber Contract Bridge");
     setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
+    QPixmap trickTs(":/resources/guiResources/buttons/trickPos.png");
     ui->ScoreButon->setIcon(QIcon(":/resources/guiResources/buttons/SCORE.png"));
+    ui->topT->setPixmap(trickTs);
+    ui->leftT->setPixmap(trickTs);
+    ui->rightT->setPixmap(trickTs);
+    ui->botT->setPixmap(trickTs);
+    ui->topT->setGeometry(ui->topT->pos().x(),ui->topT->pos().y(),51,51);
+    ui->leftT->setGeometry(ui->leftT->pos().x(),ui->leftT->pos().y(),51,51);
+    ui->rightT->setGeometry(ui->rightT->pos().x(),ui->rightT->pos().y(),51,51);
+    ui->botT->setGeometry(ui->botT->pos().x(),ui->botT->pos().y(),51,51);
+    ui->topT->show();
+    ui->leftT->show();
+    ui->rightT->show();
+    ui->botT->show();
 }
 
 void GameWindow::on_messagerB_clicked()

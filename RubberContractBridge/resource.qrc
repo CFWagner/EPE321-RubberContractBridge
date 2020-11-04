@@ -127,5 +127,6 @@
         <file>guiResources/buttons/turn.png</file>
         <file>guiResources/background/LoggerBack.png</file>
         <file>guiResources/buttons/SCORE.png</file>
+        <file>guiResources/buttons/trickPos.png</file>
     </qresource>
 </RCC>

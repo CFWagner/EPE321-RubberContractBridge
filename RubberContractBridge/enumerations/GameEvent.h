@@ -13,7 +13,8 @@ enum GameEvent{
     PLAYER_MOVED, // A player has completed their turn during the card-playing phase
     TRICK_END, // A trick has been completed during the card-playing phase
     PLAY_END, // The card-playing phase of the game has been completed
-    MATCH_END // The match has been completed
+    MATCH_END, // The match has been completed
+    RUBBER_COMPLETED
 };
 
 #endif // GAMEEVENT_H

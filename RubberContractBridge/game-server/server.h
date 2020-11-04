@@ -30,6 +30,8 @@ public slots:
     void createLobby();
     void rubberNumber(int rubberCount);
     void closeServer();
+private slots:
+    void clientDisconnected();
 private:
     qint32 maxRubbers = 1;
     ServerNetwork* serverNetwork = nullptr;

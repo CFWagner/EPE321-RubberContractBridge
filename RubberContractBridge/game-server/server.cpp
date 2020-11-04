@@ -102,7 +102,10 @@ void Server::playersSelected(QVector<QString> playerNames)
         // Create human player
         else{
             QTcpSocket* playerSocket = serverNetwork->getPlayerSoc(playerName);
-            player = new PlayerNetwork(this, playerName, playerSocket);
+            PlayerNetwork* tempPlayerNetwork = new PlayerNetwork(this, playerName, playerSocket);
+            // Connect player to client disconnected slot
+            connect(tempPlayerNetwork, &PlayerNetwork::clientDisconnected, this, &Server::clientDisconnected);
+            player = tempPlayerNetwork;
             player->setPosition(position);
         }
         // Connect players to logger
@@ -140,6 +143,15 @@ void Server::rubberNumber(int rubberCount)
 void Server::closeServer()
 {
     delete this;
+}
+
+void Server::clientDisconnected()
+{
+    PlayerNetwork* senderPlayerNetwork = (PlayerNetwork*) sender();
+    Player* tempPlayer = senderPlayerNetwork;
+    QVector<Player*> allPlayers  = gameServer->getPlayers();
+    for (int i = )
+    gameServer->getPlayers();
 }
 
 // Instantiate server lobby GUI and connect slots and signals

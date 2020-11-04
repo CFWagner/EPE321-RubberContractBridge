@@ -33,14 +33,12 @@ GameWindow::~GameWindow()
 void GameWindow::updateGameState(PlayerGameState gameState)
 {
     this->gameState = gameState;
-    qDebug() << "Receive the gameState: "<< gameState.getEvent();
-    qDebug() <<"Player name: " <<name;
-    qDebug() <<"Player turn: " <<gameState.getPlayerName(gameState.getPlayerTurn());
     this->gameState = gameState;
     switch(gameState.getEvent())
     {
     case (BID_START):
     {
+        updateGeneralInfo();
         indicatePlayerTurn();
         gameBoard->hide();
         bidBoard->show();
@@ -88,7 +86,6 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     case (PLAY_START):
     {
         dummyCreate  = true;
-        qDebug () << "DUMMY" << gameState.getDummy();
         indicatePlayerTurn();
         bidBoard->hide();
         gameBoard->show();
@@ -103,7 +100,6 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case (PLAYER_MOVED):
     {
-        qDebug() <<gameState.getLastCardPlayed()->getRank();
         if(dummyCreate)
         {
             createDummyHand();
@@ -116,6 +112,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case(TRICK_END):
     {
+        updateGeneralInfo();
         updateTrickWon();
         for(int i = 0; i <4;i++)
         {
@@ -124,7 +121,6 @@ void GameWindow::updateGameState(PlayerGameState gameState)
                 delete trickPool[i];
             }
         }
-        qDebug() << "END of trick";
         trickPos = 0;
         break;
     }
@@ -162,7 +158,6 @@ void GameWindow::receiveCard(CardSelected *card)
     if (cardsClickable && playerMayPlay)
     {
         playerMayPlay = false;
-        qDebug() << "Card selected "<< card->getSuit() << card->getRank();
         Card cardPlayed(card->getSuit(),card->getRank());
         emit cardAction(cardPlayed);
     }
@@ -321,8 +316,6 @@ void GameWindow::addCardToTrick()
 //////////////////////////////////////////////////////////
 void GameWindow::updateBidTable()
 {
-    qDebug() <<gameState.getCurrentBid()->getTricksAbove();
-    qDebug() <<gameState.getCurrentBid()->getTrumpSuit();
     if (gameState.getCurrentBid() != nullptr)
     {
         int counter = 0;
@@ -350,9 +343,6 @@ void GameWindow::updateBidTable()
             }
 
         }
-
-        qDebug() << "My pos: "<<gameState.playerPositions.key(name);
-        qDebug() << "Bid pos: "<<gameState.getCurrentBid()->bidder;
         int bidmaker = gameState.playerPositions.key(name) - gameState.getCurrentBid()->bidder;
         if (bidmaker == 0)
         {
@@ -480,6 +470,14 @@ void GameWindow::updateTrickWon()
     }
 }
 
+void GameWindow::updateGeneralInfo()
+{
+    ui->rubberN->setText("Rubber :"+ QString::number(gameState.getRubberNumber()));
+    ui->gameN->setText("Game :"+ QString::number(gameState.getGameNumber()));
+    ui->roundN->setText("Deal :"+ QString::number(gameState.getDealNumber()));
+    ui->trickN->setText("Trick :"+ QString::number(gameState.getTrickNumber()));
+}
+
 void GameWindow::createHandTable()
 {
     CardSet playerHand = gameState.getPlayerHand();
@@ -559,7 +557,7 @@ void GameWindow::createHandTable()
         cardMine = new CardSelected(playerHand.getCard(i).getSuit(),playerHand.getCard(i).getRank(),this);
         cardsInHand[i] = cardMine;
         cardsInHand[i] ->setStyleSheet(imageName+cardName);
-        cardsInHand[i] ->setGeometry(720+ i*30,940,101,141);
+        cardsInHand[i] ->setGeometry(720+ i*40,940,101,141);
         connect(cardsInHand[i],&CardSelected::sendCardPlayed,this,&GameWindow::receiveCard);
         cardsInHand[i]->show();
     }
@@ -651,13 +649,13 @@ void GameWindow::createDummyHand()
     int dummyPosition = gameState.playerPositions.key(name) - gameState.getDummy();
     if (dummyPosition == 0)
     {
-        qDebug() << "YOU ARE DUMMY";
+        qInfo() << "YOU ARE DUMMY";
     }
     else if (dummyPosition == -1 || dummyPosition == 3)
     {
         for (int i = 0; i< 13;++i)
         {
-            dummyHandSet[i]->setGeometry(40,320+30*i,101,141);
+            dummyHandSet[i]->setGeometry(40,280+40*i,101,141);
             dummyHandSet[i]->show();
         }
     }
@@ -665,7 +663,7 @@ void GameWindow::createDummyHand()
     {
         for (int i = 0; i< 13;++i)
         {
-            dummyHandSet[i]->setGeometry(720+30*i,40,101,141);
+            dummyHandSet[i]->setGeometry(680+40*i,40,101,141);
             dummyHandSet[i]->show();
         }
     }
@@ -673,7 +671,7 @@ void GameWindow::createDummyHand()
     {
         for (int i = 0; i< 13;++i)
         {
-            dummyHandSet[i]->setGeometry(1720,320+30*i,101,141);
+            dummyHandSet[i]->setGeometry(1720,280+40*i,101,141);
             dummyHandSet[i]->show();
         }
     }
@@ -709,14 +707,12 @@ void GameWindow::receiveBid(BidSelect *bidSelected)
         if(bidSelected->getBidCall() == BID)
         {
             playerMayBid = false;
-            qDebug() << "Bid made: " <<  bidSelected->getValue();
             Bid bidMade(gameState.getPlayerTurn(),bidSelected->getSuit(),bidSelected->getValue());
             emit bidAction(bidMade);
         }
         else
         {
             playerMayBid = false;
-            qDebug() << "PASS: " <<  bidSelected->getBidCall() << "FOR: "<<gameState.getPlayerTurn();
             Bid bidMade(gameState.getPlayerTurn(),bidSelected->getBidCall());
             emit bidAction(bidMade);
         }
@@ -726,13 +722,11 @@ void GameWindow::receiveBid(BidSelect *bidSelected)
 //SMALL FUNCTIONS//
 void GameWindow::playerTurnBid()
 {
-    qDebug() << "YOU MAY BID";
     playerMayBid = true;
 }
 
 void GameWindow::playerTurnMove()
 {
-    qDebug() << "YOU MAY MAKE CARD CHOICE";
     playerMayPlay = true;
 }
 

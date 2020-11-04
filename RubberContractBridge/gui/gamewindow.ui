@@ -280,7 +280,7 @@ font: 75 16pt &quot;MS Shell Dlg 2&quot;;</string>
      <x>1300</x>
      <y>540</y>
      <width>47</width>
-     <height>13</height>
+     <height>16</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -288,7 +288,7 @@ font: 75 16pt &quot;MS Shell Dlg 2&quot;;</string>
 font: 75 16pt &quot;MS Shell Dlg 2&quot;;</string>
    </property>
    <property name="text">
-    <string>1</string>
+    <string>0</string>
    </property>
   </widget>
   <widget class="QLabel" name="trickCount2">
@@ -324,6 +324,64 @@ font: 75 16pt &quot;MS Shell Dlg 2&quot;;</string>
    <property name="text">
     <string>0</string>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>10</y>
+     <width>151</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(255, 255, 255);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+font-weight: bold;</string>
+   </property>
+   <property name="title">
+    <string>Game Info:</string>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>131</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="rubberN">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="gameN">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="roundN">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="trickN">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
  </widget>
  <resources/>

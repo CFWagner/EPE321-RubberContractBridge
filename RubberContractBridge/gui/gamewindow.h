@@ -46,6 +46,7 @@ public slots:
     void setGameState(PlayerGameState gameState);
     QString getStyle(int);
     void updateTrickWon();
+    void updateGeneralInfo();
 
 signals:
     void bidAction(Bid bidMade);

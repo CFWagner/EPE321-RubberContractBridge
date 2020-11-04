@@ -53,12 +53,6 @@ void EntryWindow::staticGUIElements()
     connect(clientButton,&Hover::gotoClientLogin,this,&EntryWindow::goClientLogin);
 
     //Background
-    QLabel *title = new QLabel(this);
-    QFont westernFont("Arial", 24);
-    title->setFont(westernFont);
-    title->setText("RUBBER CONTRACT BRIDGE");
-    title->setGeometry(50,80,600,100);
-    title->setStyleSheet("color: white");
 }
 
 void EntryWindow::gotoServer()

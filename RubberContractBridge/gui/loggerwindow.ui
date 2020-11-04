@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>40</y>
+     <y>50</y>
      <width>781</width>
-     <height>641</height>
+     <height>631</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -34,7 +34,7 @@ font-weight: bold;</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>40</y>
+      <y>30</y>
       <width>741</width>
       <height>581</height>
      </rect>

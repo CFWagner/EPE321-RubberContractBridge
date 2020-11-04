@@ -20,6 +20,8 @@ public:
     quint32 getUndertricks(Team team) const;
     quint32 getHonors(Team team) const;
     quint32 getSlamBonuses(Team team) const;
+    quint32 getDoubleBonuses(Team team) const;
+    quint32 getReDoubleBonuses(Team team) const;
     quint32 getRubberBonuses(Team team) const;
     bool getTeamVulnerable(Team team) const;
     bool isGameWinner() const;

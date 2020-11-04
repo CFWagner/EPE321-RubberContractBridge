@@ -15,6 +15,7 @@ LoggerWindow::LoggerWindow(QWidget *parent) :
     this->setFixedSize(810,720);
     this->setWindowTitle ("Server Logger");
     ui->button_exit->setIcon(QIcon(":/resources/guiResources/buttons/exit_button.png"));
+    setWindowIcon(QIcon(":/resources/guiResources/cards/ace_hearts.png"));
     this->show();
 }
 

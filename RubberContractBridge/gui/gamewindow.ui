@@ -35,9 +35,9 @@
   <widget class="QLabel" name="you">
    <property name="geometry">
     <rect>
-     <x>935</x>
+     <x>915</x>
      <y>880</y>
-     <width>71</width>
+     <width>101</width>
      <height>21</height>
     </rect>
    </property>
@@ -52,9 +52,9 @@ color:rgb(255, 255, 255);</string>
   <widget class="QLabel" name="left">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>310</x>
      <y>520</y>
-     <width>71</width>
+     <width>91</width>
      <height>41</height>
     </rect>
    </property>
@@ -69,9 +69,9 @@ color:rgb(255, 255, 255);</string>
   <widget class="QLabel" name="top">
    <property name="geometry">
     <rect>
-     <x>935</x>
+     <x>915</x>
      <y>186</y>
-     <width>71</width>
+     <width>111</width>
      <height>21</height>
     </rect>
    </property>
@@ -88,7 +88,7 @@ color:rgb(255, 255, 255);</string>
     <rect>
      <x>1550</x>
      <y>520</y>
-     <width>71</width>
+     <width>91</width>
      <height>41</height>
     </rect>
    </property>
@@ -179,9 +179,21 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;</string>
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>140</width>
-     <height>55</height>
+     <width>130</width>
+     <height>40</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>130</width>
+     <height>40</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>130</width>
+     <height>40</height>
+    </size>
    </property>
    <property name="text">
     <string/>

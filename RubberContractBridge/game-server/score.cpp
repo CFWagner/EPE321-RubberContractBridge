@@ -401,6 +401,16 @@ quint32 Score::getSlamBonuses(Team team) const
     return slamBonuses[team];
 }
 
+quint32 Score::getDoubleBonuses(Team team) const
+{
+   return doubleBonuses[team];
+}
+
+quint32 Score::getReDoubleBonuses(Team team) const
+{
+   return redoubleBonuses[team];
+}
+
 // Getter for the rubber bonuses for the specified team
 quint32 Score::getRubberBonuses(Team team) const
 {

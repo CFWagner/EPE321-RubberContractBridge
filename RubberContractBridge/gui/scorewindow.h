@@ -30,9 +30,9 @@ private:
     QString undertricks = "Under score: ";
     QString honorsL = "Honors: ";
     QString slamBonusesL = "Slam bonus: ";
-    QString doubleBonusesL = "Slam bonus: ";
-    QString redoubleBonusesL = "Double bonus: ";
-    QString rubberBonusesL = "Redouble bonus: ";
+    QString doubleBonusesL = "Double bonus: ";
+    QString redoubleBonusesL = "Redouble bonus: ";
+    QString rubberBonusesL = "Rubber bonus: ";
     QString getTotalScoreL = "Total score: ";
 };
 

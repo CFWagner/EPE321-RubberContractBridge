@@ -45,6 +45,7 @@ public slots:
     void moveRejected(QString reason);
     void setGameState(PlayerGameState gameState);
     QString getStyle(int);
+    void updateTrickWon();
 
 signals:
     void bidAction(Bid bidMade);

@@ -21,6 +21,7 @@ public:
     const ServerGameState* getState() const;
     const QVector<Player*> getPlayers() const;
     void logScore();
+    void logMatchWinner();
 public slots:
     void gameEvent(GameEvent gameEvent);
     void bidSelected(Bid bid);

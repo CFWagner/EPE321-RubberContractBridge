@@ -233,9 +233,10 @@ void ClientNetwork::internalServerDisconnected()
     if (gameStarted){
         qInfo() << "internalServerDisconnected: Client: " + playerName + " emitted gameTerminated.";
 
-        // Let the GUI know that connection to the server has been lost.
-        emit gameTerminated("Client lost connection to the server.");
-
+        if (gameTerminatedOnce == false){
+            // Let the GUI know that connection to the server has been lost.
+            emit gameTerminated("Client lost connection to the server.");
+        }
         // Update relevant variables (Not complete list, since Client should be restarted.)
         gameStarted = false;
 
@@ -523,6 +524,7 @@ void ClientNetwork::rxGameTerminated(QJsonObject reasonObj)
         qInfo() << "rxGameTerminated: Data received from server has been incorrectly formatted.";
         return;
     }
-
+    gameTerminatedOnce = true;
     emit gameTerminated(reasonObj["TerminationReason"].toString());
+
 }

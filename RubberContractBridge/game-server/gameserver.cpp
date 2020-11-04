@@ -51,7 +51,7 @@ void GameServer::executeMatch(qint32 maxRubbers)
         notifyNextPlayerTurn();
         QCoreApplication::processEvents(QEventLoop::AllEvents);
         // Wait until player completes turn
-        while(!turnComplete)
+        while(!turnComplete && !matchComplete)
         {
             QCoreApplication::processEvents(QEventLoop::AllEvents);
         }
@@ -221,6 +221,12 @@ void GameServer::messageGenerated(QString message)
     Player* senderPlayer = (Player*) sender();
     for(Player* player: players)
         player->message(senderPlayer->getPlayerName(), message);
+}
+
+// Set the match completed variable
+void GameServer::setMatchCompleted(bool matchComplete)
+{
+    this->matchComplete = matchComplete;
 }
 
 // Getter for the server game state

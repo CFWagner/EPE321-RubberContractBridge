@@ -161,8 +161,8 @@ void Server::clientDisconnected()
         }
     }
 
-    // Terminate the server
-
+    // Terminate the game on the server side
+    gameServer->setMatchCompleted(true);
 }
 
 // Instantiate server lobby GUI and connect slots and signals

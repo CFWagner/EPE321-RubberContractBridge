@@ -25,6 +25,7 @@ public slots:
     void bidSelected(Bid bid);
     void moveSelected(Card card);
     void messageGenerated(QString message);
+    void setMatchCompleted(bool matchComplete);
 signals:
     void logGenerated(QString context, QString msg);
 private:

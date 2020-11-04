@@ -23,8 +23,9 @@ void GameServer::addPlayer(Player* player)
 }
 
 // Set up and start the bridge game
-void GameServer::executeMatch(qint32 maxRubbers)
+void GameServer::executeMatch(qint32 maxRubbers, bool verboseOutput)
 {
+    this->verboseOutput = verboseOutput;
     state = new ServerGameState();
 
     if(maxRubbers <= 0)
@@ -62,47 +63,6 @@ void GameServer::executeMatch(qint32 maxRubbers)
 void GameServer::broadcastStateUpdate(GameEvent gameEvent)
 {
     for(Player* player: players){
-        // TEMP DEBUG
-        QString event = "";
-        switch(gameEvent){
-        case BID_START:
-            event = "bid start";
-            break;
-        case BID_RESTART:
-            event = "bid restart";
-            break;
-        case PLAYER_BID:
-            event = "player bid";
-            break;
-        case BID_END:
-            event = "bid end";
-            break;
-        case PLAY_START:
-            event = "play start";
-            break;
-        case TRICK_START:
-            event = "trick start";
-            break;
-        case PLAYER_MOVED:
-            event = "player moved";
-            break;
-        case TRICK_END:
-            event = "trick";
-            break;
-        case PLAY_END:
-            event = "play end";
-            break;
-        case INITIALIZE:
-            event = "initialize";
-            break;
-        case MATCH_END:
-            event = "match end";
-            break;
-        }
-        // END TEMP DEBUG
-
-        qInfo() << "Broadcast: Event->" << player->getPlayerName() << " Event->" << event;
-
         PlayerGameState playerState = state->getPlayerGameState(player->getPosition(), players, gameEvent);
         player->updateGameState(playerState);
     }
@@ -124,11 +84,13 @@ void GameServer::notifyNextPlayerTurn()
     Player* playerTurn = getPlayerInPosition(state->getPlayerTurn());
     qInfo() << "Notify player turn: " << playerTurn->getPlayerName();
     if(state->getPhase() == BIDDING){
-        emit logGenerated("Game Server", playerTurn->getPlayerName() + " to bid");
+        if(verboseOutput)
+            emit logGenerated("Game Server", playerTurn->getPlayerName() + " to bid");
         playerTurn->notifyBidTurn();
     }
     else{
-        emit logGenerated("Game Server", playerTurn->getPlayerName() + " to play");
+        if(verboseOutput)
+            emit logGenerated("Game Server", playerTurn->getPlayerName() + " to play");
         playerTurn->notifyMoveTurn();
     }
 }
@@ -139,11 +101,13 @@ void GameServer::gameEvent(GameEvent gameEvent)
     switch(gameEvent){
     case BID_START:
         broadcastStateUpdate(gameEvent);
-        emit logGenerated("Game Server", "Bidding started");
+        if(verboseOutput)
+            emit logGenerated("Game Server", "Bidding started");
         break;
     case BID_RESTART:
         broadcastStateUpdate(gameEvent);
-        emit logGenerated("Game Server", "Bidding restarted");
+        if(verboseOutput)
+            emit logGenerated("Game Server", "Bidding restarted");
         break;
     case PLAYER_BID:
         broadcastStateUpdate(gameEvent);
@@ -152,7 +116,8 @@ void GameServer::gameEvent(GameEvent gameEvent)
         broadcastStateUpdate(gameEvent);
         break;
     case PLAY_START:
-        emit logGenerated("Game Server", "Cardplay started");
+        if(verboseOutput)
+            emit logGenerated("Game Server", "Cardplay started");
         broadcastStateUpdate(gameEvent);
         break;
     case TRICK_START:
@@ -162,11 +127,13 @@ void GameServer::gameEvent(GameEvent gameEvent)
         broadcastStateUpdate(gameEvent);
         break;
     case TRICK_END:
-        emit logGenerated("Game Server", "Trick completed");
+        if(verboseOutput)
+            emit logGenerated("Game Server", "Trick completed");
         broadcastStateUpdate(gameEvent);
         break;
     case PLAY_END:
-        emit logGenerated("Game Server", "Cardplay completed");
+         if(verboseOutput)
+            emit logGenerated("Game Server", "Cardplay completed");
         broadcastStateUpdate(gameEvent);
         break;
     case INITIALIZE:
@@ -188,12 +155,14 @@ void GameServer::bidSelected(Bid bid)
 
     // Check if bid is valid
     if(state->isBidValid(bid)){
-        emit logGenerated(senderPlayer->getPlayerName(), " Made bid");
+        if(verboseOutput)
+            emit logGenerated(senderPlayer->getPlayerName(), getBidInfo(bid));
         state->updateBidState(bid);
         turnComplete = true;
     }
     else{
-        emit logGenerated(senderPlayer->getPlayerName(), " Tried to make invalid bid");
+        if(verboseOutput)
+            emit logGenerated(senderPlayer->getPlayerName(), " Tried to make invalid bid");
         senderPlayer->notifyBidRejected("Invalid Bid");
     }
 }
@@ -205,12 +174,14 @@ void GameServer::moveSelected(Card card)
 
     // Check if card is valid
     if(state->isCardValid(card)){
-        emit logGenerated(senderPlayer->getPlayerName(), " Played card");
+        if(verboseOutput)
+            emit logGenerated(senderPlayer->getPlayerName(), " Played card " + getCardInfo(card));
         state->updatePlayState(card);
         turnComplete = true;
     }
     else{
-        emit logGenerated(senderPlayer->getPlayerName(), " Tried to play invalid card");
+        if(verboseOutput)
+            emit logGenerated(senderPlayer->getPlayerName(), " Tried to play invalid card");
         senderPlayer->notifyMoveRejected("Invalid Card");
     }
 }
@@ -235,7 +206,114 @@ const ServerGameState* GameServer::getState() const
     return state;
 }
 
+// Getter for players
 const QVector<Player*> GameServer::getPlayers() const
 {
     return players;
+}
+
+QString GameServer::getCardInfo(Card card)
+{
+    QString suit = "";
+    switch(card.getSuit()){
+    case CLUBS:
+        suit = "CLUBS";
+        break;
+    case HEARTS:
+        suit = "HEARTS";
+        break;
+    case SPADES:
+        suit = "SPADES";
+        break;
+    case DIAMONDS:
+        suit = "DIAMONDS";
+        break;
+    }
+
+    QString rank = "";
+    switch (card.getRank()) {
+    case TWO:
+        rank = "TWO";
+        break;
+    case THREE:
+        rank = "THREE";
+        break;
+    case FOUR:
+        rank = "FOUR";
+        break;
+    case FIVE:
+        rank = "FIVE";
+        break;
+    case SIX:
+        rank = "SIX";
+        break;
+    case SEVEN:
+        rank = "SEVEN";
+        break;
+    case EIGHT:
+        rank = "EIGHT";
+        break;
+    case NINE:
+        rank = "NINE";
+        break;
+    case TEN:
+        rank = "TEN";
+        break;
+    case JACK:
+        rank = "JACK";
+        break;
+    case QUEEN:
+        rank = "QUEEN";
+        break;
+    case KING:
+        rank = "KING";
+        break;
+    case ACE:
+        rank = "ACE";
+        break;
+    }
+
+    return rank + " of " + suit;
+}
+
+QString GameServer::getBidInfo(Bid bid)
+{
+    QString suit = "";
+    switch(bid.getTrumpSuit()){
+    case CLUBS:
+        suit = "CLUBS";
+        break;
+    case HEARTS:
+        suit = "HEARTS";
+        break;
+    case SPADES:
+        suit = "SPADES";
+        break;
+    case DIAMONDS:
+        suit = "DIAMONDS";
+        break;
+    case NONE:
+        suit = "no";
+        break;
+    }
+
+    QString oddTricks = QString::number(bid.getTricksAbove());
+
+    QString output = "";
+    switch(bid.getCall()){
+    case BID:
+        output = "Bid " + oddTricks + " odd tricks " + suit + " trump suit";
+        break;
+    case DOUBLE_BID:
+        output = "Doubled bid";
+        break;
+    case REDOUBLE_BID:
+        output = "Redoubled bid";
+        break;
+    case PASS:
+        output = "Passed on bid";
+        break;
+    }
+
+    return output;
 }

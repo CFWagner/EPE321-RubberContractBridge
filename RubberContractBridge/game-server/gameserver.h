@@ -17,7 +17,7 @@ public:
     explicit GameServer(QObject *parent = nullptr);
     ~GameServer();
     void addPlayer(Player* player);
-    void executeMatch(qint32 maxRubbers);
+    void executeMatch(qint32 maxRubbers, bool verboseOutput);
     const ServerGameState* getState() const;
     const QVector<Player*> getPlayers() const;
 public slots:
@@ -29,11 +29,14 @@ public slots:
 signals:
     void logGenerated(QString context, QString msg);
 private:
+    QString getCardInfo(Card card);
+    QString getBidInfo(Bid bid);
     void broadcastStateUpdate(GameEvent gameEvent);
     Player* getPlayerInPosition(PlayerPosition position);
     void notifyNextPlayerTurn();
     bool turnComplete;
     bool matchComplete;
+    bool verboseOutput;
     ServerGameState* state = nullptr;
     QVector<Player*> players;
 };

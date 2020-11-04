@@ -145,13 +145,24 @@ void Server::closeServer()
     delete this;
 }
 
+// Inform all other players that a client had been disconnected.
 void Server::clientDisconnected()
 {
+    // Sender info (this client has been disconnected).
     PlayerNetwork* senderPlayerNetwork = (PlayerNetwork*) sender();
-    Player* tempPlayer = senderPlayerNetwork;
+    Player* senderPlayer = senderPlayerNetwork;
+    QString senderPlayerName = senderPlayer->getPlayerName();
+
+    // Get all the players
     QVector<Player*> allPlayers  = gameServer->getPlayers();
-    for (int i = )
-    gameServer->getPlayers();
+    for (int i = allPlayers.count() - 1; i >= 0; i--){
+        if (allPlayers.at(i)->getPlayerName() != senderPlayerName){
+            allPlayers.at(i)->gameTerminated(senderPlayerName + " has disconnected from the Server. The game has therefore been terminated.");
+        }
+    }
+
+    // Terminate the server
+
 }
 
 // Instantiate server lobby GUI and connect slots and signals

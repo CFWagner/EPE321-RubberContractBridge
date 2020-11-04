@@ -116,6 +116,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case(TRICK_END):
     {
+        updateTrickWon();
         for(int i = 0; i <4;i++)
         {
             if(trickPool[i] != nullptr)
@@ -445,6 +446,38 @@ QString GameWindow::getStyle(int)
         cardName+= "spades.png)";
     }
     return imageName+cardName;
+}
+
+void GameWindow::updateTrickWon()
+{
+    if (name == gameState.getPlayerName(NORTH))
+    {
+        ui->trickCount0->setText(QString::number(gameState.getTricksWon(NORTH)));
+        ui->trickCount1->setText(QString::number(gameState.getTricksWon(EAST)));
+        ui->trickCount2->setText(QString::number(gameState.getTricksWon(SOUTH)));
+        ui->trickCount3->setText(QString::number(gameState.getTricksWon(WEST)));
+    }
+    else if (name == gameState.getPlayerName(EAST))
+    {
+        ui->trickCount0->setText(gameState.getPlayerName(EAST));
+        ui->trickCount1->setText(gameState.getPlayerName(SOUTH));
+        ui->trickCount2->setText(gameState.getPlayerName(WEST));
+        ui->trickCount3->setText(gameState.getPlayerName(NORTH));
+    }
+    else if (name == gameState.getPlayerName(WEST))
+    {
+        ui->trickCount0->setText(gameState.getPlayerName(WEST));
+        ui->trickCount1->setText(gameState.getPlayerName(NORTH));
+        ui->trickCount2->setText(gameState.getPlayerName(EAST));
+        ui->trickCount3->setText(gameState.getPlayerName(SOUTH));
+    }
+    else if (name == gameState.getPlayerName(SOUTH))
+    {
+        ui->trickCount0->setText(gameState.getPlayerName(SOUTH));
+        ui->trickCount1->setText(gameState.getPlayerName(WEST));
+        ui->trickCount2->setText(gameState.getPlayerName(NORTH));
+        ui->trickCount3->setText(gameState.getPlayerName(EAST));
+    }
 }
 
 void GameWindow::createHandTable()
@@ -827,7 +860,20 @@ void GameWindow::setupWindow()
     this->setFixedSize(1920,1080);
     this->setWindowTitle ("Rubber Contract Bridge");
     setWindowIcon(QIcon(":/resources/guiResources/cards/ace_spades.png"));
+    QPixmap trickTs(":/resources/guiResources/buttons/trickPos.png");
     ui->ScoreButon->setIcon(QIcon(":/resources/guiResources/buttons/SCORE.png"));
+    ui->topT->setPixmap(trickTs);
+    ui->leftT->setPixmap(trickTs);
+    ui->rightT->setPixmap(trickTs);
+    ui->botT->setPixmap(trickTs);
+    ui->topT->setGeometry(ui->topT->pos().x(),ui->topT->pos().y(),51,51);
+    ui->leftT->setGeometry(ui->leftT->pos().x(),ui->leftT->pos().y(),51,51);
+    ui->rightT->setGeometry(ui->rightT->pos().x(),ui->rightT->pos().y(),51,51);
+    ui->botT->setGeometry(ui->botT->pos().x(),ui->botT->pos().y(),51,51);
+    ui->topT->show();
+    ui->leftT->show();
+    ui->rightT->show();
+    ui->botT->show();
 }
 
 void GameWindow::on_messagerB_clicked()

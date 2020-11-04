@@ -24,12 +24,12 @@ ScoreWindow::~ScoreWindow()
 
 void ScoreWindow::showScore(PlayerGameState gameState)
 {
-    for(int i = 0; i < gameState.getScore().getContractPoints(E_W).size(); i++)
+    ui->left->clear();
+    for(int i = 0; i < gameState.getScore().getContractPoints(E_W).size();i++)
     {
         qDebug() <<"2";
-        ui->left->appendPlainText("Game "+QString::number(i));
+        ui->left->appendPlainText("Game "+QString::number(i) + ":");
     }
-    ui->left->clear();
     ui->left->appendPlainText(backScoreL);
     ui->left->appendPlainText(overTrickL);
     ui->left->appendPlainText(undertricks);

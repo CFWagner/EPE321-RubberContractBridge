@@ -16,6 +16,7 @@ ClientNetwork::ClientNetwork(QObject *parent) : QObject(parent)
     bLoggedIn = false;
     idCounter = 0;
     prevID = -1; // First ID received from server is 0. prevID should be smaller, thus -1.
+    gameTerminatedOnce = false; // Only send gameTerminated once to the client. Set to true after gameTerminated has been sent once.
 
     // Prepare the tcpSoc and datastream
     tcpSoc = new QTcpSocket(this);

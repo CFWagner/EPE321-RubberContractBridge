@@ -11,6 +11,7 @@ PlayerNetwork::PlayerNetwork(QObject *parent, QString playerName, QTcpSocket *cl
     PlayerNetwork::clientSoc = clientSoc;
     idCounter = 1; // One message has been sent by the Client
     prevID = 0; // The first message has been received and the ID was 0, thus prevID is 0.
+    gameTerminatedOnce = false; // Only send gameTerminated once to the client. Set to true after gameTerminated has been sent once.
 
     in.setDevice(PlayerNetwork::clientSoc);
     in.setVersion(QDataStream::Qt_5_10);
@@ -114,11 +115,15 @@ void PlayerNetwork::message(QString source, QString msg)
 
 void PlayerNetwork::gameTerminated(QString reason)
 {
-    // Create QJsonObject
-    QJsonObject txObj;
-    txObj["Type"] = "GAME_TERMINATED";
-    txObj["TerminationReason"] = reason;
-    txAll(txObj);
+    if (gameTerminatedOnce == false){
+        gameTerminatedOnce = true;
+
+        // Create QJsonObject
+        QJsonObject txObj;
+        txObj["Type"] = "GAME_TERMINATED";
+        txObj["TerminationReason"] = reason;
+        txAll(txObj);
+    }
 }
 
 /**
@@ -325,7 +330,9 @@ void PlayerNetwork::rxMessage(QJsonObject msgObj)
 void PlayerNetwork::internalClientDisconnected()
 {
     // Ensure that the client is actually disconnected
-    emit clientDisconnected();
+    if (gameTerminatedOnce == false) {
+        emit clientDisconnected();
+    }
     clientSoc->abort();
 
     // Prevent the socket from being aborted or deleted again

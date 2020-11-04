@@ -86,6 +86,7 @@ private:
     QDataStream in;
     qint64 idCounter;
     qint64 prevID;
+    bool gameTerminatedOnce;
 };
 
 #endif // CLIENTNETWORK_H

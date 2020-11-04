@@ -129,7 +129,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case(PLAY_END):
     {
-        scoreWindow->show();
+    emit getScore(this->gameState);
         for (int i = 0; i < 13;i++)
         {
             if(cardsInHand[i] != nullptr)

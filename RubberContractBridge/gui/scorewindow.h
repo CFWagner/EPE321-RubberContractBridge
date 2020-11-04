@@ -26,13 +26,13 @@ private slots:
 private:
     Ui::ScoreWindow *ui;
     QString backScoreL = "Back score: ";
-    QString overTrickL = "Over trick: ";
-    QString undertricks = "Under score: ";
+    QString overTrickL = "Overtricks: ";
+    QString undertricks = "Undertricks: ";
     QString honorsL = "Honors: ";
-    QString slamBonusesL = "Slam bonus: ";
-    QString doubleBonusesL = "Slam bonus: ";
-    QString redoubleBonusesL = "Double bonus: ";
-    QString rubberBonusesL = "Redouble bonus: ";
+    QString slamBonusesL = "Slam bonuses: ";
+    QString doubleBonusesL = "Double bonuses: ";
+    QString redoubleBonusesL = "Redouble bonuses: ";
+    QString rubberBonusesL = "Rubber bonuses: ";
     QString getTotalScoreL = "Total score: ";
 };
 

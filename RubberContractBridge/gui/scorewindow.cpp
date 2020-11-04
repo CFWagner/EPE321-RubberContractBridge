@@ -24,7 +24,7 @@ ScoreWindow::~ScoreWindow()
 
 void ScoreWindow::showScore(PlayerGameState gameState)
 {
-    for(int i = 0; i < gameState.getScore().getContractPoints(E_W).size();i++)
+    for(int i = 0; i < gameState.getScore().getContractPoints(E_W).size(); i++)
     {
         qDebug() <<"2";
         ui->left->appendPlainText("Game "+QString::number(i));

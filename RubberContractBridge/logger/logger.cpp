@@ -45,18 +45,12 @@ bool Logger::isLogEnabled() const
 
 void Logger::log(QString context, QString msg)
 {
-    // Show that a log was signal was emitted
-    // qDebug() << "Logger::log (enableLogging:" << isLogEnabled() << ") Context:" << context << "Message:" << msg;
-
     // Check if logging is enabled.
     if (enableLogging == true){
         // Get the local time
-        QDateTime UTC(QDateTime::currentDateTimeUtc());
-        QDateTime local(UTC.toLocalTime());
-        QString logTime = QLocale().toString(local, QLocale::ShortFormat);
+        QString logTime = QDateTime::currentDateTimeUtc().toLocalTime().toString("yyyy/MM/dd hh:mm:ss.zzz");
 
         // Print log to command line
-        // qDebug() << logTime <<" {" << context << "}: " << msg;
         QTextStream out(stdout);
         out << logTime << " {" << context << "}: " << msg << "\n";
 

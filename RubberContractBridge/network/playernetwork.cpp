@@ -332,6 +332,7 @@ void PlayerNetwork::internalClientDisconnected()
     // Ensure that the client is actually disconnected
     if (gameTerminatedOnce == false) {
         emit clientDisconnected();
+        gameTerminatedOnce = true;
     }
     clientSoc->abort();
 

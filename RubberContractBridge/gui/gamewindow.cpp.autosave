@@ -145,7 +145,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case(MATCH_END):
     {
-        QMessageBox::warning(this,"GAME ENDED","GAME ENDED");
+        QMessageBox::warning(this,"Rubber Contract Bridge","GAME HAS ENDED");
         break;
     }
     default:

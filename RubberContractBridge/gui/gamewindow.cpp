@@ -38,6 +38,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     {
     case (BID_START):
     {
+        updateGeneralInfo();
         indicatePlayerTurn();
         gameBoard->hide();
         bidBoard->show();
@@ -111,6 +112,7 @@ void GameWindow::updateGameState(PlayerGameState gameState)
     }
     case(TRICK_END):
     {
+        updateGeneralInfo();
         updateTrickWon();
         for(int i = 0; i <4;i++)
         {
@@ -468,6 +470,14 @@ void GameWindow::updateTrickWon()
     }
 }
 
+void GameWindow::updateGeneralInfo()
+{
+    ui->rubberN->setText("Rubber :"+ QString::number(gameState.getRubberNumber()));
+    ui->gameN->setText("Game :"+ QString::number(gameState.getGameNumber()));
+    ui->roundN->setText("Deal :"+ QString::number(gameState.getDealNumber()));
+    ui->trickN->setText("Trick :"+ QString::number(gameState.getTrickNumber()));
+}
+
 void GameWindow::createHandTable()
 {
     CardSet playerHand = gameState.getPlayerHand();
@@ -547,7 +557,7 @@ void GameWindow::createHandTable()
         cardMine = new CardSelected(playerHand.getCard(i).getSuit(),playerHand.getCard(i).getRank(),this);
         cardsInHand[i] = cardMine;
         cardsInHand[i] ->setStyleSheet(imageName+cardName);
-        cardsInHand[i] ->setGeometry(720+ i*30,940,101,141);
+        cardsInHand[i] ->setGeometry(720+ i*40,940,101,141);
         connect(cardsInHand[i],&CardSelected::sendCardPlayed,this,&GameWindow::receiveCard);
         cardsInHand[i]->show();
     }
@@ -645,7 +655,7 @@ void GameWindow::createDummyHand()
     {
         for (int i = 0; i< 13;++i)
         {
-            dummyHandSet[i]->setGeometry(40,320+30*i,101,141);
+            dummyHandSet[i]->setGeometry(40,280+40*i,101,141);
             dummyHandSet[i]->show();
         }
     }
@@ -653,7 +663,7 @@ void GameWindow::createDummyHand()
     {
         for (int i = 0; i< 13;++i)
         {
-            dummyHandSet[i]->setGeometry(720+30*i,40,101,141);
+            dummyHandSet[i]->setGeometry(680+40*i,40,101,141);
             dummyHandSet[i]->show();
         }
     }
@@ -661,7 +671,7 @@ void GameWindow::createDummyHand()
     {
         for (int i = 0; i< 13;++i)
         {
-            dummyHandSet[i]->setGeometry(1720,320+30*i,101,141);
+            dummyHandSet[i]->setGeometry(1720,280+40*i,101,141);
             dummyHandSet[i]->show();
         }
     }

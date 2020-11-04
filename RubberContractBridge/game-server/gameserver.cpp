@@ -128,11 +128,11 @@ void GameServer::gameEvent(GameEvent gameEvent)
         break;
     case TRICK_END:
         if(verboseOutput)
-            emit logGenerated("Game Server", "Trick completed");
+            emit logGenerated("Game Server", "Trick " + QString::number(state->getTrickNumber()) + "completed");
         broadcastStateUpdate(gameEvent);
         break;
     case PLAY_END:
-         if(verboseOutput)
+        if(verboseOutput)
             emit logGenerated("Game Server", "Cardplay completed");
         broadcastStateUpdate(gameEvent);
         break;
@@ -140,11 +140,17 @@ void GameServer::gameEvent(GameEvent gameEvent)
         emit logGenerated("Game Server", "Match started");
         break;
     case MATCH_END:
+        emit logGenerated("Game Server", "Rubber " + QString::number(state->getRubberNumber()) + " completed");
+        logScore();
         emit logGenerated("Game Server", "Match completed");
+        logMatchWinner();
         matchComplete = true;
         for(Player* player: players)
-            player->gameTerminated("Match Completed");
+            player->gameTerminated("Match completed");
         break;
+    case RUBBER_COMPLETED:
+        emit logGenerated("Game Server", "Rubber " + QString::number(state->getRubberNumber()) + " completed");
+        logScore();
     }
 }
 
@@ -316,4 +322,42 @@ QString GameServer::getBidInfo(Bid bid)
     }
 
     return output;
+}
+
+void GameServer::logScore()
+{
+    QString winningTeam;
+    switch(state->getScore().getRubberWinner()){
+    case N_S:
+        winningTeam = "NORTH-SOUTH";
+        break;
+    case E_W:
+        winningTeam = "EAST-WEST";
+        break;
+    }
+
+    const Score& score = state->getScore();
+    emit logGenerated("Score", "Winner      : " + winningTeam);
+    emit logGenerated("Score", "Games Won   : NS = " + QString::number(score.getGamesWon(N_S)) + ", EW = " + QString::number(score.getGamesWon(E_W)));
+    for(int i = 0; i < score.getContractPoints(N_S).size(); i++){
+        emit logGenerated("Score", "Game " + QString::number(i + 1) + "  : NS = " + QString::number(score.getContractPoints(N_S).value(i)) + ", EW = " + QString::number(score.getContractPoints(E_W).value(i)));
+    }
+    emit logGenerated("Score", "Back Scores : NS = " + QString::number(score.getBackScore(N_S)) + ", EW = " + QString::number(score.getBackScore(E_W)));
+    emit logGenerated("Score", "Total Scores: NS = " + QString::number(score.getTotalScore(N_S)) + ", EW = " + QString::number(score.getTotalScore(E_W)));
+    emit logGenerated("Score", "-----------------------------------------------");
+}
+
+void GameServer::logMatchWinner()
+{
+    QString winningTeam;
+    switch(state->getScore().getMatchWinner()){
+    case N_S:
+        winningTeam = "NORTH-SOUTH";
+        break;
+    case E_W:
+        winningTeam = "EAST-WEST";
+        break;
+    }
+
+    emit logGenerated("Score", "Match Winner: " + winningTeam);
 }

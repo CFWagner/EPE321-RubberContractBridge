@@ -228,6 +228,7 @@ void ServerGameState::updatePlayState(const Card &card)
                     return;
                 }else{
                     // Initialise next rubber
+                    emit gameEvent(RUBBER_COMPLETED);
                     nextRubber();
                 }
 

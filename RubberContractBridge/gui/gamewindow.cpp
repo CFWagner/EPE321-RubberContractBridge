@@ -748,12 +748,12 @@ void GameWindow::updateGeneralInfo()
     {
         playerMayBid = true;
     }
-
+// Player makes a move.
     void GameWindow::playerTurnMove()
     {
         playerMayPlay = true;
     }
-
+// Set the current game state of the game and use when updating.
     void GameWindow::setGameState(PlayerGameState gameState)
     {
         this->gameState = gameState;
@@ -794,7 +794,7 @@ void GameWindow::updateGeneralInfo()
         ui->top->raise();
         ui->right->raise();
     }
-
+// Setup the labels and pushButtons.
     void GameWindow::staticGUIElements()
     {
         QPixmap arrowPix(":/resources/guiResources/background/bidBoard.png");
@@ -828,46 +828,46 @@ void GameWindow::updateGeneralInfo()
         turnIndicator = new QLabel(this);
         turnIndicator->setPixmap(tI);
     }
-
+// If game show errors.
     void GameWindow::generalError(QString errorMsg)
     {
         QMessageBox::warning(this,"Error message",errorMsg);
     }
-
+// If game has been ended such as closing client.
     void GameWindow::gameTerminated(QString reason)
     {
         QMessageBox::warning(this,"Game terminated",reason);
         this->close();
     }
-
+// Set name of the player.
     void GameWindow::setName(QString username)
     {
         this->name = username;
     }
-
+// Create exit button.
     void GameWindow::on_button_exit_clicked()
     {
         this->close();
     }
-
+// Message in chat box displayed.
     void GameWindow::messageReceived(QString source, QString msg)
     {
         QString reMessage =" {" + source + "}: " + msg;
         ui->messagePanel->appendPlainText(reMessage);
     }
-
+// Bid is rejected so show message.
     void GameWindow::bidRejected(QString reason)
     {
         playerMayBid = true;
         //QMessageBox::warning(this,"Bid rejected",reason);
     }
-
+// Move is rejected so show message.
     void GameWindow::moveRejected(QString reason)
     {
         playerMayPlay = true;
         //QMessageBox::warning(this,"Move rejected",reason);
     }
-
+// Setup the background and the boards.
     void GameWindow::setupWindow()
     {
         QPixmap bkgnd(":/resources/guiResources/background/background1.png");
@@ -893,7 +893,7 @@ void GameWindow::updateGeneralInfo()
         ui->rightT->show();
         ui->botT->show();
     }
-
+// Send message
     void GameWindow::on_messagerB_clicked()
     {
         if (ui->messageEdit->text() != "")
@@ -902,7 +902,7 @@ void GameWindow::updateGeneralInfo()
             ui->messageEdit->clear();
         }
     }
-
+// Send message by pressing enter.
     void GameWindow::keyPressEvent(QKeyEvent *event)
     {
         if( event->key() == 16777220 )
@@ -914,7 +914,7 @@ void GameWindow::updateGeneralInfo()
             }
         }
     }
-
+// Show the score screen.
     void GameWindow::on_ScoreButon_clicked()
     {
         emit getScore(this->gameState);

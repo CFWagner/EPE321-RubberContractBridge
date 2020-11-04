@@ -33,7 +33,7 @@ void TestGameServer::testGameServer()
 
     // Start game with game server
     qint8 maxRubbers = 1;
-    gameServer1.executeMatch(maxRubbers);
+    gameServer1.executeMatch(maxRubbers, false);
     QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 
     // Create players
@@ -61,7 +61,7 @@ void TestGameServer::testGameServer()
 
     // Start game with game server
     maxRubbers = 5;
-    gameServer1.executeMatch(maxRubbers);
+    gameServer1.executeMatch(maxRubbers, false);
     QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 }
 
@@ -93,7 +93,7 @@ void TestGameServer::testGameServerWithDumbAI()
 
     // Start game with game server
     qint8 maxRubbers = 1;
-    gameServer1.executeMatch(maxRubbers);
+    gameServer1.executeMatch(maxRubbers, false);
     QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 
     // Create players
@@ -121,7 +121,7 @@ void TestGameServer::testGameServerWithDumbAI()
 
     // Start game with game server
     maxRubbers = 5;
-    gameServer1.executeMatch(maxRubbers);
+    gameServer1.executeMatch(maxRubbers, false);
     QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 }
 
@@ -153,7 +153,7 @@ void TestGameServer::testGameServerWithAI()
 
     // Start game with game server
     qint8 maxRubbers = 1;
-    gameServer1.executeMatch(maxRubbers);
+    gameServer1.executeMatch(maxRubbers, false);
     QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 
     // Create players
@@ -181,6 +181,6 @@ void TestGameServer::testGameServerWithAI()
 
     // Start game with game server
     maxRubbers = 10;
-    gameServer1.executeMatch(maxRubbers);
+    gameServer1.executeMatch(maxRubbers, false);
     QCOMPARE(gameServer1.getState()->getRubberNumber(), maxRubbers);
 }

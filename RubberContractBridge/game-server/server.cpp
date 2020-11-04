@@ -73,6 +73,7 @@ void Server::playersSelected(QVector<QString> playerNames)
     connect(gameServer, &GameServer::logGenerated, logger, &Logger::log);
 
     // Create players and add to game server
+    qint8 aiPlayerCount = 0;
     for(qint8 i = 0; i < playerNames.length(); ++ i){
         // Get player name and position
         QString playerName = playerNames.value(i);
@@ -95,6 +96,7 @@ void Server::playersSelected(QVector<QString> playerNames)
         Player* player;
         // Create AI player
         if(playerName.contains("BOT")){
+            aiPlayerCount++;
             player = new AI();
             player->setPlayerName(playerName);
             player->setPosition(position);
@@ -118,7 +120,8 @@ void Server::playersSelected(QVector<QString> playerNames)
     serverNetwork->stopListening();
 
     // Run the match for specified number of rubbers
-    gameServer->executeMatch(maxRubbers);
+    bool verboseOutput = aiPlayerCount < 4;
+    gameServer->executeMatch(maxRubbers, verboseOutput);
 }
 
 // Slot for when the server password is selected in the server login menu

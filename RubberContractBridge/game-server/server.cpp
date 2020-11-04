@@ -159,7 +159,7 @@ void Server::clientDisconnected()
     // Get all the players
     QVector<Player*> allPlayers  = gameServer->getPlayers();
     for (int i = allPlayers.count() - 1; i >= 0; i--){
-        if (allPlayers.at(i)->getPlayerName() != senderPlayerName){
+        if (allPlayers.at(i) != nullptr && allPlayers.at(i)->getPlayerName() != senderPlayerName){
             allPlayers.at(i)->gameTerminated(senderPlayerName + " has disconnected from the Server. The game has therefore been terminated.");
         }
     }
